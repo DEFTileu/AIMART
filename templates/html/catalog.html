@@ -1,0 +1,272 @@
+{% extends 'html/base.html' %}
+{% load static %}
+
+{% block title %}Каталог товаров - AIMART{% endblock %}
+
+{% block styles %}
+<style>
+    .catalog-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    .catalog-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+    
+    .catalog-title {
+        color: #333;
+        margin: 0;
+        font-size: 28px;
+    }
+    
+    .catalog-layout {
+        display: grid;
+        grid-template-columns: 250px 1fr;
+        gap: 30px;
+    }
+    
+    .filters {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        align-self: flex-start;
+    }
+    
+    .filter-title {
+        margin-top: 0;
+        margin-bottom: 20px;
+        color: #333;
+        font-size: 18px;
+        font-weight: 600;
+    }
+    
+    .filter-group {
+        margin-bottom: 20px;
+    }
+    
+    .filter-label {
+        display: block;
+        margin-bottom: 8px;
+        color: #555;
+        font-weight: 500;
+    }
+    
+    .filter-select, .filter-input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background: #f9f9f9;
+    }
+    
+    .price-inputs {
+        display: flex;
+        gap: 10px;
+    }
+    
+    .filter-button {
+        background: #ff8c00;
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        width: 100%;
+        font-weight: 600;
+        transition: background 0.3s;
+    }
+    
+    .filter-button:hover {
+        background: #e67e00;
+    }
+    
+    .products-section {
+        flex: 1;
+    }
+    
+    .no-products {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .no-products h3 {
+        margin-top: 0;
+        color: #333;
+    }
+    
+    .no-products p {
+        color: #666;
+    }
+    
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 30px;
+    }
+    
+    .pagination-item {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 40px;
+        height: 40px;
+        padding: 0 10px;
+        margin: 0 5px;
+        background: white;
+        border-radius: 5px;
+        text-decoration: none;
+        color: #333;
+        font-weight: 500;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s;
+    }
+    
+    .pagination-item:hover {
+        background: #f0f0f0;
+    }
+    
+    .pagination-item.active {
+        background: #ff8c00;
+        color: white;
+    }
+    
+    @media (max-width: 768px) {
+        .catalog-layout {
+            grid-template-columns: 1fr;
+        }
+        
+        .catalog-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .sort-options {
+            margin-top: 15px;
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="catalog-container">
+    <div class="catalog-header">
+        <h1 class="catalog-title">Каталог товаров</h1>
+        <div class="sort-options">
+            <select name="sort" id="sort" class="filter-select" aria-label="Сортировка товаров">
+                <option value="popular">По популярности</option>
+                <option value="price_asc">По возрастанию цены</option>
+                <option value="price_desc">По убыванию цены</option>
+                <option value="new">Сначала новые</option>
+            </select>
+        </div>
+    </div>
+    
+    <div class="catalog-layout">
+        <div class="filters">
+            <h2 class="filter-title">Фильтры</h2>
+            <form action="{% url 'catalog' %}" method="get">
+                <div class="filter-group">
+                    <label class="filter-label" for="category-select">Категория</label>
+                    <select name="category" id="category-select" class="filter-select" aria-label="Фильтр по категориям">
+                        <option value="">Все категории</option>
+                        {% for category in categories %}
+                            <option value="{{ category.id }}" {% if selected_category == category.id %}selected{% endif %}>
+                                {{ category.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label class="filter-label">Цена</label>
+                    <div class="price-inputs">
+                        <input type="number" name="min_price" class="filter-input" placeholder="от" value="{{ min_price }}">
+                        <input type="number" name="max_price" class="filter-input" placeholder="до" value="{{ max_price }}">
+                    </div>
+                </div>
+                
+                {% if brands %}
+                <div class="filter-group">
+                    <label class="filter-label" for="brand-select">Бренд</label>
+                    <select name="brand" id="brand-select" class="filter-select" aria-label="Фильтр по брендам">
+                        <option value="">Все бренды</option>
+                        {% for brand in brands %}
+                            <option value="{{ brand.id }}" {% if selected_brand == brand.id %}selected{% endif %}>
+                                {{ brand.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% endif %}
+                
+                <button type="submit" class="filter-button">Применить фильтры</button>
+            </form>
+        </div>
+        
+        <div class="products-section">
+            {% include 'html/components/product_grid.html' with 
+                products=products 
+                empty_title="Товары не найдены" 
+                empty_message="Попробуйте изменить параметры фильтрации или вернуться позже."
+                empty_action_url="/catalog/"
+                empty_action_text="Сбросить фильтры"
+                show_seller=True
+                show_rating=True
+                show_category=True
+            %}
+                
+            {% if is_paginated %}
+            <div class="pagination">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="pagination-item">1</a>
+                    {% if page_obj.previous_page_number != 1 %}
+                        <a href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="pagination-item">{{ page_obj.previous_page_number }}</a>
+                    {% endif %}
+                {% endif %}
+                
+                <a href="#" class="pagination-item active">{{ page_obj.number }}</a>
+                
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="pagination-item">{{ page_obj.next_page_number }}</a>
+                    {% if page_obj.next_page_number != page_obj.paginator.num_pages %}
+                        <a href="?page={{ page_obj.paginator.num_pages }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="pagination-item">{{ page_obj.paginator.num_pages }}</a>
+                    {% endif %}
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Получение CSRF токена из cookies
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,84 @@
+{% extends 'html/base.html' %}
+
+{% block title %}О нас - AIMART{% endblock %}
+
+{% block content %}
+    <section class="about-section">
+        <div class="container">
+            <h1>О компании AIMART</h1>
+            <p class="lead">Добро пожаловать в AIMART — ваш надежный интернет-магазин, где качество и удобство покупок на первом месте!</p>
+            
+            <div class="about-content">
+                <h2>Наша миссия</h2>
+                <p>Мы стремимся предоставлять клиентам широкий ассортимент товаров высокого качества по доступным ценам. Наша цель — сделать процесс покупок максимально простым, быстрым и приятным, чтобы каждый клиент остался доволен.</p>
+
+                <h2>Почему выбирают нас?</h2>
+                <ul class="about-list">
+                    <li><strong>Широкий выбор товаров:</strong> От электроники до товаров для дома — у нас есть все, что вам нужно.</li>
+                    <li><strong>Гарантия качества:</strong> Мы сотрудничаем только с проверенными поставщиками.</li>
+                    <li><strong>Быстрая доставка:</strong> Доставляем заказы в кратчайшие сроки по всей России.</li>
+                    <li><strong>Отличный сервис:</strong> Наша команда поддержки всегда готова ответить на ваши вопросы.</li>
+                </ul>
+
+                <h2>Наша история</h2>
+                <p>Компания AIMART была основана в 2020 году с целью изменить подход к онлайн-шопингу. За несколько лет мы выросли из небольшого стартапа в крупный интернет-магазин, которому доверяют тысячи клиентов по всей стране.</p>
+
+                <h2>Свяжитесь с нами</h2>
+                <p>Если у вас есть вопросы или предложения, напишите нам на <a href="mailto:info@aimart.ru">info@aimart.ru</a> или позвоните по телефону <a href="tel:+78001234567">8 (800) 123-45-67</a>. Мы всегда рады помочь!</p>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block extra_css %}
+    <style>
+        .about-section {
+            padding: 40px 0;
+            background-color: #f9f9f9;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .lead {
+            font-size: 1.2em;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #555;
+        }
+        .about-content h2 {
+            font-size: 1.8em;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        .about-content p {
+            font-size: 1em;
+            line-height: 1.6;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .about-list {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 20px;
+        }
+        .about-list li {
+            font-size: 1em;
+            margin-bottom: 10px;
+            padding-left: 20px;
+            position: relative;
+        }
+        .about-list li:before {
+            content: "✔";
+            position: absolute;
+            left: 0;
+            color: #28a745;
+        }
+    </style>
+{% endblock %}

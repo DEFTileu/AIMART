@@ -1,0 +1,501 @@
+{% extends 'html/base.html' %}
+{% load static %}
+
+{% block title %}{% if product %}Редактирование товара{% else %}Добавление нового товара{% endif %} - AIMART{% endblock %}
+
+{% block extra_css %}
+<style>
+  .edit-product-container {
+    max-width: 800px;
+    margin: 30px auto;
+    padding: 0 20px;
+  }
+
+  .edit-product-header {
+    margin-bottom: 30px;
+  }
+
+  .edit-product-title {
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 10px;
+  }
+
+  .edit-subtitle {
+    color: #666;
+    font-size: 16px;
+    margin-bottom: 30px;
+  }
+
+  .edit-form {
+    background: white;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .form-group {
+    margin-bottom: 25px;
+  }
+
+  .form-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+  }
+
+  .form-input, .form-textarea, .form-select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+  }
+
+  .form-input:focus, .form-textarea:focus, .form-select:focus {
+    border-color: #FF8C00;
+    outline: none;
+  }
+
+  .form-textarea {
+    min-height: 150px;
+    resize: vertical;
+  }
+
+  .image-preview-container {
+    display: flex;
+    margin-top: 15px;
+    gap: 20px;
+  }
+
+  .image-preview {
+    width: 120px;
+    height: 120px;
+    border-radius: 5px;
+    background-color: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .image-preview img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: cover;
+  }
+
+  .image-label {
+    display: block;
+    font-size: 14px;
+    color: #666;
+    margin-top: 5px;
+    text-align: center;
+  }
+
+  .image-remove {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 20px;
+    height: 20px;
+    background: rgba(255, 0, 0, 0.7);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 12px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .image-preview:hover .image-remove {
+    opacity: 1;
+  }
+
+  .form-checkbox-group {
+    display: flex;
+    align-items: center;
+  }
+
+  .form-checkbox {
+    margin-right: 10px;
+    width: 18px;
+    height: 18px;
+  }
+
+  .form-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+  }
+
+  .btn-save, .btn-cancel, .btn-delete {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 0.3s;
+  }
+
+  .btn-save {
+    background: #FF8C00;
+    color: white;
+  }
+
+  .btn-save:hover {
+    background: #E67E00;
+  }
+
+  .btn-cancel {
+    background: #f5f5f5;
+    color: #333;
+  }
+
+  .btn-cancel:hover {
+    background: #e0e0e0;
+  }
+
+  .btn-delete {
+    background: #ff3b30;
+    color: white;
+  }
+
+  .btn-delete:hover {
+    background: #d9302c;
+  }
+
+  .error-text {
+    color: #ff3b30;
+    font-size: 14px;
+    margin-top: 5px;
+  }
+
+  .price-input-group {
+    position: relative;
+  }
+
+  .price-symbol {
+    position: absolute;
+    right: 12px;
+    top: 12px;
+    color: #666;
+    font-weight: 600;
+  }
+
+  @media (max-width: 576px) {
+    .form-buttons {
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .btn-save, .btn-cancel, .btn-delete {
+      width: 100%;
+    }
+
+    .image-preview-container {
+      flex-wrap: wrap;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="edit-product-container">
+  <div class="edit-product-header">
+    <h1 class="edit-product-title">
+      {% if product %}Редактирование товара{% else %}Добавление нового товара{% endif %}
+    </h1>
+    <p class="edit-subtitle">
+      {% if product %}
+        Измените параметры товара и сохраните изменения
+      {% else %}
+        Заполните форму для добавления нового товара
+      {% endif %}
+    </p>
+  </div>
+
+  <form method="post" enctype="multipart/form-data" class="edit-form">
+    {% csrf_token %}
+    
+    <div class="form-group">
+      <label for="product-name" class="form-label">Название товара *</label>
+      <input 
+        type="text" 
+        id="product-name" 
+        name="name" 
+        class="form-input" 
+        value="{{ product.name|default:'' }}" 
+        required
+        placeholder="Введите название товара"
+      >
+      {% if form.name.errors %}
+        <div class="error-text">{{ form.name.errors }}</div>
+      {% endif %}
+    </div>
+
+    <div class="form-group">
+      <label for="product-description" class="form-label">Описание товара</label>
+      <textarea 
+        id="product-description" 
+        name="description" 
+        class="form-textarea" 
+        placeholder="Подробно опишите ваш товар"
+      >{{ product.description|default:'' }}</textarea>
+      {% if form.description.errors %}
+        <div class="error-text">{{ form.description.errors }}</div>
+      {% endif %}
+    </div>
+
+    <div class="form-group">
+      <label for="product-price" class="form-label">Цена *</label>
+      <div class="price-input-group">
+        <input 
+          type="number" 
+          id="product-price" 
+          name="price" 
+          class="form-input" 
+          value="{{ product.price|default:'' }}" 
+          min="0" 
+          step="0.01" 
+          required
+          placeholder="0.00"
+        >
+        <span class="price-symbol">₽</span>
+      </div>
+      {% if form.price.errors %}
+        <div class="error-text">{{ form.price.errors }}</div>
+      {% endif %}
+    </div>
+
+    <div class="form-group">
+      <label for="product-category" class="form-label">Категория *</label>
+      <select id="product-category" name="category" class="form-select" required>
+        <option value="" disabled {% if not product.category %}selected{% endif %}>Выберите категорию</option>
+        {% for category in categories %}
+          <option value="{{ category.id }}" {% if product.category.id == category.id %}selected{% endif %}>
+            {{ category.name }}
+          </option>
+        {% endfor %}
+      </select>
+      {% if form.category.errors %}
+        <div class="error-text">{{ form.category.errors }}</div>
+      {% endif %}
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Изображения товара</label>
+      
+      <div class="form-group">
+        <label for="image-main" class="form-label">Основное изображение</label>
+        <input type="file" id="image-main" name="image_main" class="form-input" accept="image/*">
+        {% if form.image_main.errors %}
+          <div class="error-text">{{ form.image_main.errors }}</div>
+        {% endif %}
+        
+        <div class="image-preview-container">
+          <div class="image-preview" id="main-image-preview">
+            {% if product.image_main %}
+              <img src="{{ product.image_main.url }}" alt="Основное изображение">
+              <div class="image-remove" data-image-type="main">×</div>
+            {% else %}
+              <span>Нет фото</span>
+            {% endif %}
+          </div>
+          <div class="image-label">Основное фото</div>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="image-optional" class="form-label">Дополнительное изображение</label>
+        <input type="file" id="image-optional" name="image_optional" class="form-input" accept="image/*">
+        {% if form.image_optional.errors %}
+          <div class="error-text">{{ form.image_optional.errors }}</div>
+        {% endif %}
+        
+        <div class="image-preview-container">
+          <div class="image-preview" id="optional-image-preview">
+            {% if product.image_optional %}
+              <img src="{{ product.image_optional.url }}" alt="Дополнительное изображение">
+              <div class="image-remove" data-image-type="optional">×</div>
+            {% else %}
+              <span>Нет фото</span>
+            {% endif %}
+          </div>
+          <div class="image-label">Дополнительное фото</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="form-checkbox-group">
+        <input 
+          type="checkbox" 
+          id="product-active" 
+          name="is_active" 
+          class="form-checkbox" 
+          {% if product.is_active|default:True %}checked{% endif %}
+        >
+        <label for="product-active" class="form-label">Товар активен (доступен для покупки)</label>
+      </div>
+    </div>
+
+    <div class="form-buttons">
+      <div>
+        <button type="submit" class="btn-save">Сохранить</button>
+        <a href="{% url 'seller_profile' %}" class="btn-cancel">Отмена</a>
+      </div>
+      
+      {% if product %}
+        <button type="button" class="btn-delete" id="delete-product-btn" data-product-id="{{ product.id }}">
+          Удалить товар
+        </button>
+      {% endif %}
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Предпросмотр основного изображения
+    const imageMainInput = document.getElementById('image-main');
+    const mainImagePreview = document.getElementById('main-image-preview');
+    
+    if (imageMainInput) {
+      imageMainInput.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            mainImagePreview.innerHTML = `
+              <img src="${e.target.result}" alt="Основное изображение">
+              <div class="image-remove" data-image-type="main">×</div>
+            `;
+            
+            // Добавляем обработчик для кнопки удаления
+            attachRemoveHandlers();
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+    }
+    
+    // Предпросмотр дополнительного изображения
+    const imageOptionalInput = document.getElementById('image-optional');
+    const optionalImagePreview = document.getElementById('optional-image-preview');
+    
+    if (imageOptionalInput) {
+      imageOptionalInput.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            optionalImagePreview.innerHTML = `
+              <img src="${e.target.result}" alt="Дополнительное изображение">
+              <div class="image-remove" data-image-type="optional">×</div>
+            `;
+            
+            // Добавляем обработчик для кнопки удаления
+            attachRemoveHandlers();
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+    }
+    
+    // Удаление изображений
+    function attachRemoveHandlers() {
+      const removeButtons = document.querySelectorAll('.image-remove');
+      
+      removeButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          const imageType = this.dataset.imageType;
+          
+          if (imageType === 'main') {
+            imageMainInput.value = '';
+            mainImagePreview.innerHTML = '<span>Нет фото</span>';
+            
+            // Добавляем скрытое поле для указания, что изображение нужно удалить
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = 'remove_image_main';
+            hiddenInput.value = 'true';
+            mainImagePreview.appendChild(hiddenInput);
+          } else if (imageType === 'optional') {
+            imageOptionalInput.value = '';
+            optionalImagePreview.innerHTML = '<span>Нет фото</span>';
+            
+            // Добавляем скрытое поле для указания, что изображение нужно удалить
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = 'remove_image_optional';
+            hiddenInput.value = 'true';
+            optionalImagePreview.appendChild(hiddenInput);
+          }
+        });
+      });
+    }
+    
+    // Вызываем функцию при загрузке страницы для существующих кнопок
+    attachRemoveHandlers();
+    
+    // Подтверждение удаления товара
+    const deleteButton = document.getElementById('delete-product-btn');
+    if (deleteButton) {
+      deleteButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        const confirmed = confirm('Вы действительно хотите удалить этот товар? Это действие нельзя отменить.');
+        
+        if (confirmed) {
+          const productId = this.dataset.productId;
+          
+          fetch(`/api/products/${productId}/delete/`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': getCookie('csrftoken')
+            }
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              window.location.href = '{% url "seller_profile" %}';
+            } else {
+              alert('Ошибка при удалении товара: ' + data.error);
+            }
+          })
+          .catch(error => {
+            console.error('Ошибка:', error);
+            alert('Произошла ошибка при удалении товара');
+          });
+        }
+      });
+    }
+    
+    // Получение CSRF токена из cookies
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+  });
+</script>
+{% endblock %} 

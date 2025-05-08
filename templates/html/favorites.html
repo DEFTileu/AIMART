@@ -1,0 +1,319 @@
+{% extends 'html/base.html' %} {% load static %} {% block title %}Избранные
+товары - AIMART{% endblock %} {% block extra_css %}
+<style>
+  .favorites-container {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 0 20px;
+  }
+
+  .favorites-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+  }
+
+  .favorites-title {
+    font-size: 28px;
+    color: #333;
+  }
+
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 25px;
+  }
+
+  .product-card {
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+    position: relative;
+  }
+
+  .product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  }
+
+  .product-image {
+    height: 220px;
+    width: 100%;
+    object-fit: cover;
+  }
+
+  .product-info {
+    padding: 20px;
+  }
+
+  .product-name {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #333;
+  }
+
+  .product-price {
+    font-size: 18px;
+    font-weight: 700;
+    color: #ff8c00;
+    margin-bottom: 15px;
+  }
+
+  .product-actions {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .add-to-cart,
+  .remove-favorite {
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+  }
+
+  .add-to-cart {
+    background: #ff8c00;
+    color: white;
+    flex-grow: 1;
+    margin-right: 10px;
+    font-weight: 600;
+  }
+
+  .add-to-cart:hover {
+    background: #e67e00;
+  }
+
+  .add-to-cart:active {
+    transform: scale(0.98);
+  }
+
+  .remove-favorite {
+    background: #f8f8f8;
+    color: #ff8c00;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+  }
+
+  .remove-favorite:hover {
+    background: #ffe8d0;
+  }
+
+  .fav-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: #ff8c00;
+    color: white;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  }
+
+  .no-favorites {
+    text-align: center;
+    padding: 50px 20px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .no-favorites h2 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 15px;
+  }
+
+  .no-favorites p {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 25px;
+  }
+
+  .browse-catalog-btn {
+    display: inline-block;
+    padding: 12px 25px;
+    background: #ff8c00;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: 600;
+    transition: background 0.3s;
+  }
+
+  .browse-catalog-btn:hover {
+    background: #e67e00;
+  }
+
+  @media (max-width: 768px) {
+    .product-grid {
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 15px;
+    }
+
+    .product-image {
+      height: 180px;
+    }
+
+    .product-info {
+      padding: 15px;
+    }
+
+    .product-name {
+      font-size: 14px;
+    }
+  }
+</style>
+{% endblock %} {% block content %}
+<div class="favorites-container">
+  <div class="favorites-header">
+    <h1 class="favorites-title">Избранные товары</h1>
+  </div>
+
+  {% if favorites %} {% include 'html/components/product_grid.html' with
+  products=favorites|map_attr:"product" empty_title="У вас пока нет избранных
+  товаров" empty_message="Добавляйте понравившиеся товары в избранное, чтобы
+  быстро находить их позже" empty_action_url="/catalog/"
+  empty_action_text="Перейти в каталог" show_seller=True show_rating=True
+  show_discount=True product_card_class="favorite-item" %} {% else %}
+  <div class="no-favorites">
+    <h2>У вас пока нет избранных товаров</h2>
+    <p>
+      Добавляйте понравившиеся товары в избранное, чтобы быстро находить их
+      позже
+    </p>
+    <a href="{% url 'catalog' %}" class="browse-catalog-btn"
+      >Перейти в каталог</a
+    >
+  </div>
+  {% endif %}
+</div>
+{% endblock %} {% block extra_js %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Добавление в корзину
+    const addToCartButtons = document.querySelectorAll(".add-to-cart");
+    addToCartButtons.forEach((button) => {
+      button.addEventListener("click", function () {
+        const productId = this.dataset.productId;
+
+        fetch("/api/cart/add/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCookie("csrftoken"),
+          },
+          body: JSON.stringify({
+            product_id: productId,
+            quantity: 1,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              alert("Товар добавлен в корзину!");
+            } else {
+              alert("Ошибка: " + data.error);
+            }
+          })
+          .catch((error) => {
+            console.error("Ошибка:", error);
+          });
+      });
+    });
+
+    // Удаление из избранного
+    const removeFavoriteButtons = document.querySelectorAll(".remove-favorite");
+    removeFavoriteButtons.forEach((button) => {
+      button.addEventListener("click", function () {
+        const productId = this.dataset.productId;
+        const favoriteId = this.dataset.favoriteId;
+        const productCard = this.closest(".product-card");
+
+        fetch("/api/favorites/remove/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCookie("csrftoken"),
+          },
+          body: JSON.stringify({
+            product_id: productId,
+            favorite_id: favoriteId,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              // Анимация удаления карточки товара
+              productCard.style.transition = "opacity 0.3s, transform 0.3s";
+              productCard.style.opacity = "0";
+              productCard.style.transform = "scale(0.8)";
+
+              setTimeout(() => {
+                productCard.remove();
+
+                // Проверяем, остались ли еще товары в избранном
+                const remainingCards =
+                  document.querySelectorAll(".product-card");
+                if (remainingCards.length === 0) {
+                  const productGrid = document.querySelector(".product-grid");
+                  const favoritesContainer = document.querySelector(
+                    ".favorites-container"
+                  );
+
+                  // Если товаров не осталось, показываем сообщение
+                  productGrid.remove();
+
+                  const noFavorites = document.createElement("div");
+                  noFavorites.className = "no-favorites";
+                  noFavorites.innerHTML = `
+                                    <h2>У вас пока нет избранных товаров</h2>
+                                    <p>Добавляйте понравившиеся товары в избранное, чтобы быстро находить их позже</p>
+                                    <a href="{% url 'catalog' %}" class="browse-catalog-btn">Перейти в каталог</a>
+                                `;
+
+                  favoritesContainer.appendChild(noFavorites);
+                }
+              }, 300);
+            } else {
+              alert("Ошибка: " + data.error);
+            }
+          })
+          .catch((error) => {
+            console.error("Ошибка:", error);
+          });
+      });
+    });
+
+    // Получение CSRF токена из cookies
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== "") {
+        const cookies = document.cookie.split(";");
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === name + "=") {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+  });
+</script>
+{% endblock %}

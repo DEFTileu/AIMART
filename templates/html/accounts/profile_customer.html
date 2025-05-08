@@ -1,0 +1,175 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Профиль пользователя</title>
+    <style>
+      body {
+        font-family: "Open Sans", Helvetica, Arial, sans-serif;
+        background: #f5f5f5;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        max-width: 800px;
+        margin: 50px auto;
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      }
+      .profile-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 30px;
+      }
+      .profile-avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        overflow: hidden;
+        margin-right: 20px;
+        background: #e0e0e0;
+      }
+      .profile-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .profile-info {
+        flex-grow: 1;
+      }
+      .profile-name {
+        font-size: 24px;
+        margin: 0 0 5px;
+      }
+      .profile-email {
+        font-size: 16px;
+        color: #666;
+        margin: 0 0 5px;
+      }
+      .profile-type {
+        display: inline-block;
+        background: #ff8c00;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 14px;
+      }
+      .button {
+        display: inline-block;
+        background: #ff8c00;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        text-decoration: none;
+        margin-right: 10px;
+        transition: background 0.3s;
+      }
+      .button:hover {
+        background: #e67e00;
+      }
+      .button-danger {
+        background: #e74c3c;
+      }
+      .button-danger:hover {
+        background: #c0392b;
+      }
+      .favorites-section {
+        margin-top: 40px;
+        border-top: 1px solid #eee;
+        padding-top: 20px;
+      }
+      .favorites-title {
+        font-size: 20px;
+        margin-bottom: 20px;
+        color: #333;
+      }
+      .favorites-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 20px;
+      }
+      .favorite-item {
+        border: 1px solid #eee;
+        border-radius: 5px;
+        padding: 15px;
+        transition: box-shadow 0.3s;
+      }
+      .favorite-item:hover {
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+      .favorite-image {
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 5px;
+        margin-bottom: 10px;
+      }
+      .favorite-name {
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+      .favorite-price {
+        color: #ff8c00;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="profile-header">
+        <div class="profile-avatar">
+          {% if user.avatar %}
+          <img src="{{ user.avatar.url }}" alt="Аватар" />
+          {% endif %}
+        </div>
+        <div class="profile-info">
+          <h1 class="profile-name">{{ user.full_name }}</h1>
+          <p class="profile-email">{{ user.email }}</p>
+          <span class="profile-type">{{ user.get_user_type_display }}</span>
+        </div>
+      </div>
+
+      <div class="profile-actions">
+        <a href="{% url 'home' %}" class="button">На главную</a>
+        <a href="{% url 'logout' %}" class="button button-danger">Выйти</a>
+      </div>
+
+      <div class="favorites-section">
+        <h2 class="favorites-title">Избранные товары</h2>
+        <div class="favorites-grid">
+          {% if favorites %} {% for item in favorites %}
+          <div class="favorite-item">
+            {% if item.product.image %}
+            <img
+              src="{{ item.product.image.url }}"
+              alt="{{ item.product.name }}"
+              class="favorite-image"
+            />
+            {% else %}
+            <div
+              class="favorite-image"
+              style="
+                background-color: #eee;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              "
+            >
+              <span>Нет фото</span>
+            </div>
+            {% endif %}
+            <div class="favorite-name">{{ item.product.name }}</div>
+            <div class="favorite-price">{{ item.product.price }} ₽</div>
+          </div>
+          {% endfor %} {% else %}
+          <p>У вас пока нет избранных товаров</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

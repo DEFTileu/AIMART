@@ -1,0 +1,10 @@
+<div class="product-card">
+    <a href="{% url 'product_detail' product.id %}">
+        <img src="{{ product.image_main.url }}" alt="{{ product.name }}" class="product-image">
+        <h3>{{ product.name }}</h3>
+    </a>
+    <p>{{ product.price }} ₽</p>
+    {% if show_buy_button %}
+        <a href="{% url 'buy_item' product.id %}" class="buy-btn">Купить</a>
+    {% endif %}
+</div>

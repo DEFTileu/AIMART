@@ -1,0 +1,84 @@
+{% extends 'html/base.html' %}
+{% load static %}
+
+{% block title %}AIMART - Главная страница{% endblock %}
+
+{% block content %}
+<!-- Hero Banner Section -->
+<section class="hero-banner">
+    <div class="banner-carousel">
+        {% for banner in banners %}
+        <div class="banner-slide" style="--slide-index: {{ forloop.counter0 }};">
+            <div class="overlay-banner"></div>
+            <div class="background-image" style="background-image: url('{{ banner.image.url }}');"></div>
+            <div class="banner-content">
+                <h1>{{ banner.title }}</h1>
+                <p>{{ banner.description }}</p>
+                <a href="{{ banner.button_url }}" class="banner-btn">{{ banner.button_text }}</a>
+            </div>
+        </div>
+        {% empty %}
+        <!-- Fallback banner if no banners in database -->
+        <div class="banner-slide" style="--slide-index: 0;">
+            <div class="overlay-banner"></div>
+            <div class="background-image" style="background-image: url('{% static 'images/banner.png' %}');"></div>
+            <div class="banner-content">
+                <h1>Добро пожаловать в AIMART</h1>
+                <p>Ваш универсальный интернет-магазин с широким выбором качественных товаров по доступным ценам</p>
+                <a href="{% url 'catalog' %}" class="banner-btn">Перейти в каталог</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% if banners %}
+    <div class="banner-controls">
+        {% for banner in banners %}
+        <button class="banner-dot" data-slide="{{ forloop.counter0 }}"></button>
+        {% endfor %}
+    </div>
+    {% endif %}
+</section>
+
+<!-- About Section -->
+<section class="about-section">
+    <div class="about-container">
+        <div class="about-text">
+            <h2>О компании AIMART</h2>
+            <p>AIMART - это современный интернет-магазин, предлагающий широкий ассортимент качественных товаров. Мы стремимся сделать процесс покупок максимально простым, удобным и выгодным для наших клиентов.</p>
+            <p>Наша миссия - обеспечивать потребителей качественными товарами по доступным ценам, предоставляя при этом высокий уровень сервиса и заботясь о каждом клиенте.</p>
+        </div>
+    </div>
+    <div class="about-features">
+        <div class="feature-item">
+            <div class="feature-icon">🚚</div>
+            <h3 class="feature-title">Быстрая доставка</h3>
+            <p class="feature-desc">Доставляем заказы по всей России в кратчайшие сроки</p>
+        </div>
+        <div class="feature-item">
+            <div class="feature-icon">💸</div>
+            <h3 class="feature-title">Лучшие цены</h3>
+            <p class="feature-desc">Регулярные акции и скидки для наших покупателей</p>
+        </div>
+        <div class="feature-item">
+            <div class="feature-icon">🔒</div>
+            <h3 class="feature-title">Безопасная оплата</h3>
+            <p class="feature-desc">Надежные и проверенные способы оплаты</p>
+        </div>
+        <div class="feature-item">
+            <div class="feature-icon">👍</div>
+            <h3 class="feature-title">Гарантия качества</h3>
+            <p class="feature-desc">Тщательно отбираем и проверяем все товары</p>
+        </div>
+    </div>
+</section>
+
+<!-- Products Section -->
+<section class="products-section">
+    <h2 class="section-title">Популярные товары</h2>
+    {% include 'html/components/product_grid.html' with products=products show_seller=True show_rating=True grid_class="compact" %}
+    </div>
+    <div style="text-align: center; margin-top: 2rem;">
+        <a href="{% url 'catalog' %}" class="banner-btn">Смотреть все товары</a>
+    </div>
+</section>
+{% endblock %}

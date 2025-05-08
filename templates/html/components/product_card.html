@@ -1,0 +1,491 @@
+{% load static %} {% load custom_filters %}
+
+<div
+  class="product-card {% if additional_class %}{{ additional_class }}{% endif %}"
+  data-product-id="{{ product.id }}"
+>
+  {% if is_seller_view %}
+  <div class="seller-controls">
+    <button
+      class="toggle-product-status {% if product.is_active %}btn-deactivate{% else %}btn-activate{% endif %}"
+      data-product-id="{{ product.id }}"
+      data-status="{% if product.is_active %}active{% else %}inactive{% endif %}"
+    >
+      {% if product.is_active %}Деактивировать{% else %}Активировать{% endif %}
+    </button>
+    <a href="{% url 'edit_product' product.id %}" class="edit-product-btn">
+      <span>✎</span>
+    </a>
+  </div>
+  {% endif %} {% if product.is_active %}
+  <div class="product-status status-active">В наличии</div>
+  {% else %}
+  <div class="product-status status-inactive">Нет в наличии</div>
+  {% endif %} {% if show_discount and product.discount_percent > 0 %}
+  <div class="product-discount">-{{ product.discount_percent }}%</div>
+  {% endif %}
+
+  <a href="{% url 'product_detail' product.id %}" class="product-link">
+    <div class="product-image-container">
+      {% if product.image_main %}
+      <img
+        src="{{ product.image_main.url }}"
+        alt="{{ product.name }}"
+        class="product-image"
+      />
+      {% else %}
+      <div class="product-image product-no-image">
+        <span>Нет фото</span>
+      </div>
+      {% endif %} {% if show_quick_view %}
+      <div class="quick-view-overlay">
+        <button class="quick-view-btn" data-product-id="{{ product.id }}">
+          Быстрый просмотр
+        </button>
+      </div>
+      {% endif %}
+    </div>
+  </a>
+
+  <div class="product-info">
+    {% if show_seller and product.seller %}
+    <div class="product-seller-info">
+      <a
+        href="{% url 'seller_profile' product.seller.id %}"
+        class="seller-link"
+      >
+        {{ product.seller.full_name }}
+      </a>
+    </div>
+    {% endif %}
+
+    <h3 class="product-name">
+      <a href="{% url 'product_detail' product.id %}">{{ product.name }}</a>
+    </h3>
+
+    <div class="product-price-container">
+      {% if product.discount_price %}
+      <div class="product-price discounted">{{ product.price }} ₽</div>
+      <div class="product-discount-price">{{ product.discount_price }} ₽</div>
+      {% else %}
+      <div class="product-price">{{ product.price }} ₽</div>
+      {% endif %} {% if show_rating and product.rating %}
+      <div class="product-rating">
+        <span class="rating-stars">
+          {% for i in "12345" %} {% if forloop.counter <= product.rating_int %}
+          <span class="star filled">★</span>
+          {% else %}
+          <span class="star empty">☆</span>
+          {% endif %} {% endfor %}
+        </span>
+        <span class="rating-count">({{ product.reviews_count }})</span>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="product-actions">
+      <button
+        class="add-to-cart {% if not product.is_active %}disabled{% endif %}"
+        data-product-id="{{ product.id }}"
+        {% if not product.is_active %}disabled{% endif %}
+      >
+        {% if not product.is_active %} Нет в наличии {% else %} В корзину {% endif %}
+      </button>
+      <button
+        class="add-to-favorite {% if is_favorite %}active{% endif %}"
+        data-product-id="{{ product.id }}"
+        title="{% if is_favorite %}Удалить из избранного{% else %}Добавить в избранное{% endif %}"
+      >
+        {% if is_favorite %}❤️{% else %}❤{% endif %}
+      </button>
+    </div>
+
+    {% if show_category and product.category %}
+    <div class="product-category">
+      <a href="{% url 'catalog' %}?category={{ product.category.id }}"
+        >{{ product.category.name }}</a
+      >
+    </div>
+    {% endif %} {% if is_seller_view %}
+    <div class="product-seller-info">
+      <span class="product-date"
+        >Добавлен: {{ product.created_at|date:"d.m.Y" }}</span
+      >
+      {% if product.views_count %}
+      <span class="product-views">👁 {{ product.views_count }}</span>
+      {% endif %} {% if product.orders_count %}
+      <span class="product-orders">🛒 {{ product.orders_count }}</span>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<style>
+  .product-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s, box-shadow 0.3s;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  }
+
+  .product-status {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    padding: 4px 10px;
+    border-radius: 30px;
+    font-size: 12px;
+    color: white;
+    z-index: 2;
+    font-weight: 600;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+
+  .status-active {
+    background: #4caf50;
+  }
+
+  .status-inactive {
+    background: #f44336;
+  }
+
+  .product-discount {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: #ff3b30;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 30px;
+    font-size: 12px;
+    font-weight: 700;
+    z-index: 2;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+
+  .seller-controls {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    z-index: 5;
+  }
+
+  .toggle-product-status,
+  .edit-product-btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .btn-activate {
+    background: #4caf50;
+    color: white;
+  }
+
+  .btn-activate:hover {
+    background: #388e3c;
+  }
+
+  .btn-deactivate {
+    background: #f44336;
+    color: white;
+  }
+
+  .btn-deactivate:hover {
+    background: #d32f2f;
+  }
+
+  .edit-product-btn {
+    background: #2196f3;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    text-decoration: none;
+  }
+
+  .edit-product-btn:hover {
+    background: #1976d2;
+  }
+
+  .product-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+
+  .product-image-container {
+    position: relative;
+    overflow: hidden;
+    height: 220px;
+  }
+
+  .product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s;
+  }
+
+  .product-card:hover .product-image {
+    transform: scale(1.05);
+  }
+
+  .product-no-image {
+    background-color: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #888;
+    font-size: 14px;
+  }
+
+  .quick-view-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 10px;
+    transform: translateY(100%);
+    transition: transform 0.3s;
+    display: flex;
+    justify-content: center;
+  }
+
+  .product-card:hover .quick-view-overlay {
+    transform: translateY(0);
+  }
+
+  .quick-view-btn {
+    background: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+
+  .quick-view-btn:hover {
+    background: #f0f0f0;
+  }
+
+  .product-info {
+    padding: 15px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .product-seller-info {
+    margin-bottom: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .seller-link {
+    color: #666;
+    font-size: 13px;
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+
+  .seller-link:hover {
+    color: #ff8c00;
+  }
+
+  .product-name {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    height: 42px;
+  }
+
+  .product-name a {
+    color: #333;
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+
+  .product-name a:hover {
+    color: #ff8c00;
+  }
+
+  .product-price-container {
+    margin-bottom: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .product-price {
+    font-size: 18px;
+    font-weight: 700;
+    color: #ff8c00;
+  }
+
+  .product-price.discounted {
+    color: #999;
+    text-decoration: line-through;
+    font-size: 14px;
+    font-weight: normal;
+    margin-right: 8px;
+  }
+
+  .product-discount-price {
+    font-size: 18px;
+    font-weight: 700;
+    color: #ff8c00;
+  }
+
+  .product-rating {
+    display: flex;
+    align-items: center;
+    margin-top: 5px;
+  }
+
+  .rating-stars {
+    color: #ffc107;
+    font-size: 14px;
+    margin-right: 5px;
+  }
+
+  .star.filled {
+    color: #ffc107;
+  }
+
+  .star.empty {
+    color: #ddd;
+  }
+
+  .rating-count {
+    font-size: 12px;
+    color: #777;
+  }
+
+  .product-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: auto;
+  }
+
+  .add-to-cart,
+  .add-to-favorite {
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .add-to-cart {
+    background: #ff8c00;
+    color: white;
+    flex-grow: 1;
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  .add-to-cart:hover:not(.disabled) {
+    background: #e67e00;
+  }
+
+  .add-to-cart.disabled {
+    background: #ccc;
+    cursor: not-allowed;
+  }
+
+  .add-to-favorite {
+    background: #f8f8f8;
+    color: #333;
+    width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+
+  .add-to-favorite:hover {
+    background: #ffe8d0;
+  }
+
+  .add-to-favorite.active {
+    background: #ffe8d0;
+    color: #ff8c00;
+  }
+
+  .product-category {
+    margin-top: 10px;
+    font-size: 12px;
+  }
+
+  .product-category a {
+    color: #666;
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+
+  .product-category a:hover {
+    color: #ff8c00;
+  }
+
+  .product-date,
+  .product-views,
+  .product-orders {
+    font-size: 12px;
+    color: #777;
+  }
+
+  /* Анимация при удалении из избранного */
+  @keyframes removing {
+    from {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+  }
+
+  .product-card.removing {
+    animation: removing 0.3s forwards;
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Обработчики для кнопок будут добавлены в родительском шаблоне
+    // или с помощью включения дополнительного скрипта
+  });
+</script>

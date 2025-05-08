@@ -1,0 +1,195 @@
+{% load static %} {% load custom_filters %}
+
+<div class="product-grid {% if grid_class %}{{ grid_class }}{% endif %}">
+  {% if products %}
+    {% for product in products %}
+        {% include 'html/components/product_card.html' with product=product show_discount=show_discount|default:True show_rating=show_rating|default:True show_seller=show_seller|default:False show_category=show_category|default:False show_quick_view=show_quick_view|default:False is_favorite=product.id|in_favorites:request.user additional_class=product_card_class|default:"" is_seller_view=is_seller_view|default:False %}
+    {% endfor %}
+    {% else %}
+  <div class="empty-products">
+    <div class="empty-content">
+      <div class="empty-icon">
+        {% if empty_icon %} {{ empty_icon|safe }} {% else %} 🔍 {% endif %}
+      </div>
+
+      <h3 class="empty-title">
+        {% if empty_title %} {{ empty_title }} {% else %} Товары не найдены
+            {% endif %}
+      </h3>
+
+      <p class="empty-message">
+        {% if empty_message %} {{ empty_message }} {% else %} К сожалению, по
+        вашему запросу не удалось найти товары. Попробуйте изменить параметры
+        поиска. {% endif %}
+      </p>
+
+      {% if empty_action_url %}
+      <a href="{{ empty_action_url }}" class="empty-action-btn">
+        {{ empty_action_text|default:"Вернуться в каталог" }}
+      </a>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<style>
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 25px;
+    margin-bottom: 30px;
+  }
+
+  .product-grid.compact {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+  }
+
+  .product-grid.list {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .empty-products {
+    grid-column: 1 / -1;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+    padding: 40px 20px;
+    text-align: center;
+  }
+
+  .empty-content {
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .empty-icon {
+    font-size: 50px;
+    margin-bottom: 20px;
+    color: #ccc;
+  }
+
+  .empty-title {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 15px;
+  }
+
+  .empty-message {
+    color: #666;
+    line-height: 1.5;
+    margin-bottom: 25px;
+  }
+
+  .empty-action-btn {
+    display: inline-block;
+    background: #ff8c00;
+    color: white;
+    padding: 12px 25px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background 0.3s;
+  }
+
+  .empty-action-btn:hover {
+    background: #e67e00;
+  }
+
+  @media (max-width: 768px) {
+    .product-grid {
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 15px;
+    }
+
+    .product-grid.compact {
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 10px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .product-grid {
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 10px;
+    }
+
+    .product-grid.compact {
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 8px;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Обработчики кнопок добавления в корзину
+    const addToCartButtons = document.querySelectorAll(
+      ".add-to-cart:not(.disabled)"
+    );
+
+    addToCartButtons.forEach((button) => {
+      button.addEventListener("click", function () {
+        const productId = this.dataset.productId;
+
+        fetch("/api/cart/add/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCookie("csrftoken"),
+          },
+          body: JSON.stringify({
+            product_id: productId,
+            quantity: 1,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              // Анимация успешного добавления
+              const originalText = this.textContent.trim();
+              this.textContent = "Добавлено ✓";
+
+              setTimeout(() => {
+                this.textContent = originalText;
+              }, 2000);
+
+              // Обновление счетчика корзины, если он существует
+              const cartCounter = document.querySelector(".cart-counter");
+              if (cartCounter && data.cart_count) {
+                cartCounter.textContent = data.cart_count;
+                cartCounter.classList.add("cart-updated");
+
+                setTimeout(() => {
+                  cartCounter.classList.remove("cart-updated");
+                }, 1000);
+              }
+            } else {
+              alert("Ошибка: " + data.error);
+            }
+          })
+          .catch((error) => {
+            console.error("Ошибка:", error);
+          });
+      });
+    });
+
+    // Получение CSRF токена из cookies
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== "") {
+        const cookies = document.cookie.split(";");
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === name + "=") {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+  });
+</script>

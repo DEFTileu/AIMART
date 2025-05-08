@@ -1,0 +1,125 @@
+{% load static %} {% load custom_filters %}
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}AIMART - Интернет-магазин{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    {% block extra_css %}{% endblock %}
+  </head>
+  <body>
+    <!-- Навигационная панель -->
+    <nav class="navbar">
+      <div class="navbar-container">
+        <a href="{% url 'home' %}" class="logo">
+          <span class="logo-icon">🛒</span>
+          <span class="logo-text">AIMART</span>
+        </a>
+        <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+        <div class="nav-links" id="navLinks">
+          <a href="{% url 'home' %}" class="nav-link"
+            ><span class="nav-icon">🏠</span> Главная</a
+          >
+          <a href="{% url 'catalog' %}" class="nav-link"
+            ><span class="nav-icon">📋</span> Каталог</a
+          >
+          <a href="{% url 'about' %}" class="nav-link"
+            ><span class="nav-icon">ℹ️</span> О нас</a
+          >
+          <a href="{% url 'favorites' %}" class="nav-link"
+            ><span class="nav-icon">❤️</span> Избранное</a
+          >
+          <a href="{% url 'cart' %}" class="nav-link"
+            ><span class="nav-icon">🛒</span> Корзина</a
+          >
+          {% if user.is_authenticated %}
+          <a href="{% url 'profile' %}" class="btn-profile"
+            ><span class="nav-icon">👤</span> Профиль</a
+          >
+          {% else %}
+          <a href="{% url 'auth' %}" class="btn-login"
+            ><span class="nav-icon">👤</span> Войти</a
+          >
+          {% endif %}
+        </div>
+      </div>
+      <div class="overlay" id="overlay"></div>
+    </nav>
+
+    <!-- Основное содержимое -->
+    <main class="main-content">{% block content %}{% endblock %}</main>
+
+    <!-- Кнопка прокрутки вверх -->
+    <div class="scroll-top" id="scrollTop">↑</div>
+
+    <!-- Футер -->
+    <footer class="footer">
+      <div class="footer-container">
+        <div class="footer-section">
+          <h3>О компании AIMART</h3>
+          <ul class="footer-links">
+            {#
+            <li class="footer-link"><a href="{% url 'about' %}">О нас</a></li>
+            #} {#
+            <li class="footer-link">
+              <a href="{% url 'about' %}">Контакты</a>
+            </li>
+            #} {#
+{#            <li class="footer-link"><a href="{% url 'news' %}">Новости</a></li>#}
+{#            #} {##}
+{#            <li class="footer-link">#}
+{#              <a href="{% url 'careers' %}">Вакансии</a>#}
+            </li>
+            #}
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3>Покупателям</h3>
+{#          <ul class="footer-links">#}
+{##}
+{#            <li class="footer-link">#}
+{#              <a href="{% url 'delivery' %}">Доставка</a>#}
+{#            </li>#}
+             {##}
+{#            <li class="footer-link">#}
+{#              <a href="{% url 'payment' %}">Оплата</a>#}
+{#            </li>#}
+             {##}
+{#            <li class="footer-link">#}
+{#              <a href="{% url 'returns' %}">Возврат товара</a>#}
+{#            </li>#}
+             {##}
+{#            <li class="footer-link">#}
+{#              <a href="{% url 'faq' %}">Вопросы и ответы</a>#}
+{#            </li>#}
+{##}
+{#          </ul>#}
+        </div>
+        <div class="footer-section">
+          <h3>Свяжитесь с нами</h3>
+          <ul class="footer-links">
+            <li class="footer-link">Email: info@aimart.kz</li>
+            <li class="footer-link">Телефон: 8 (800) 123-45-67</li>
+          </ul>
+          <div class="social-icons">
+            <a href="#" class="social-icon">📱</a>
+            <a href="#" class="social-icon">📷</a>
+            <a href="#" class="social-icon">🐦</a>
+            <a href="#" class="social-icon">👥</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>
+          &copy; {% now "Y" %} AIMART. Все права защищены.
+          <a href="">Политика конфиденциальности</a> |
+          <a href="">Условия использования</a>
+        </p>
+      </div>
+    </footer>
+
+    <script src="{% static 'js/main.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+  </body>
+</html>
