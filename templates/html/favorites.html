@@ -1,5 +1,5 @@
-{% extends 'html/base.html' %} {% load static %} {% block title %}Избранные
-товары - AIMART{% endblock %} {% block extra_css %}
+{% extends 'html/base.html' %} {% load static %} {% load custom_filters %}
+{%block title %}Избранные товары - AIMART{% endblock %} {% block extra_css %}
 <style>
   .favorites-container {
     max-width: 1200px;
@@ -184,12 +184,70 @@
     <h1 class="favorites-title">Избранные товары</h1>
   </div>
 
-  {% if favorites %} {% include 'html/components/product_grid.html' with
-  products=favorites|map_attr:"product" empty_title="У вас пока нет избранных
-  товаров" empty_message="Добавляйте понравившиеся товары в избранное, чтобы
-  быстро находить их позже" empty_action_url="/catalog/"
-  empty_action_text="Перейти в каталог" show_seller=True show_rating=True
-  show_discount=True product_card_class="favorite-item" %} {% else %}
+  {% if favorites %}
+  <div class="product-grid">
+    {% for favorite in favorites %}
+    <div class="product-card" data-product-id="{{ favorite.product.id }}">
+      <div class="fav-badge">
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+            fill="white"
+          />
+        </svg>
+      </div>
+      <a href="{% url 'product_detail' favorite.product.id %}">
+        <img
+          src="{{ favorite.product.main_image.url }}"
+          alt="{{ favorite.product.name }}"
+          class="product-image"
+          onerror="this.src='{% static 'img/no-image.png' %}'"
+        />
+      </a>
+      <div class="product-info">
+        <h3 class="product-name">
+          <a href="{% url 'product_detail' favorite.product.id %}">
+            {{ favorite.product.name }}
+          </a>
+        </h3>
+        <div class="product-price">{{ favorite.product.price }} ₽</div>
+        <div class="product-actions">
+          <button
+            class="add-to-cart"
+            onclick="addToCart({{ favorite.product.id }})"
+          >
+            В корзину
+          </button>
+          <button
+            class="remove-favorite"
+            onclick="removeFromFavorites({{ favorite.product.id }}, this)"
+            title="Удалить из избранного"
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                fill="#ff8c00"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
   <div class="no-favorites">
     <h2>У вас пока нет избранных товаров</h2>
     <p>
@@ -204,116 +262,120 @@
 </div>
 {% endblock %} {% block extra_js %}
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    // Добавление в корзину
-    const addToCartButtons = document.querySelectorAll(".add-to-cart");
-    addToCartButtons.forEach((button) => {
-      button.addEventListener("click", function () {
-        const productId = this.dataset.productId;
-
-        fetch("/api/cart/add/", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": getCookie("csrftoken"),
-          },
-          body: JSON.stringify({
-            product_id: productId,
-            quantity: 1,
-          }),
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            if (data.success) {
-              alert("Товар добавлен в корзину!");
-            } else {
-              alert("Ошибка: " + data.error);
-            }
-          })
-          .catch((error) => {
-            console.error("Ошибка:", error);
-          });
-      });
-    });
-
-    // Удаление из избранного
-    const removeFavoriteButtons = document.querySelectorAll(".remove-favorite");
-    removeFavoriteButtons.forEach((button) => {
-      button.addEventListener("click", function () {
-        const productId = this.dataset.productId;
-        const favoriteId = this.dataset.favoriteId;
-        const productCard = this.closest(".product-card");
-
-        fetch("/api/favorites/remove/", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": getCookie("csrftoken"),
-          },
-          body: JSON.stringify({
-            product_id: productId,
-            favorite_id: favoriteId,
-          }),
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            if (data.success) {
-              // Анимация удаления карточки товара
-              productCard.style.transition = "opacity 0.3s, transform 0.3s";
-              productCard.style.opacity = "0";
-              productCard.style.transform = "scale(0.8)";
-
-              setTimeout(() => {
-                productCard.remove();
-
-                // Проверяем, остались ли еще товары в избранном
-                const remainingCards =
-                  document.querySelectorAll(".product-card");
-                if (remainingCards.length === 0) {
-                  const productGrid = document.querySelector(".product-grid");
-                  const favoritesContainer = document.querySelector(
-                    ".favorites-container"
-                  );
-
-                  // Если товаров не осталось, показываем сообщение
-                  productGrid.remove();
-
-                  const noFavorites = document.createElement("div");
-                  noFavorites.className = "no-favorites";
-                  noFavorites.innerHTML = `
-                                    <h2>У вас пока нет избранных товаров</h2>
-                                    <p>Добавляйте понравившиеся товары в избранное, чтобы быстро находить их позже</p>
-                                    <a href="{% url 'catalog' %}" class="browse-catalog-btn">Перейти в каталог</a>
-                                `;
-
-                  favoritesContainer.appendChild(noFavorites);
-                }
-              }, 300);
-            } else {
-              alert("Ошибка: " + data.error);
-            }
-          })
-          .catch((error) => {
-            console.error("Ошибка:", error);
-          });
-      });
-    });
-
-    // Получение CSRF токена из cookies
-    function getCookie(name) {
-      let cookieValue = null;
-      if (document.cookie && document.cookie !== "") {
-        const cookies = document.cookie.split(";");
-        for (let i = 0; i < cookies.length; i++) {
-          const cookie = cookies[i].trim();
-          if (cookie.substring(0, name.length + 1) === name + "=") {
-            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-            break;
-          }
+  // Получаем CSRF-токен для запросов
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
         }
       }
-      return cookieValue;
     }
-  });
+    return cookieValue;
+  }
+
+  // Удаление из избранного
+  function removeFromFavorites(productId, button) {
+    {% if user.is_authenticated %}
+      fetch('{% url "toggle_favorite" %}', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({
+          product_id: productId
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          // Анимация удаления карточки
+          const productCard = button.closest('.product-card');
+          productCard.style.transition = 'opacity 0.3s, transform 0.3s';
+          productCard.style.opacity = '0';
+          productCard.style.transform = 'translateY(10px)';
+
+          // Через 300мс удаляем элемент из DOM
+          setTimeout(() => {
+            productCard.remove();
+
+            // Если больше нет избранных товаров, показываем пустой блок
+            if (document.querySelectorAll('.product-card').length === 0) {
+              window.location.reload(); // Перезагружаем страницу для отображения блока "пусто"
+            }
+          }, 300);
+
+          // Обновляем счетчик избранного в шапке, если он есть
+          const favCounter = document.querySelector('.favorites-counter');
+          if (favCounter) {
+            favCounter.textContent = data.favorites_count;
+            favCounter.style.display = data.favorites_count > 0 ? 'block' : 'none';
+          }
+        } else {
+          alert('Ошибка: ' + data.error);
+        }
+      })
+      .catch(error => {
+        console.error('Ошибка:', error);
+      });
+    {% else %}
+      // Для неавторизованных используем обычное переключение без AJAX
+      window.location.href = '{% url "add_to_wishlist" product.id %}';
+    {% endif %}
+  }
+
+  // Добавление в корзину
+  function addToCart(productId) {
+    {% if user.is_authenticated %}
+      fetch('{% url "cart_ajax" %}', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({
+          product_id: productId,
+          quantity: 1,
+          operation: 'add'
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          // Находим кнопку и меняем её текст
+          const button = document.querySelector(`.product-card[data-product-id="${productId}"] .add-to-cart`);
+          const originalText = button.textContent;
+          button.textContent = 'Добавлено ✓';
+          button.classList.add('added');
+
+          // Через 2 секунды возвращаем обратно
+          setTimeout(() => {
+            button.textContent = originalText;
+            button.classList.remove('added');
+          }, 2000);
+
+          // Обновляем счетчик корзины в шапке, если он есть
+          const cartCounter = document.querySelector('.cart-counter');
+          if (cartCounter) {
+            cartCounter.textContent = data.cart_count;
+            cartCounter.style.display = 'block';
+          }
+        } else {
+          alert('Ошибка: ' + data.error);
+        }
+      })
+      .catch(error => {
+        console.error('Ошибка:', error);
+      });
+    {% else %}
+      // Для неавторизованных используем обычное переключение без AJAX
+      window.location.href = '{% url "add_to_cart" product.id %}';
+    {% endif %}
+  }
 </script>
 {% endblock %}

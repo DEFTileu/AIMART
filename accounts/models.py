@@ -48,7 +48,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     objects = CustomUserManager()
 
     USERNAME_FIELD = 'email'  # Поле для аутентификации
-    REQUIRED_FIELDS = ['name']  # Обязательные поля для суперпользователя
+    REQUIRED_FIELDS = ['full_name']  # Обязательные поля для суперпользователя
 
     def __str__(self):
         return self.email

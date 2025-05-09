@@ -38,7 +38,7 @@ def in_favorites(product_id, user):
         return False
     
     # Импортируем модель внутри функции, чтобы избежать циклических импортов
-    from main.models import Favorite
+    from products.models import Favorite
     
     return Favorite.objects.filter(user=user, product_id=product_id).exists()
 

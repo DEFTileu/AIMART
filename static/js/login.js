@@ -4,8 +4,12 @@ document.addEventListener('DOMContentLoaded', function () {
     const signInForm = document.querySelector('.sign-in');
     const signUpForm = document.querySelector('.sign-up');
 
+    // Флаг, который будет блокировать переключение формы при отправке
+    let isFormSubmitting = false;
+
     // Функция для переключения на Sign Up
     function showSignUp() {
+        if (isFormSubmitting) return;  // Если форма отправляется, не переключаем
         cont.classList.add('s-signup');
         signInForm.style.display = 'none';
         signUpForm.style.display = 'block';
@@ -13,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Функция для переключения на Sign In
     function showSignIn() {
+        if (isFormSubmitting) return;  // Если форма отправляется, не переключаем
         cont.classList.remove('s-signup');
         signInForm.style.display = 'block';
         signUpForm.style.display = 'none';
@@ -28,12 +33,22 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Обработчик клика по кнопке переключения
     imgBtn.addEventListener('click', function () {
+        if (isFormSubmitting) return;  // Если форма отправляется, не переключаем
         if (cont.classList.contains('s-signup')) {
             showSignIn();
         } else {
             showSignUp();
         }
     });
+
+    // Обработчик отправки формы логина
+    const loginForm = document.querySelector('.form.sign-in');
+    if (loginForm) {
+        loginForm.addEventListener('submit', function () {
+            // Блокируем возможность переключать формы во время отправки
+            isFormSubmitting = true;
+        });
+    }
 
     // Автоматическое исчезновение сообщений (ошибки/успех)
     const messages = document.querySelectorAll('.error, .success');

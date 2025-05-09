@@ -1,14 +1,22 @@
-from itertools import product
-
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
-
+from django.shortcuts import render, get_object_or_404
+from django.views.decorators.cache import cache_page
+from django.core.cache import cache
 from accounts.models import CustomUser
 
+from products.models import Product
 
+
+@cache_page(60 * 15)  # Кэшируем на 15 минут
 def home(request):
-    products = Product.objects.filter(is_active=True)
-    return render(request, 'html/home.html',{'products':products})
+    # Берем активные товары и предварительно загружаем связанные объекты
+    cache_key = 'home_products'
+    products = cache.get(cache_key)
+    
+    if not products:
+        products = Product.objects.filter(is_active=True).select_related('category', 'brand').prefetch_related('images')[:12]
+        cache.set(cache_key, products, 60 * 10)  # Кэшируем на 10 минут
+        
+    return render(request, 'html/home.html', {'products': products})
 
 def about(request):
     return render(request, 'html/about.html')
@@ -16,148 +24,82 @@ def about(request):
 def base(request):
     return render(request, 'html/base.html')
 
-def catalog(request):
-    return render(request, 'html/catalog.html')
 
-def favorites(request):
-    if request.user.is_authenticated:
-        user_favorites = Favorite.objects.filter(user=request.user)
-        return render(request, 'html/favorites.html', {'favorites': user_favorites})
-    else:
-        return render(request, 'html/favorites.html', {'favorites': []})
 
 def cart(request):
     return render(request, 'html/cart.html')
 
-def login(request):
-    return render(request, 'html/accounts/login.html')
 
 
-from django.shortcuts import render, redirect
-from .forms import ProductForm
-from .models import Product
-
-@login_required
-def add_product(request):
-    if request.method == 'POST':
-        form = ProductForm(request.POST, request.FILES)
-        if form.is_valid():
-            try:
-                product = form.save(commit=False)
-                product.seller = request.user  # Привязываем товар к текущему пользователю
-                product.save()  # Сохраняем товар
-                return redirect('profile')  # Перенаправление на страницу профиля
-            except Exception as e:
-                print(f"Ошибка при сохранении товара: {e}")
-                return render(request, 'html/accounts/profile_seller.html', {'form': form, 'error': 'Ошибка при сохранении товара'})
-        else:
-            print(f"Форма невалидна: {form.errors}")
-            return render(request, 'html/accounts/profile_seller.html', {'form': form, 'error': 'Неверные данные формы'})
-    else:
-        form = ProductForm()
-
-    return render(request, 'html/accounts/profile_seller.html', {'form': form})
-
-from django.shortcuts import render, get_object_or_404
-from .models import Product  # модель товара, если еще не создана
-
-def product_detail(request, id):
-    product = get_object_or_404(Product, id=id)
-    return render(request, 'html/product_detail.html', {'product': product})
-
-from django.http import JsonResponse
-from django.shortcuts import redirect
-
-def add_to_cart(request, id):
-    product = get_object_or_404(Product, id=id)
-
-    # Проверка, есть ли корзина в сессии
-    cart = request.session.get('cart', [])
-    cart.append(product.id)
-    request.session['cart'] = cart
-
-    return redirect('product_detail', id=id)  # возвращаем на страницу товара
-
-def add_to_wishlist(request, id):
-    product = get_object_or_404(Product, id=id)
-
-    # Проверка, есть ли избранное в сессии
-    wishlist = request.session.get('wishlist', [])
-    wishlist.append(product.id)
-    request.session['wishlist'] = wishlist
-
-    return redirect('product_detail', id=id)  # возвращаем на страницу товара
-
-def cart_view(request):
-    cart = request.session.get('cart', [])
-    products_in_cart = Product.objects.filter(id__in=cart)
-    return render(request, 'html/cart.html', {'products': products_in_cart})
-
-def wishlist_view(request):
-    wishlist = request.session.get('wishlist', [])
-    products_in_wishlist = Product.objects.filter(id__in=wishlist)
-    return render(request, 'html/favorites.html', {'products': products_in_wishlist})
 
 def seller_profile(request, seller_id):
     seller = CustomUser.objects.get(id=seller_id)
     product = Product.objects.filter(seller = seller)
+    print(seller)
+    print(product)
     return render(request, 'html/accounts/public_seller_profile.html', {'seller': seller, 'products': product})
 
-# views.py
-from django.http import JsonResponse
-import json
-from .models import Favorite
-from .models import Product
-
-def toggle_favorite(request):
-    if request.user.is_authenticated and request.method == "POST":
-        try:
-            # Получаем данные из JSON в теле запроса
-            data = json.loads(request.body)
-            product_id = data.get('product_id')
-            
-            if not product_id:
-                return JsonResponse({'success': False, 'error': 'Product ID is required'})
-                
-            try:
-                product = Product.objects.get(id=product_id)
-            except Product.DoesNotExist:
-                return JsonResponse({'success': False, 'error': 'Product not found'})
-
-            # Проверяем, есть ли товар в избранном
-            favorite = Favorite.objects.filter(user=request.user, product=product)
-            
-            if favorite.exists():
-                # Если товар уже в избранном - удаляем его
-                favorite.delete()
-                added = False
-            else:
-                # Если товара нет в избранном - добавляем его
-                Favorite.objects.create(user=request.user, product=product)
-                added = True
-
-            # Обновляем количество избранных
-            favorites_count = Favorite.objects.filter(user=request.user).count()
-
-            return JsonResponse({
-                'success': True,
-                'added': added,
-                'favorites_count': favorites_count,
-            })
-        except json.JSONDecodeError:
-            return JsonResponse({'success': False, 'error': 'Invalid JSON'})
-        except Exception as e:
-            return JsonResponse({'success': False, 'error': str(e)})
-
-    return JsonResponse({'success': False, 'error': 'User not authenticated'})
 
 
-# views.py
-def product_list(request):
-    products = Product.objects.all()
-    favorites = Favorite.objects.filter(user=request.user).values_list('product_id', flat=True)
+def faq(request):
+    """Страница с часто задаваемыми вопросами"""
+    # Список вопросов и ответов для отображения на странице
+    faq_items = [
+        {
+            'id': 'delivery',
+            'question': 'Как происходит доставка товаров?',
+            'answer': 'Доставка товаров осуществляется по всей стране. Сроки доставки зависят от региона и обычно составляют от 1 до 7 рабочих дней. Стоимость доставки рассчитывается автоматически при оформлении заказа в зависимости от веса товара и адреса доставки.'
+        },
+        {
+            'id': 'payment',
+            'question': 'Какие способы оплаты доступны?',
+            'answer': 'Мы принимаем различные способы оплаты: банковские карты (Visa, MasterCard), электронные деньги, оплата через мобильный банкинг, а также наличными при получении (для доставки курьером). Выберите наиболее удобный для вас способ при оформлении заказа.'
+        },
+        {
+            'id': 'return',
+            'question': 'Как вернуть товар?',
+            'answer': 'Вы можете вернуть товар в течение 14 дней с момента получения, если он не был в употреблении и сохранены его товарный вид, потребительские свойства, пломбы и фабричные ярлыки. Для возврата необходимо заполнить заявление в личном кабинете или связаться с нашей службой поддержки.'
+        },
+        {
+            'id': 'warranty',
+            'question': 'Какие гарантии предоставляются на товары?',
+            'answer': 'На все товары предоставляется гарантия производителя. Срок гарантии указан в карточке товара и в сопроводительных документах. В случае обнаружения заводского брака или неисправности в течение гарантийного срока, мы производим бесплатный ремонт, замену товара или возврат денежных средств.'
+        },
+        {
+            'id': 'order',
+            'question': 'Как отследить статус заказа?',
+            'answer': 'Отследить статус заказа можно в личном кабинете на сайте или через мобильное приложение. Также мы отправляем уведомления о статусе заказа на указанный при оформлении email и номер телефона. При возникновении вопросов вы всегда можете связаться с нашей службой поддержки.'
+        },
+        {
+            'id': 'discount',
+            'question': 'Есть ли система скидок или бонусная программа?',
+            'answer': 'Да, у нас действует бонусная программа лояльности. За каждую покупку вы получаете бонусные баллы, которые можно использовать для оплаты последующих заказов. Также мы регулярно проводим акции и предлагаем промокоды со скидками для наших клиентов.'
+        },
+        {
+            'id': 'wholesale',
+            'question': 'Возможны ли оптовые закупки?',
+            'answer': 'Да, мы работаем с оптовыми заказами. Для получения специальных условий и оптовых цен, пожалуйста, свяжитесь с нашим отделом продаж по телефону или через форму на сайте. Мы подготовим индивидуальное предложение с учетом ваших потребностей.'
+        },
+        {
+            'id': 'international',
+            'question': 'Осуществляете ли вы международную доставку?',
+            'answer': 'Да, мы осуществляем доставку в страны ближнего и дальнего зарубежья. Стоимость и сроки международной доставки зависят от страны назначения. Для уточнения деталей, пожалуйста, обратитесь в нашу службу поддержки.'
+        }
+    ]
+    
+    # Категории вопросов для быстрой навигации
+    faq_categories = [
+        {'id': 'delivery', 'name': 'Доставка'},
+        {'id': 'payment', 'name': 'Оплата'},
+        {'id': 'return', 'name': 'Возврат'},
+        {'id': 'warranty', 'name': 'Гарантия'},
+        {'id': 'general', 'name': 'Общие вопросы'}
+    ]
+    
+    context = {
+        'faq_items': faq_items,
+        'faq_categories': faq_categories
+    }
+    
+    return render(request, 'html/faq.html', context)
 
-    return render(request, 'product_list.html', {
-        'products': products,
-        'favorites': favorites,
-    })

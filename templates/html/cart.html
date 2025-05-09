@@ -322,58 +322,52 @@ AIMART{% endblock %} {% block extra_css %}
   {% if cart_items %}
   <div class="cart-layout">
     <div class="cart-items">
-      {% for item in cart_items %}
-      <div class="cart-item" data-item-id="{{ item.id }}">
-        {% if item.product.image %}
+      {% for cart_item in cart_items %}
+      <div class="cart-item" data-product-id="{{ cart_item.product.id }}">
         <img
-          src="{{ item.product.image.url }}"
-          alt="{{ item.product.name }}"
+          src="{{ cart_item.product.main_image.url }}"
+          alt="{{ cart_item.product.name }}"
           class="cart-item-image"
+          onerror="this.src='{% static 'img/no-image.png' %}'"
         />
-        {% else %}
-        <div
-          class="cart-item-image"
-          style="
-            background-color: #eee;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-          "
-        >
-          <span>Нет фото</span>
-        </div>
-        {% endif %}
-
         <div class="cart-item-details">
-          <h3 class="cart-item-name">{{ item.product.name }}</h3>
-          <div class="cart-item-price">{{ item.product.price }} ₽</div>
+          <h3 class="cart-item-name">
+            <a href="{% url 'product_detail' cart_item.product.id %}"
+              >{{ cart_item.product.name }}</a
+            >
+          </h3>
+          <div class="cart-item-price">{{ cart_item.product.price }} ₽</div>
         </div>
-
         <div class="cart-item-controls">
           <div class="quantity-control">
             <button
-              class="quantity-btn decrease-quantity"
-              data-item-id="{{ item.id }}"
+              class="quantity-btn quantity-decrease"
+              onclick="updateQuantity({{ cart_item.product.id }}, -1)"
             >
               -
             </button>
             <input
               type="number"
-              value="{{ item.quantity }}"
               min="1"
+              max="99"
               class="quantity-input"
-              data-item-id="{{ item.id }}"
+              value="{{ cart_item.quantity }}"
+              onchange="updateQuantityInput({{ cart_item.product.id }}, this.value)"
+              title="Количество товара"
               aria-label="Количество товара"
             />
             <button
-              class="quantity-btn increase-quantity"
-              data-item-id="{{ item.id }}"
+              class="quantity-btn quantity-increase"
+              onclick="updateQuantity({{ cart_item.product.id }}, 1)"
             >
               +
             </button>
           </div>
-          <button class="remove-item" data-item-id="{{ item.id }}">
-            Удалить
+          <button
+            class="remove-item"
+            onclick="removeFromCart({{ cart_item.product.id }})"
+          >
+            <span class="remove-icon">×</span> Удалить
           </button>
         </div>
       </div>
@@ -381,48 +375,16 @@ AIMART{% endblock %} {% block extra_css %}
     </div>
 
     <div class="cart-summary">
-      <h2 class="summary-title">Сумма заказа</h2>
-
+      <h3 class="summary-title">Итого</h3>
       <div class="summary-row">
         <span>Товары ({{ cart_items|length }})</span>
-        <span>{{ subtotal }} ₽</span>
+        <span id="cart-items-total">{{ cart_total }} ₽</span>
       </div>
-
-      {% if delivery_cost %}
-      <div class="summary-row">
-        <span>Доставка</span>
-        <span>{{ delivery_cost }} ₽</span>
-      </div>
-      {% endif %} {% if discount %}
-      <div class="summary-row" style="color: #ff8c00">
-        <span>Скидка</span>
-        <span>-{{ discount }} ₽</span>
-      </div>
-      {% endif %}
-
       <div class="summary-total">
-        <span>Итого</span>
-        <span>{{ total }} ₽</span>
+        <span>Итого:</span>
+        <span id="cart-total">{{ cart_total }} ₽</span>
       </div>
-
-      <div class="promo-input">
-        <input
-          type="text"
-          placeholder="Промокод"
-          class="promo-code"
-          id="promoCode"
-        />
-        <button class="apply-promo" id="applyPromo">Применить</button>
-      </div>
-
-      {% if promo_applied %}
-      <div class="applied-promo">
-        <span>{{ promo_code }} (-{{ promo_discount }}%)</span>
-        <button class="remove-promo" id="removePromo">×</button>
-      </div>
-      {% endif %}
-
-      <button class="checkout-btn" id="checkout">Оформить заказ</button>
+      <button class="checkout-btn" id="checkoutBtn">Оформить заказ</button>
     </div>
   </div>
   {% else %}
@@ -437,328 +399,140 @@ AIMART{% endblock %} {% block extra_css %}
 </div>
 {% endblock %} {% block extra_js %}
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    // Увеличение количества товара
-    const increaseButtons = document.querySelectorAll(".increase-quantity");
-    increaseButtons.forEach((button) => {
-      button.addEventListener("click", function () {
-        const itemId = this.dataset.itemId;
-        const inputElem = document.querySelector(
-          `.quantity-input[data-item-id="${itemId}"]`
-        );
-        let currentValue = parseInt(inputElem.value);
-        inputElem.value = currentValue + 1;
-        updateQuantity(itemId, currentValue + 1);
-      });
-    });
-
-    // Уменьшение количества товара
-    const decreaseButtons = document.querySelectorAll(".decrease-quantity");
-    decreaseButtons.forEach((button) => {
-      button.addEventListener("click", function () {
-        const itemId = this.dataset.itemId;
-        const inputElem = document.querySelector(
-          `.quantity-input[data-item-id="${itemId}"]`
-        );
-        let currentValue = parseInt(inputElem.value);
-        if (currentValue > 1) {
-          inputElem.value = currentValue - 1;
-          updateQuantity(itemId, currentValue - 1);
+  // Получаем CSRF-токен для запросов
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
         }
-      });
-    });
-
-    // Обработка изменения количества в поле ввода
-    const quantityInputs = document.querySelectorAll(".quantity-input");
-    quantityInputs.forEach((input) => {
-      input.addEventListener("change", function () {
-        const itemId = this.dataset.itemId;
-        let currentValue = parseInt(this.value);
-
-        // Проверка на валидность ввода
-        if (isNaN(currentValue) || currentValue < 1) {
-          currentValue = 1;
-          this.value = 1;
-        }
-
-        updateQuantity(itemId, currentValue);
-      });
-    });
-
-    // Удаление товара из корзины
-    const removeButtons = document.querySelectorAll(".remove-item");
-    removeButtons.forEach((button) => {
-      button.addEventListener("click", function () {
-        const itemId = this.dataset.itemId;
-        const cartItem = document.querySelector(
-          `.cart-item[data-item-id="${itemId}"]`
-        );
-
-        removeFromCart(itemId, cartItem);
-      });
-    });
-
-    // Очистка корзины
-    const clearCartButton = document.getElementById("clearCart");
-    if (clearCartButton) {
-      clearCartButton.addEventListener("click", function () {
-        clearCart();
-      });
+      }
     }
+    return cookieValue;
+  }
 
-    // Применение промокода
-    const applyPromoButton = document.getElementById("applyPromo");
-    if (applyPromoButton) {
-      applyPromoButton.addEventListener("click", function () {
-        const promoCode = document.getElementById("promoCode").value.trim();
-        if (promoCode) {
-          applyPromoCode(promoCode);
-        }
-      });
-    }
+  // Обновление количества товара
+  function updateQuantity(productId, delta) {
+    const item = document.querySelector(`.cart-item[data-product-id="${productId}"]`);
+    const inputEl = item.querySelector('.quantity-input');
+    let newValue = parseInt(inputEl.value) + delta;
 
-    // Удаление промокода
-    const removePromoButton = document.getElementById("removePromo");
-    if (removePromoButton) {
-      removePromoButton.addEventListener("click", function () {
-        removePromoCode();
-      });
-    }
+    // Валидация: не менее 1, не более 99
+    if (newValue < 1) newValue = 1;
+    if (newValue > 99) newValue = 99;
 
-    // Оформление заказа
+    inputEl.value = newValue;
 
+    // Обновляем на сервере
+    updateQuantityInput(productId, newValue);
+  }
 
-    // Функция обновления количества
-    function updateQuantity(itemId, quantity) {
-      fetch("/api/cart/update/", {
-        method: "POST",
+  // Обработчик изменения значения в поле ввода
+  function updateQuantityInput(productId, quantity) {
+    {% if user.is_authenticated %}
+      fetch('{% url "cart_ajax" %}', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          "X-CSRFToken": getCookie("csrftoken"),
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCookie('csrftoken')
         },
         body: JSON.stringify({
-          item_id: itemId,
-          quantity: quantity,
-        }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.success) {
-            // Обновляем сумму заказа без перезагрузки страницы
-            updateCartSummary(data.subtotal, data.total, data.discount);
-          } else {
-            alert("Ошибка: " + data.error);
-          }
+          product_id: productId,
+          quantity: parseInt(quantity),
+          operation: 'update'
         })
-        .catch((error) => {
-          console.error("Ошибка:", error);
-        });
-    }
-
-    // Функция удаления товара из корзины
-    function removeFromCart(itemId, cartItemElement) {
-      fetch("/api/cart/remove/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRFToken": getCookie("csrftoken"),
-        },
-        body: JSON.stringify({
-          item_id: itemId,
-        }),
       })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.success) {
-            // Анимация удаления элемента
-            cartItemElement.style.transition = "opacity 0.3s, transform 0.3s";
-            cartItemElement.style.opacity = "0";
-            cartItemElement.style.transform = "translateX(20px)";
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          // Обновляем отображаемую информацию об итоговой стоимости
+          document.getElementById('cart-items-total').textContent = data.cart_total + ' ₽';
+          document.getElementById('cart-total').textContent = data.cart_total + ' ₽';
 
-            setTimeout(() => {
-              cartItemElement.remove();
-
-              // Обновляем сумму заказа
-              updateCartSummary(data.subtotal, data.total, data.discount);
-
-              // Проверяем, остались ли товары в корзине
-              const remainingItems = document.querySelectorAll(".cart-item");
-              if (remainingItems.length === 0) {
-                // Если корзина пуста, перезагружаем страницу
-                window.location.reload();
-              }
-            }, 300);
-          } else {
-            alert("Ошибка: " + data.error);
+          // Обновляем счетчик корзины в шапке
+          const cartCounter = document.querySelector('.cart-counter');
+          if (cartCounter) {
+            cartCounter.textContent = data.cart_count;
           }
-        })
-        .catch((error) => {
-          console.error("Ошибка:", error);
-        });
-    }
-
-    // Функция очистки корзины
-    function clearCart() {
-      if (!confirm("Вы уверены, что хотите очистить корзину?")) {
-        return;
-      }
-
-      fetch("/api/cart/clear/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRFToken": getCookie("csrftoken"),
-        },
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.success) {
-            window.location.reload();
-          } else {
-            alert("Ошибка: " + data.error);
-          }
-        })
-        .catch((error) => {
-          console.error("Ошибка:", error);
-        });
-    }
-
-    // Функция применения промокода
-    function applyPromoCode(code) {
-      fetch("/api/cart/apply-promo/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRFToken": getCookie("csrftoken"),
-        },
-        body: JSON.stringify({
-          promo_code: code,
-        }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.success) {
-            // Обновляем информацию о скидке и общей сумме
-            updateCartSummary(data.subtotal, data.total, data.discount);
-
-            // Добавляем визуальное отображение примененного промокода
-            const promoInputContainer = document.querySelector(".promo-input");
-            const appliedPromo = document.createElement("div");
-            appliedPromo.className = "applied-promo";
-            appliedPromo.innerHTML = `
-                        <span>${code} (-${data.promo_discount}%)</span>
-                        <button class="remove-promo" id="removePromo">×</button>
-                    `;
-
-            promoInputContainer.insertAdjacentElement("afterend", appliedPromo);
-
-            // Добавляем обработчик для кнопки удаления промокода
-            document
-              .getElementById("removePromo")
-              .addEventListener("click", function () {
-                removePromoCode();
-              });
-
-            // Очищаем поле ввода
-            document.getElementById("promoCode").value = "";
-          } else {
-            alert("Ошибка: " + data.error);
-          }
-        })
-        .catch((error) => {
-          console.error("Ошибка:", error);
-        });
-    }
-
-    // Функция удаления промокода
-    function removePromoCode() {
-      fetch("/api/cart/remove-promo/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRFToken": getCookie("csrftoken"),
-        },
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.success) {
-            // Обновляем информацию о скидке и общей сумме
-            updateCartSummary(data.subtotal, data.total, 0);
-
-            // Удаляем визуальное отображение промокода
-            const appliedPromo = document.querySelector(".applied-promo");
-            if (appliedPromo) {
-              appliedPromo.remove();
-            }
-          } else {
-            alert("Ошибка: " + data.error);
-          }
-        })
-        .catch((error) => {
-          console.error("Ошибка:", error);
-        });
-    }
-
-    // Функция обновления суммы заказа
-    function updateCartSummary(subtotal, total, discount) {
-      const subtotalElem = document.querySelector(
-        ".summary-row:first-child span:last-child"
-      );
-      const totalElem = document.querySelector(
-        ".summary-total span:last-child"
-      );
-
-      if (subtotalElem) {
-        subtotalElem.textContent = subtotal + " ₽";
-      }
-
-      if (totalElem) {
-        totalElem.textContent = total + " ₽";
-      }
-
-      // Обновляем информацию о скидке
-      let discountElem = document.querySelector(
-        '.summary-row[style*="color: #ff8c00"]'
-      );
-
-      if (discount > 0) {
-        if (!discountElem) {
-          // Создаем элемент скидки, если его нет
-          const summaryTotal = document.querySelector(".summary-total");
-          discountElem = document.createElement("div");
-          discountElem.className = "summary-row";
-          discountElem.style.color = "#ff8c00";
-          discountElem.innerHTML = `
-                        <span>Скидка</span>
-                        <span>-${discount} ₽</span>
-                    `;
-          summaryTotal.insertAdjacentElement("beforebegin", discountElem);
         } else {
-          // Обновляем существующий элемент
-          discountElem.querySelector("span:last-child").textContent =
-            "-" + discount + " ₽";
+          alert('Ошибка: ' + data.error);
         }
-      } else if (discountElem) {
-        // Удаляем элемент скидки, если скидки нет
-        discountElem.remove();
-      }
-    }
+      })
+      .catch(error => {
+        console.error('Ошибка:', error);
+      });
+    {% else %}
+      // Для неавторизованных пользователей реализуем через сессии и перезагрузку страницы
+      window.location.href = `/update_cart/${productId}/?quantity=${quantity}`;
+    {% endif %}
+  }
 
-    // Получение CSRF токена из cookies
-    function getCookie(name) {
-      let cookieValue = null;
-      if (document.cookie && document.cookie !== "") {
-        const cookies = document.cookie.split(";");
-        for (let i = 0; i < cookies.length; i++) {
-          const cookie = cookies[i].trim();
-          if (cookie.substring(0, name.length + 1) === name + "=") {
-            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-            break;
+  // Удаление товара из корзины
+  function removeFromCart(productId) {
+    {% if user.is_authenticated %}
+      fetch('{% url "cart_ajax" %}', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({
+          product_id: productId,
+          operation: 'remove'
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          // Удаляем элемент из DOM
+          const item = document.querySelector(`.cart-item[data-product-id="${productId}"]`);
+          item.remove();
+
+          // Обновляем отображаемую информацию об итоговой стоимости
+          document.getElementById('cart-items-total').textContent = data.cart_total + ' ₽';
+          document.getElementById('cart-total').textContent = data.cart_total + ' ₽';
+
+          // Обновляем счетчик корзины в шапке
+          const cartCounter = document.querySelector('.cart-counter');
+          if (cartCounter) {
+            cartCounter.textContent = data.cart_count;
+            if (data.cart_count === 0) {
+              // Если корзина пуста, перезагружаем страницу для отображения пустой корзины
+              window.location.reload();
+            }
           }
+        } else {
+          alert('Ошибка: ' + data.error);
         }
-      }
-      return cookieValue;
+      })
+      .catch(error => {
+        console.error('Ошибка:', error);
+      });
+    {% else %}
+      // Для неавторизованных пользователей реализуем через сессии и перезагрузку страницы
+      window.location.href = `/remove_from_cart/${productId}/`;
+    {% endif %}
+  }
+
+  // Очистка корзины
+  document.getElementById('clearCart').addEventListener('click', function() {
+    if (confirm('Вы уверены, что хотите очистить корзину?')) {
+      window.location.href = '/clear_cart/';
     }
+  });
+
+  // Оформление заказа
+  document.getElementById('checkoutBtn').addEventListener('click', function() {
+    {% if user.is_authenticated %}
+      window.location.href = '/checkout/';
+    {% else %}
+      alert('Для оформления заказа необходимо войти в систему.');
+      window.location.href = '/login/?next=/checkout/';
+    {% endif %}
   });
 </script>
 {% endblock %}

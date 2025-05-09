@@ -32,10 +32,22 @@
     border-radius: 10px;
     padding: 30px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transform: translateY(0);
+    transition: all 0.3s ease;
+  }
+
+  .edit-form:hover {
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
   }
 
   .form-group {
     margin-bottom: 25px;
+    transition: all 0.3s ease;
+  }
+
+  .form-group:hover {
+    transform: translateY(-2px);
   }
 
   .form-label {
@@ -51,12 +63,14 @@
     border: 1px solid #ddd;
     border-radius: 5px;
     font-size: 16px;
-    transition: border-color 0.3s;
+    transition: all 0.3s ease;
   }
 
   .form-input:focus, .form-textarea:focus, .form-select:focus {
     border-color: #FF8C00;
     outline: none;
+    box-shadow: 0 0 8px rgba(255, 140, 0, 0.3);
+    transform: translateY(-2px);
   }
 
   .form-textarea {
@@ -80,12 +94,25 @@
     justify-content: center;
     overflow: hidden;
     position: relative;
+    border: 2px solid #ddd;
+    transition: all 0.3s ease;
+  }
+
+  .image-preview:hover {
+    border-color: #FF8C00;
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
   }
 
   .image-preview img {
     max-width: 100%;
     max-height: 100%;
     object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .image-preview:hover img {
+    transform: scale(1.05);
   }
 
   .image-label {
@@ -143,33 +170,74 @@
     font-size: 16px;
     font-weight: 600;
     transition: all 0.3s;
+    overflow: hidden;
+    position: relative;
   }
 
   .btn-save {
-    background: #FF8C00;
+    background: linear-gradient(135deg, #FF8C00 0%, #E67E00 100%);
     color: white;
+    box-shadow: 0 4px 12px rgba(255, 140, 0, 0.3);
   }
 
   .btn-save:hover {
-    background: #E67E00;
+    background: linear-gradient(135deg, #E67E00 0%, #FF8C00 100%);
+    box-shadow: 0 6px 18px rgba(255, 140, 0, 0.5);
+    transform: translateY(-2px);
+  }
+
+  .btn-save::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.2);
+    transition: left 0.3s ease;
+  }
+
+  .btn-save:hover::before {
+    left: 100%;
   }
 
   .btn-cancel {
     background: #f5f5f5;
     color: #333;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   }
 
   .btn-cancel:hover {
     background: #e0e0e0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
   }
 
   .btn-delete {
-    background: #ff3b30;
+    background: linear-gradient(135deg, #ff3b30 0%, #d9302c 100%);
     color: white;
+    box-shadow: 0 4px 12px rgba(255, 0, 0, 0.2);
   }
 
   .btn-delete:hover {
-    background: #d9302c;
+    background: linear-gradient(135deg, #d9302c 0%, #ff3b30 100%);
+    box-shadow: 0 6px 18px rgba(255, 0, 0, 0.3);
+    transform: translateY(-2px);
+  }
+
+  .btn-delete::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.2);
+    transition: left 0.3s ease;
+  }
+
+  .btn-delete:hover::before {
+    left: 100%;
   }
 
   .error-text {
@@ -190,6 +258,478 @@
     font-weight: 600;
   }
 
+  /* Новые стили для галереи изображений */
+  .image-gallery {
+    margin-top: 20px;
+  }
+
+  .current-images-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  .image-item {
+    width: 150px;
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: grab;
+  }
+
+  .image-item:hover {
+    transform: translateY(-5px);
+    z-index: 2;
+  }
+
+  .image-item:active {
+    cursor: grabbing;
+  }
+
+  .image-item.dragging {
+    opacity: 0.7;
+    transform: scale(1.05);
+    z-index: 10;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  }
+
+  .image-item .image-preview {
+    width: 100%;
+    height: 150px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    transition: all 0.3s;
+  }
+
+  .image-item .image-preview.is-main {
+    border-color: #FF8C00;
+    box-shadow: 0 0 10px rgba(255, 140, 0, 0.3);
+  }
+
+  .image-item .image-preview:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0);
+    transition: background-color 0.3s;
+    z-index: 1;
+  }
+
+  .image-item .image-preview:hover:before {
+    background-color: rgba(0, 0, 0, 0.2);
+  }
+
+  .image-item .image-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .image-item:hover .image-preview img {
+    transform: scale(1.05);
+  }
+
+  .image-actions {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 8px;
+    display: flex;
+    justify-content: space-between;
+    opacity: 0;
+    transition: opacity 0.3s, transform 0.3s;
+    z-index: 2;
+    transform: translateY(100%);
+  }
+
+  .image-item .image-preview:hover .image-actions {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .image-action {
+    border: none;
+    background: none;
+    color: white;
+    font-size: 12px;
+    cursor: pointer;
+    padding: 3px 6px;
+    border-radius: 3px;
+    transition: background 0.3s;
+  }
+
+  .image-action:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  .image-action.set-main {
+    background: #FF8C00;
+  }
+
+  .image-action.set-main:hover {
+    background: #E67E00;
+  }
+
+  .image-action.set-main:disabled {
+    background: #45a049;
+    cursor: not-allowed;
+  }
+
+  .image-action.delete-image {
+    background: #ff3b30;
+  }
+
+  .image-action.delete-image:hover {
+    background: #d9302c;
+  }
+
+  .image-order-controls {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    display: flex;
+    flex-direction: column;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 5px;
+    z-index: 2;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .image-item .image-preview:hover .image-order-controls {
+    opacity: 1;
+  }
+
+  .order-btn {
+    border: none;
+    background: none;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    width: 25px;
+    height: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s;
+  }
+
+  .order-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  .order-number {
+    color: white;
+    background: rgba(0, 0, 0, 0.7);
+    font-size: 12px;
+    width: 25px;
+    height: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Стили для предпросмотра загружаемых файлов */
+  .images-preview-container {
+    margin-top: 15px;
+    background: #f9f9f9;
+    padding: 15px;
+    border-radius: 5px;
+    animation: fadeIn 0.5s ease;
+  }
+
+  .preview-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 10px;
+  }
+
+  .preview-item {
+    width: 100px;
+    text-align: center;
+    animation: scaleIn 0.3s ease;
+    transition: transform 0.3s ease;
+  }
+
+  .preview-item:hover {
+    transform: translateY(-5px);
+  }
+
+  .preview-item img {
+    width: 100%;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+
+  .preview-item:hover img {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    border-color: #FF8C00;
+  }
+
+  .preview-filename {
+    display: block;
+    font-size: 12px;
+    color: #666;
+    margin-top: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .image-upload-container {
+    position: relative;
+    margin-bottom: 20px;
+  }
+
+  .image-upload-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #f0f0f0;
+    border: 2px dashed #ddd;
+    border-radius: 5px;
+    padding: 15px 25px;
+    font-size: 16px;
+    color: #555;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .image-upload-button:hover {
+    background: #e8e8e8;
+    border-color: #FF8C00;
+    color: #FF8C00;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  .image-upload-button i {
+    margin-right: 10px;
+    font-size: 20px;
+  }
+
+  .hidden-file-input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .drag-area {
+    border: 2px dashed #ddd;
+    border-radius: 8px;
+    padding: 30px;
+    text-align: center;
+    background: #fafafa;
+    color: #666;
+    transition: all 0.3s ease;
+    margin-bottom: 20px;
+    cursor: pointer;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+  }
+
+  .drag-area:hover {
+    border-color: #FF8C00;
+    background: #fffaf5;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+  }
+
+  .drag-area.active {
+    border-color: #FF8C00;
+    background: rgba(255, 140, 0, 0.05);
+  }
+
+  .drag-area i {
+    font-size: 40px;
+    margin-bottom: 15px;
+    color: #999;
+    transition: color 0.3s ease;
+  }
+  
+  .drag-area:hover i {
+    color: #FF8C00;
+  }
+
+  .drag-area .drag-text {
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+
+  .drag-area .drag-hint {
+    font-size: 14px;
+    color: #888;
+  }
+
+  /* Анимации */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes scaleIn {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  @keyframes slideInUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  .appear-animation {
+    animation: fadeIn 0.5s ease;
+  }
+
+  /* Улучшенная анимация появления для формы */
+  .slide-in-animation {
+    animation: slideInUp 0.5s ease;
+  }
+  
+  .scale-in-animation {
+    animation: scaleIn 0.5s ease;
+  }
+
+  .loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255, 140, 0, 0.3);
+    border-radius: 50%;
+    border-top-color: #FF8C00;
+    animation: spin 1s ease-in-out infinite;
+    margin: 0 auto 15px;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .upload-progress {
+    height: 5px;
+    width: 100%;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+    margin-top: 10px;
+    overflow: hidden;
+  }
+
+  .upload-progress-bar {
+    height: 100%;
+    background-color: #FF8C00;
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+
+  .upload-counter {
+    display: inline-block;
+    background: #FF8C00;
+    color: white;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    text-align: center;
+    line-height: 24px;
+    font-size: 12px;
+    font-weight: bold;
+    margin-left: 10px;
+  }
+
+  .mt-2 {
+    margin-top: 10px;
+  }
+
+  .mt-3 {
+    margin-top: 15px;
+  }
+
+  .mt-4 {
+    margin-top: 20px;
+  }
+
+  .mb-3 {
+    margin-bottom: 15px;
+  }
+
+  /* Улучшенные стили для предпросмотра основного изображения */
+  #main-preview {
+    width: 100%;
+    height: 400px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+    overflow: hidden;
+    border: 2px solid #ddd;
+    transition: all 0.3s ease;
+  }
+  
+  #main-preview:hover {
+    border-color: #FF8C00;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Эффект фотопленки */
+  .photo-film-effect {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    padding: 10px;
+    background-color: #fff;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+  }
+  
+  .photo-film-effect::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 10px;
+    background: repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 12px,
+      #333 12px,
+      #333 15px
+    );
+  }
+  
+  .photo-film-effect::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 10px;
+    background: repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 12px,
+      #333 12px,
+      #333 15px
+    );
+  }
+
   @media (max-width: 576px) {
     .form-buttons {
       flex-direction: column;
@@ -203,13 +743,21 @@
     .image-preview-container {
       flex-wrap: wrap;
     }
+
+    .current-images-container {
+      gap: 10px;
+    }
+
+    .image-item {
+      width: calc(50% - 5px);
+    }
   }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="edit-product-container">
-  <div class="edit-product-header">
+  <div class="edit-product-header slide-in-animation">
     <h1 class="edit-product-title">
       {% if product %}Редактирование товара{% else %}Добавление нового товара{% endif %}
     </h1>
@@ -222,17 +770,20 @@
     </p>
   </div>
 
-  <form method="post" enctype="multipart/form-data" class="edit-form">
+  <form id="product-form" method="post" enctype="multipart/form-data" class="edit-form slide-in-animation">
     {% csrf_token %}
-    
+    {% if product.id %}
+    <input type="hidden" name="product_id" value="{{ product.id }}">
+    {% endif %}
+
     <div class="form-group">
       <label for="product-name" class="form-label">Название товара *</label>
-      <input 
-        type="text" 
-        id="product-name" 
-        name="name" 
-        class="form-input" 
-        value="{{ product.name|default:'' }}" 
+      <input
+        type="text"
+        id="product-name"
+        name="name"
+        class="form-input"
+        value="{{ product.name|default:'' }}"
         required
         placeholder="Введите название товара"
       >
@@ -243,10 +794,10 @@
 
     <div class="form-group">
       <label for="product-description" class="form-label">Описание товара</label>
-      <textarea 
-        id="product-description" 
-        name="description" 
-        class="form-textarea" 
+      <textarea
+        id="product-description"
+        name="description"
+        class="form-textarea"
         placeholder="Подробно опишите ваш товар"
       >{{ product.description|default:'' }}</textarea>
       {% if form.description.errors %}
@@ -257,14 +808,14 @@
     <div class="form-group">
       <label for="product-price" class="form-label">Цена *</label>
       <div class="price-input-group">
-        <input 
-          type="number" 
-          id="product-price" 
-          name="price" 
-          class="form-input" 
-          value="{{ product.price|default:'' }}" 
-          min="0" 
-          step="0.01" 
+        <input
+          type="number"
+          id="product-price"
+          name="price"
+          class="form-input"
+          value="{{ product.price|default:'' }}"
+          min="0"
+          step="0.01"
           required
           placeholder="0.00"
         >
@@ -291,56 +842,93 @@
     </div>
 
     <div class="form-group">
-      <label class="form-label">Изображения товара</label>
-      
-      <div class="form-group">
-        <label for="image-main" class="form-label">Основное изображение</label>
-        <input type="file" id="image-main" name="image_main" class="form-input" accept="image/*">
-        {% if form.image_main.errors %}
-          <div class="error-text">{{ form.image_main.errors }}</div>
-        {% endif %}
-        
-        <div class="image-preview-container">
-          <div class="image-preview" id="main-image-preview">
+      <label class="form-label">Изображения товара (до 5 фото)</label>
+
+      <!-- Основное превью -->
+      <div id="main-preview" class="slide-in-animation">
+        {% if product.image_main or product_images %}
+          <div class="photo-film-effect">
             {% if product.image_main %}
-              <img src="{{ product.image_main.url }}" alt="Основное изображение">
-              <div class="image-remove" data-image-type="main">×</div>
-            {% else %}
-              <span>Нет фото</span>
+              <img src="{{ product.image_main.url }}" alt="Предпросмотр" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+            {% elif main_image %}
+              <img src="{{ main_image.image.url }}" alt="Предпросмотр" style="max-width: 100%; max-height: 100%; object-fit: contain;">
             {% endif %}
+
           </div>
-          <div class="image-label">Основное фото</div>
-        </div>
-      </div>
-      
-      <div class="form-group">
-        <label for="image-optional" class="form-label">Дополнительное изображение</label>
-        <input type="file" id="image-optional" name="image_optional" class="form-input" accept="image/*">
-        {% if form.image_optional.errors %}
-          <div class="error-text">{{ form.image_optional.errors }}</div>
+        {% else %}
+          <span id="no-image-placeholder">Выберите фотографии</span>
         {% endif %}
-        
-        <div class="image-preview-container">
-          <div class="image-preview" id="optional-image-preview">
-            {% if product.image_optional %}
-              <img src="{{ product.image_optional.url }}" alt="Дополнительное изображение">
-              <div class="image-remove" data-image-type="optional">×</div>
-            {% else %}
-              <span>Нет фото</span>
-            {% endif %}
-          </div>
-          <div class="image-label">Дополнительное фото</div>
+      </div>
+
+      <!-- Область для перетаскивания файлов -->
+      <div id="drag-area" class="drag-area">
+        <i>⬆</i>
+        <h4 class="drag-text">Перетащите фотографии сюда</h4>
+        <p class="drag-hint">или нажмите для выбора файлов</p>
+        <input type="file" id="product-images-drag" name="product_images" class="hidden-file-input" accept="image/*" multiple title="Загрузите изображения продукта">
+        <div class="upload-progress" id="upload-progress" style="display: none;">
+          <div class="upload-progress-bar" id="upload-progress-bar"></div>
         </div>
       </div>
+
+      <div class="image-upload-container mt-3">
+        <div class="image-upload-header">
+          <label class="form-label">Выбранные изображения <span id="image-counter" class="upload-counter" style="display: none;">0</span></label>
+          <small class="text-muted">Максимум 5 изображений. Перетаскивайте для изменения порядка.</small>
+        </div>
+
+        <!-- Контейнер для предпросмотра выбранных изображений -->
+        <div id="selected-images-container" class="preview-gallery mt-2"></div>
+      </div>
+
+      <!-- Текущие фотографии -->
+      {% if product_images %}
+      <div class="form-group mt-4">
+        <h4 class="mb-3">Текущие фотографии</h4>
+
+        <div class="image-gallery">
+          <div id="sortable-images" class="image-sortable-container appear-animation">
+            {% for image in product_images %}
+            <div class="image-item" data-id="{{ image.id }}" data-order="{{ image.order }}" data-image-id="{{ image.id }}">
+              <input type="hidden" name="image_order_{{ image.id }}" value="{{ image.order }}" class="order-input">
+              <input type="hidden" name="delete_image_{{ image.id }}" value="false" class="delete-input">
+              <div class="image-preview {% if image.is_main %}is-main{% endif %}">
+                <img src="{{ image.image.url }}" alt="Изображение {{ forloop.counter }}">
+                
+                <div class="image-actions">
+                  <button type="button" class="action-btn set-main" data-id="{{ image.id }}" {% if image.is_main %}disabled{% endif %}>
+                    {% if image.is_main %}Главное{% else %}Сделать главным{% endif %}
+                  </button>
+                  <button type="button" class="action-btn delete-image" data-id="{{ image.id }}">Удалить</button>
+                </div>
+                
+                <div class="image-order-controls">
+                  <button type="button" class="order-btn move-up" title="Переместить вверх">
+                    <i class="fas fa-chevron-up"></i>
+                  </button>
+                  <div class="order-number">{{ image.order|add:"1" }}</div>
+                  <button type="button" class="order-btn move-down" title="Переместить вниз">
+                    <i class="fas fa-chevron-down"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+      <input type="hidden" name="main_image" id="main-image-input" value="">
     </div>
 
     <div class="form-group">
       <div class="form-checkbox-group">
-        <input 
-          type="checkbox" 
-          id="product-active" 
-          name="is_active" 
-          class="form-checkbox" 
+        <input
+          type="checkbox"
+          id="product-active"
+          name="is_active"
+          class="form-checkbox"
           {% if product.is_active|default:True %}checked{% endif %}
         >
         <label for="product-active" class="form-label">Товар активен (доступен для покупки)</label>
@@ -350,9 +938,9 @@
     <div class="form-buttons">
       <div>
         <button type="submit" class="btn-save">Сохранить</button>
-        <a href="{% url 'seller_profile' %}" class="btn-cancel">Отмена</a>
+        <a href="{% url 'profile' %}" class="btn-cancel">Отмена</a>
       </div>
-      
+
       {% if product %}
         <button type="button" class="btn-delete" id="delete-product-btn" data-product-id="{{ product.id }}">
           Удалить товар
@@ -364,100 +952,207 @@
 {% endblock %}
 
 {% block extra_js %}
+<!-- Подключение библиотеки SortableJS -->
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // Предпросмотр основного изображения
+    // Предпросмотр основного изображения и управление
     const imageMainInput = document.getElementById('image-main');
     const mainImagePreview = document.getElementById('main-image-preview');
+    const mainPreview = document.getElementById('main-preview');
+    const noImagePlaceholder = document.getElementById('no-image-placeholder');
+    const selectedImagesContainer = document.getElementById('selected-images-container');
+    const imageCounter = document.getElementById('image-counter');
+    const dragArea = document.getElementById('drag-area');
+    const dragFileInput = document.getElementById('product-images-drag');
+    const uploadProgressBar = document.getElementById('upload-progress-bar');
+    const uploadProgress = document.getElementById('upload-progress');
     
+    // Массив для хранения выбранных файлов
+    let selectedFiles = [];
+
+    // Предпросмотр всех изображений продукта
     if (imageMainInput) {
       imageMainInput.addEventListener('change', function() {
         const file = this.files[0];
         if (file) {
           const reader = new FileReader();
           reader.onload = function(e) {
-            mainImagePreview.innerHTML = `
-              <img src="${e.target.result}" alt="Основное изображение">
-              <div class="image-remove" data-image-type="main">×</div>
-            `;
+            // Анимируем изменение
+            if (mainImagePreview) {
+              mainImagePreview.style.transition = 'all 0.3s ease';
+              mainImagePreview.style.transform = 'scale(0.95)';
+              mainImagePreview.style.opacity = '0.5';
+              
+              setTimeout(() => {
+                mainImagePreview.innerHTML = `
+                  <img src="${e.target.result}" alt="Основное изображение">
+                  <div class="image-remove" data-image-type="main">×</div>
+                `;
+                
+                setTimeout(() => {
+                  mainImagePreview.style.transform = 'scale(1)';
+                  mainImagePreview.style.opacity = '1';
+                }, 50);
+                
+                // Добавляем обработчик для кнопки удаления
+                attachRemoveHandlers();
+              }, 300);
+            }
             
-            // Добавляем обработчик для кнопки удаления
-            attachRemoveHandlers();
+            // Обновляем основное превью
+            if (mainPreview) {
+              updateMainPreview(file);
+            }
           };
           reader.readAsDataURL(file);
         }
       });
     }
     
+    // Функция обновления основного превью
+    function updateMainPreview(file) {
+      if (!mainPreview) return;
+      
+      // Добавляем анимацию загрузки
+      mainPreview.innerHTML = '<div class="loading-spinner"></div>';
+      
+      setTimeout(() => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          mainPreview.style.transition = 'all 0.3s ease';
+          mainPreview.style.transform = 'scale(0.95)';
+          mainPreview.style.opacity = '0.7';
+          
+          setTimeout(() => {
+            mainPreview.innerHTML = `
+              <div class="photo-film-effect">
+                <img src="${e.target.result}" alt="Предпросмотр" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+              </div>
+            `;
+            
+            setTimeout(() => {
+              mainPreview.style.transform = 'scale(1)';
+              mainPreview.style.opacity = '1';
+            }, 50);
+          }, 300);
+        };
+        reader.readAsDataURL(file);
+      }, 500);
+    }
+
     // Предпросмотр дополнительного изображения
     const imageOptionalInput = document.getElementById('image-optional');
     const optionalImagePreview = document.getElementById('optional-image-preview');
-    
-    if (imageOptionalInput) {
+
+    if (imageOptionalInput && optionalImagePreview) {
       imageOptionalInput.addEventListener('change', function() {
         const file = this.files[0];
         if (file) {
           const reader = new FileReader();
           reader.onload = function(e) {
-            optionalImagePreview.innerHTML = `
-              <img src="${e.target.result}" alt="Дополнительное изображение">
-              <div class="image-remove" data-image-type="optional">×</div>
-            `;
+            // Анимируем изменение
+            optionalImagePreview.style.transition = 'all 0.3s ease';
+            optionalImagePreview.style.transform = 'scale(0.95)';
+            optionalImagePreview.style.opacity = '0.5';
             
-            // Добавляем обработчик для кнопки удаления
-            attachRemoveHandlers();
+            setTimeout(() => {
+              optionalImagePreview.innerHTML = `
+                <img src="${e.target.result}" alt="Дополнительное изображение">
+                <div class="image-remove" data-image-type="optional">×</div>
+              `;
+              
+              setTimeout(() => {
+                optionalImagePreview.style.transform = 'scale(1)';
+                optionalImagePreview.style.opacity = '1';
+              }, 50);
+              
+              // Добавляем обработчик для кнопки удаления
+              attachRemoveHandlers();
+            }, 300);
           };
           reader.readAsDataURL(file);
         }
       });
     }
-    
+
     // Удаление изображений
     function attachRemoveHandlers() {
       const removeButtons = document.querySelectorAll('.image-remove');
-      
+
       removeButtons.forEach(button => {
         button.addEventListener('click', function() {
           const imageType = this.dataset.imageType;
-          
+          const parentPreview = this.closest('.image-preview');
+
           if (imageType === 'main') {
             imageMainInput.value = '';
-            mainImagePreview.innerHTML = '<span>Нет фото</span>';
             
-            // Добавляем скрытое поле для указания, что изображение нужно удалить
-            const hiddenInput = document.createElement('input');
-            hiddenInput.type = 'hidden';
-            hiddenInput.name = 'remove_image_main';
-            hiddenInput.value = 'true';
-            mainImagePreview.appendChild(hiddenInput);
+            // Анимируем удаление
+            parentPreview.style.transition = 'all 0.3s ease';
+            parentPreview.style.transform = 'scale(0.9)';
+            parentPreview.style.opacity = '0';
+            
+            setTimeout(() => {
+              parentPreview.innerHTML = '<span>Нет фото</span>';
+              parentPreview.style.transform = 'scale(1)';
+              parentPreview.style.opacity = '1';
+              
+              // Добавляем скрытое поле для указания, что изображение нужно удалить
+              const hiddenInput = document.createElement('input');
+              hiddenInput.type = 'hidden';
+              hiddenInput.name = 'remove_image_main';
+              hiddenInput.value = 'true';
+              parentPreview.appendChild(hiddenInput);
+              
+              // Обновляем основное превью
+              if (mainPreview) {
+                mainPreview.innerHTML = '<span id="no-image-placeholder">Выберите фотографии</span>';
+              }
+            }, 300);
           } else if (imageType === 'optional') {
             imageOptionalInput.value = '';
-            optionalImagePreview.innerHTML = '<span>Нет фото</span>';
             
-            // Добавляем скрытое поле для указания, что изображение нужно удалить
-            const hiddenInput = document.createElement('input');
-            hiddenInput.type = 'hidden';
-            hiddenInput.name = 'remove_image_optional';
-            hiddenInput.value = 'true';
-            optionalImagePreview.appendChild(hiddenInput);
+            // Анимируем удаление
+            parentPreview.style.transition = 'all 0.3s ease';
+            parentPreview.style.transform = 'scale(0.9)';
+            parentPreview.style.opacity = '0';
+            
+            setTimeout(() => {
+              parentPreview.innerHTML = '<span>Нет фото</span>';
+              parentPreview.style.transform = 'scale(1)';
+              parentPreview.style.opacity = '1';
+              
+              // Добавляем скрытое поле для указания, что изображение нужно удалить
+              const hiddenInput = document.createElement('input');
+              hiddenInput.type = 'hidden';
+              hiddenInput.name = 'remove_image_optional';
+              hiddenInput.value = 'true';
+              parentPreview.appendChild(hiddenInput);
+            }, 300);
           }
         });
       });
     }
-    
+
     // Вызываем функцию при загрузке страницы для существующих кнопок
     attachRemoveHandlers();
-    
+
     // Подтверждение удаления товара
     const deleteButton = document.getElementById('delete-product-btn');
     if (deleteButton) {
       deleteButton.addEventListener('click', function(e) {
         e.preventDefault();
         const confirmed = confirm('Вы действительно хотите удалить этот товар? Это действие нельзя отменить.');
-        
+
         if (confirmed) {
           const productId = this.dataset.productId;
           
+          // Анимируем кнопку при удалении
+          this.textContent = 'Удаление...';
+          this.style.opacity = '0.7';
+          this.disabled = true;
+
           fetch(`/api/products/${productId}/delete/`, {
             method: 'POST',
             headers: {
@@ -468,19 +1163,27 @@
           .then(response => response.json())
           .then(data => {
             if (data.success) {
-              window.location.href = '{% url "seller_profile" %}';
+              window.location.href = '{% url "profile" %}';
             } else {
               alert('Ошибка при удалении товара: ' + data.error);
+              // Восстанавливаем кнопку
+              this.textContent = 'Удалить товар';
+              this.style.opacity = '1';
+              this.disabled = false;
             }
           })
           .catch(error => {
             console.error('Ошибка:', error);
             alert('Произошла ошибка при удалении товара');
+            // Восстанавливаем кнопку
+            this.textContent = 'Удалить товар';
+            this.style.opacity = '1';
+            this.disabled = false;
           });
         }
       });
     }
-    
+
     // Получение CSRF токена из cookies
     function getCookie(name) {
       let cookieValue = null;
@@ -496,6 +1199,570 @@
       }
       return cookieValue;
     }
+
+    // Функционал для работы с текущими изображениями товара
+    const imageItems = document.querySelectorAll('.image-item');
+    if (imageItems.length > 0) {
+      // Обработка кнопок "Сделать главным"
+      const setMainButtons = document.querySelectorAll('.set-main');
+      setMainButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          const imageId = this.dataset.id;
+          document.getElementById('main-image-input').value = imageId;
+
+          // Визуально обновляем интерфейс
+          document.querySelectorAll('.image-preview').forEach(preview => {
+            preview.classList.remove('is-main');
+          });
+          document.querySelectorAll('.set-main').forEach(btn => {
+            btn.removeAttribute('disabled');
+            btn.textContent = 'Сделать главным';
+          });
+
+          const parentPreview = this.closest('.image-preview');
+          parentPreview.classList.add('is-main');
+          this.setAttribute('disabled', true);
+          this.textContent = 'Главное';
+          
+          // Эффект пульсации для выделения
+          parentPreview.style.animation = 'none';
+          setTimeout(() => {
+            parentPreview.style.animation = 'pulse 0.5s ease';
+          }, 10);
+          
+          // Обновляем основное превью
+          const imageUrl = parentPreview.querySelector('img').src;
+          if (mainPreview) {
+            mainPreview.innerHTML = `
+              <div class="photo-film-effect">
+                <img src="${imageUrl}" alt="Предпросмотр" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+              </div>
+            `;
+          }
+        });
+      });
+
+      // Обработка кнопок удаления
+      const deleteButtons = document.querySelectorAll('.delete-image');
+      deleteButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          const imageId = this.dataset.id;
+          const imageItem = this.closest('.image-item');
+
+          // Помечаем для удаления на сервере и скрываем из интерфейса
+          const deleteInput = imageItem.querySelector(`.delete-input`);
+          deleteInput.value = 'true';
+
+          // Анимация удаления
+          imageItem.style.transition = 'all 0.3s ease';
+          imageItem.style.transform = 'scale(0.8)';
+          imageItem.style.opacity = '0';
+
+          setTimeout(() => {
+            imageItem.style.display = 'none';
+            // Обновляем порядок отображения
+            updateOrderNumbers();
+          }, 300);
+        });
+      });
+
+      // Обработка кнопок изменения порядка
+      const moveUpButtons = document.querySelectorAll('.move-up');
+      const moveDownButtons = document.querySelectorAll('.move-down');
+
+      moveUpButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          const currentItem = this.closest('.image-item');
+          const prevItem = currentItem.previousElementSibling;
+
+          if (prevItem) {
+            // Анимируем перемещение
+            currentItem.style.transition = 'all 0.3s ease';
+            prevItem.style.transition = 'all 0.3s ease';
+
+            const currentPos = currentItem.getBoundingClientRect();
+            const prevPos = prevItem.getBoundingClientRect();
+            const offsetY = prevPos.top - currentPos.top;
+
+            currentItem.style.transform = `translateY(${offsetY}px)`;
+            prevItem.style.transform = `translateY(${-currentItem.offsetHeight}px)`;
+
+            setTimeout(() => {
+              currentItem.style.transition = '';
+              prevItem.style.transition = '';
+              currentItem.style.transform = '';
+              prevItem.style.transform = '';
+
+              const container = currentItem.parentNode;
+              container.insertBefore(currentItem, prevItem);
+              updateOrderValues();
+            }, 300);
+          }
+        });
+      });
+
+      moveDownButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          const currentItem = this.closest('.image-item');
+          const nextItem = currentItem.nextElementSibling;
+
+          if (nextItem) {
+            // Анимируем перемещение
+            currentItem.style.transition = 'all 0.3s ease';
+            nextItem.style.transition = 'all 0.3s ease';
+
+            const currentPos = currentItem.getBoundingClientRect();
+            const nextPos = nextItem.getBoundingClientRect();
+            const offsetY = nextPos.top - currentPos.top;
+
+            currentItem.style.transform = `translateY(${offsetY}px)`;
+            nextItem.style.transform = `translateY(${-currentItem.offsetHeight}px)`;
+
+            setTimeout(() => {
+              currentItem.style.transition = '';
+              nextItem.style.transition = '';
+              currentItem.style.transform = '';
+              nextItem.style.transform = '';
+
+              const container = currentItem.parentNode;
+              container.insertBefore(nextItem, currentItem);
+              updateOrderValues();
+            }, 300);
+          }
+        });
+      });
+
+      // Обновление значений порядка для отправки на сервер
+      function updateOrderValues() {
+        const items = document.querySelectorAll('.image-item');
+        items.forEach((item, index) => {
+          const orderInput = item.querySelector('.order-input');
+          if (orderInput) {
+            orderInput.value = index + 1;
+          }
+
+          // Обновляем отображаемый номер
+          const orderNumber = item.querySelector('.order-number');
+          if (orderNumber) {
+            orderNumber.textContent = index + 1;
+          }
+        });
+      }
+
+      // Обновление номеров после удаления
+      function updateOrderNumbers() {
+        const visibleItems = Array.from(document.querySelectorAll('.image-item')).filter(
+          item => item.style.display !== 'none'
+        );
+
+        visibleItems.forEach((item, index) => {
+          const orderNumber = item.querySelector('.order-number');
+          if (orderNumber) {
+            orderNumber.textContent = index + 1;
+          }
+
+          const orderInput = item.querySelector('.order-input');
+          if (orderInput) {
+            orderInput.value = index + 1;
+          }
+        });
+      }
+
+      // Инициализация Sortable для перетаскивания изображений
+      const sortableImagesContainer = document.getElementById('sortable-images');
+      if (sortableImagesContainer) {
+        const sortable = new Sortable(sortableImagesContainer, {
+          animation: 150,
+          ghostClass: 'dragging',
+          onEnd: function() {
+            updateOrderValues();
+            
+            // Сохраняем порядок изображений в localStorage
+            saveImageOrderToLocalStorage();
+          }
+        });
+        
+        // Восстанавливаем порядок изображений из localStorage при загрузке страницы
+        restoreImageOrderFromLocalStorage();
+      }
+    }
+
+    // Обработка загрузки изображений через перетаскивание
+    if (dragArea && dragFileInput) {
+      // Анимации при наведении
+      dragArea.addEventListener("mouseenter", function() {
+        this.style.transform = "scale(1.01)";
+        this.style.boxShadow = "0 5px 15px rgba(255, 140, 0, 0.1)";
+      });
+
+      dragArea.addEventListener("mouseleave", function() {
+        this.style.transform = "scale(1)";
+        this.style.boxShadow = "0 3px 10px rgba(0, 0, 0, 0.05)";
+      });
+
+      // Предотвращаем стандартное поведение для всего документа
+      // чтобы избежать открытия файлов в браузере при перетаскивании
+      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        document.addEventListener(eventName, function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+        }, false);
+      });
+
+      // Подсвечиваем область при перетаскивании файлов где угодно на странице
+      ['dragenter', 'dragover'].forEach(eventName => {
+        document.addEventListener(eventName, function(e) {
+          if (!dragArea) return;
+          dragArea.style.borderColor = "#FF8C00";
+          dragArea.style.background = "#fff8f0";
+          dragArea.classList.add('active');
+          dragArea.style.transform = "scale(1.02)";
+          dragArea.style.animation = "pulse 1.5s infinite";
+        }, false);
+      });
+
+      // События перетаскивания для самой области
+      ['dragenter', 'dragover'].forEach(eventName => {
+        dragArea.addEventListener(eventName, function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          this.style.borderColor = "#FF8C00";
+          this.style.background = "#fff8f0";
+          this.classList.add('active');
+          this.style.transform = "scale(1.02)";
+          
+          // Добавляем анимацию пульсации при перетаскивании
+          this.style.animation = "pulse 1.5s infinite";
+        }, false);
+      });
+
+      // Убираем подсветку при отпускании или уходе с документа
+      ['dragleave', 'drop'].forEach(eventName => {
+        document.addEventListener(eventName, function(e) {
+          if (!dragArea) return;
+          // Проверяем, что событие действительно покидает документ
+          // а не переходит между его элементами
+          if (eventName === 'dragleave' && e.target.contains(dragArea)) {
+            return;
+          }
+          dragArea.style.borderColor = "#ddd";
+          dragArea.style.background = "#fafafa";
+          dragArea.classList.remove('active');
+          dragArea.style.transform = "scale(1)";
+          dragArea.style.animation = "none";
+        }, false);
+      });
+
+      ['dragleave', 'drop'].forEach(eventName => {
+        dragArea.addEventListener(eventName, function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          this.style.borderColor = "#ddd";
+          this.style.background = "#fafafa";
+          this.classList.remove('active');
+          this.style.transform = "scale(1)";
+          
+          // Останавливаем анимацию пульсации
+          this.style.animation = "none";
+          
+          if (eventName === 'drop') {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleFiles({ target: { files: files } });
+          }
+        }, false);
+      });
+
+      // Клик для выбора файлов
+      dragArea.addEventListener('click', function() {
+        dragFileInput.click();
+      });
+
+      // Обработка выбора файлов через клик
+      dragFileInput.addEventListener('change', handleFiles);
+
+      // Обработчик выбора файлов
+      function handleFiles(e) {
+        const files = Array.from(e.target.files);
+
+        // Проверяем количество файлов
+        if (selectedFiles.length + files.length > 5) {
+          alert('Вы можете загрузить максимум 5 фотографий!');
+          return;
+        }
+
+        // Показываем счетчик изображений
+        selectedFiles = [...selectedFiles, ...files];
+        
+        // Сохраняем информацию о выбранных файлах в localStorage
+        try {
+          const productId = document.querySelector('input[name="product_id"]').value;
+          if (productId) {
+            // Преобразуем файлы в их представление для сохранения
+            const fileInfos = selectedFiles.map(file => ({
+              name: file.name,
+              size: file.size,
+              type: file.type,
+              lastModified: file.lastModified
+            }));
+            localStorage.setItem(`product_${productId}_selected_images`, JSON.stringify(fileInfos));
+          }
+        } catch (e) {
+          console.error('Ошибка при сохранении информации о файлах:', e);
+        }
+        
+        imageCounter.textContent = selectedFiles.length;
+        imageCounter.style.display = 'inline-block';
+
+        // Показываем прогресс
+        uploadProgress.style.display = 'block';
+
+        // Имитация загрузки
+        let progress = 0;
+        const interval = setInterval(() => {
+          progress += 5;
+          uploadProgressBar.style.width = `${progress}%`;
+
+          if (progress >= 100) {
+            clearInterval(interval);
+            setTimeout(() => {
+              uploadProgress.style.display = 'none';
+              uploadProgressBar.style.width = '0%';
+              displaySelectedImages();
+            }, 500);
+          }
+        }, 50);
+        
+        // Обновляем основное превью, если это первый файл
+        if (selectedFiles.length === 1 && mainPreview) {
+          updateMainPreview(files[0]);
+        }
+      }
+
+      // Отображение выбранных изображений
+      function displaySelectedImages() {
+        selectedImagesContainer.innerHTML = '';
+
+        selectedFiles.forEach((file, index) => {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            const imageItem = document.createElement('div');
+            imageItem.className = 'preview-item appear-animation';
+            imageItem.dataset.index = index;
+            imageItem.style.animationDelay = `${index * 0.1}s`;
+
+            imageItem.innerHTML = `
+              <div style="position: relative;">
+                <img src="${e.target.result}" alt="Превью ${index + 1}">
+                <span class="upload-counter" style="position: absolute; top: 5px; left: 5px;">${index + 1}</span>
+                <button type="button" class="image-action delete-image" style="position: absolute; top: 5px; right: 5px; padding: 0; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; background: rgba(255,0,0,0.7); border-radius: 50%; border: none; color: white; font-size: 12px; cursor: pointer; opacity: 0; transition: opacity 0.3s;">×</button>
+              </div>
+              <span class="preview-filename">${file.name}</span>
+            `;
+            
+            // Добавляем анимацию при наведении
+            imageItem.addEventListener("mouseenter", function() {
+              this.style.transform = "translateY(-5px)";
+              this.querySelector("img").style.transform = "scale(1.05)";
+              this.querySelector("button").style.opacity = "1";
+            });
+
+            imageItem.addEventListener("mouseleave", function() {
+              this.style.transform = "translateY(0)";
+              this.querySelector("img").style.transform = "scale(1)";
+              this.querySelector("button").style.opacity = "0";
+            });
+
+            // Обработчик удаления
+            const deleteBtn = imageItem.querySelector('.delete-image');
+            deleteBtn.addEventListener('click', function() {
+              selectedFiles = selectedFiles.filter((_, i) => i !== index);
+
+              // Анимация удаления
+              imageItem.style.transition = 'all 0.3s ease';
+              imageItem.style.transform = 'scale(0.8)';
+              imageItem.style.opacity = '0';
+
+              setTimeout(() => {
+                selectedImagesContainer.removeChild(imageItem);
+                // Обновляем счетчик
+                imageCounter.textContent = selectedFiles.length;
+                if (selectedFiles.length === 0) {
+                  imageCounter.style.display = 'none';
+                }
+
+                // Обновляем индексы
+                const items = selectedImagesContainer.querySelectorAll('.preview-item');
+                items.forEach((item, i) => {
+                  const counter = item.querySelector('.upload-counter');
+                  if (counter) {
+                    counter.textContent = i + 1;
+                  }
+                  item.dataset.index = i;
+                });
+                
+                // Если удалили первое изображение, обновляем основное превью
+                if (index === 0 && selectedFiles.length > 0 && mainPreview) {
+                  updateMainPreview(selectedFiles[0]);
+                } else if (selectedFiles.length === 0 && mainPreview) {
+                  mainPreview.innerHTML = '<span id="no-image-placeholder">Выберите фотографии</span>';
+                }
+              }, 300);
+            });
+
+            selectedImagesContainer.appendChild(imageItem);
+          };
+          reader.readAsDataURL(file);
+        });
+
+        // Инициализируем Sortable для миниатюр
+        if (selectedImagesContainer.children.length > 0 && typeof Sortable !== 'undefined') {
+          new Sortable(selectedImagesContainer, {
+            animation: 150,
+            ghostClass: 'dragging',
+            onEnd: function() {
+              // Переупорядочиваем файлы после перетаскивания
+              const newOrder = [];
+              const items = selectedImagesContainer.querySelectorAll('.preview-item');
+
+              items.forEach((item, index) => {
+                const oldIndex = parseInt(item.dataset.index);
+                newOrder[index] = selectedFiles[oldIndex];
+
+                // Обновляем номер
+                const counter = item.querySelector('.upload-counter');
+                if (counter) {
+                  counter.textContent = index + 1;
+                }
+
+                item.dataset.index = index;
+              });
+
+              selectedFiles = newOrder;
+              
+              // Обновляем основное превью
+              if (selectedFiles.length > 0 && mainPreview) {
+                updateMainPreview(selectedFiles[0]);
+              }
+            }
+          });
+        }
+      }
+    }
+
+    // Функция для сохранения порядка изображений в localStorage
+    function saveImageOrderToLocalStorage() {
+      const productId = document.querySelector('input[name="product_id"]').value;
+      const imageItems = document.querySelectorAll('.image-item');
+      const orderData = {};
+      
+      imageItems.forEach((item, index) => {
+        const imageId = item.dataset.imageId;
+        if (imageId) {
+          orderData[imageId] = index + 1;
+        }
+      });
+      
+      localStorage.setItem(`product_${productId}_image_order`, JSON.stringify(orderData));
+    }
+    
+    // Функция для восстановления порядка изображений из localStorage
+    function restoreImageOrderFromLocalStorage() {
+      const productId = document.querySelector('input[name="product_id"]').value;
+      const savedOrder = localStorage.getItem(`product_${productId}_image_order`);
+      
+      if (!savedOrder) return;
+      
+      try {
+        const orderData = JSON.parse(savedOrder);
+        const container = document.getElementById('sortable-images');
+        const items = Array.from(container.querySelectorAll('.image-item'));
+        
+        // Сортируем элементы в соответствии с сохраненным порядком
+        items.sort((a, b) => {
+          const aId = a.dataset.imageId;
+          const bId = b.dataset.imageId;
+          
+          if (!aId || !bId) return 0;
+          
+          return (orderData[aId] || 999) - (orderData[bId] || 999);
+        });
+        
+        // Перестраиваем DOM
+        items.forEach(item => {
+          container.appendChild(item);
+        });
+        
+        // Обновляем номера порядка
+        updateOrderValues();
+      } catch (e) {
+        console.error('Ошибка при восстановлении порядка изображений:', e);
+      }
+    }
+    
+    // Обновляем форму перед отправкой, чтобы учесть изменения в перетаскивании
+    const productForm = document.getElementById('product-form');
+    if (productForm) {
+      productForm.addEventListener('submit', function(e) {
+        // Обеспечиваем, что все изменения порядка изображений будут отправлены
+        updateOrderValues();
+        
+        // Добавляем скрытые поля для основного изображения, если оно не выбрано
+        const hasMainImage = document.querySelector('.image-preview.is-main');
+        if (!hasMainImage) {
+          // Если нет выбранного главного изображения, используем первое
+          const firstImage = document.querySelector('.image-item');
+          if (firstImage) {
+            const imageId = firstImage.dataset.imageId;
+            if (imageId) {
+              const mainImageInput = document.getElementById('main-image-input');
+              if (mainImageInput) {
+                mainImageInput.value = imageId;
+              } else {
+                // Создаем скрытое поле, если его нет
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = 'main_image';
+                hiddenInput.value = imageId;
+                this.appendChild(hiddenInput);
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Обеспечиваем корректную работу dropzone при перезагрузке страницы
+    window.addEventListener('DOMContentLoaded', function() {
+      // Восстанавливаем выбранные изображения из localStorage, если есть
+      const productId = document.querySelector('input[name="product_id"]')?.value;
+      if (productId) {
+        const savedImages = localStorage.getItem(`product_${productId}_selected_images`);
+        if (savedImages) {
+          try {
+            selectedFiles = JSON.parse(savedImages);
+            if (selectedFiles && selectedFiles.length > 0) {
+              // Отображаем сохраненные изображения
+              displaySelectedImages();
+            }
+          } catch (e) {
+            console.error('Ошибка при восстановлении выбранных изображений:', e);
+            localStorage.removeItem(`product_${productId}_selected_images`);
+          }
+        }
+      }
+      
+      // Добавляем обработчик для очистки localStorage при успешной отправке формы
+      const productForm = document.getElementById('product-form');
+      if (productForm) {
+        productForm.addEventListener('submit', function() {
+          if (productId) {
+            localStorage.removeItem(`product_${productId}_image_order`);
+            localStorage.removeItem(`product_${productId}_selected_images`);
+          }
+        });
+      }
+    });
   });
 </script>
 {% endblock %} 

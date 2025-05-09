@@ -3,7 +3,7 @@
 
 {% block title %}Каталог товаров - AIMART{% endblock %}
 
-{% block styles %}
+{% block extra_css %}
 <style>
     .catalog-container {
         max-width: 1200px;
@@ -163,10 +163,10 @@
         <h1 class="catalog-title">Каталог товаров</h1>
         <div class="sort-options">
             <select name="sort" id="sort" class="filter-select" aria-label="Сортировка товаров">
-                <option value="popular">По популярности</option>
-                <option value="price_asc">По возрастанию цены</option>
-                <option value="price_desc">По убыванию цены</option>
-                <option value="new">Сначала новые</option>
+                <option value="popular" {% if sort_by == 'popular' %}selected{% endif %}>По популярности</option>
+                <option value="price_asc" {% if sort_by == 'price_asc' %}selected{% endif %}>По возрастанию цены</option>
+                <option value="price_desc" {% if sort_by == 'price_desc' %}selected{% endif %}>По убыванию цены</option>
+                <option value="new" {% if sort_by == 'new' %}selected{% endif %}>Сначала новые</option>
             </select>
         </div>
     </div>
@@ -214,16 +214,7 @@
         </div>
         
         <div class="products-section">
-            {% include 'html/components/product_grid.html' with 
-                products=products 
-                empty_title="Товары не найдены" 
-                empty_message="Попробуйте изменить параметры фильтрации или вернуться позже."
-                empty_action_url="/catalog/"
-                empty_action_text="Сбросить фильтры"
-                show_seller=True
-                show_rating=True
-                show_category=True
-            %}
+            {% include 'html/components/product_grid.html' with products=products empty_title="Товары не найдены" empty_message="Попробуйте изменить параметры фильтрации или вернуться позже." empty_action_url="/catalog/" empty_action_text="Сбросить фильтры" show_seller=True show_rating=True show_category=True %}
                 
             {% if is_paginated %}
             <div class="pagination">
@@ -266,6 +257,26 @@
                 }
             }
             return cookieValue;
+        }
+        
+        // Обработка изменения параметра сортировки
+        const sortSelect = document.getElementById('sort');
+        if (sortSelect) {
+            sortSelect.addEventListener('change', function() {
+                // Получаем текущие параметры URL
+                const urlParams = new URLSearchParams(window.location.search);
+                
+                // Обновляем параметр сортировки
+                urlParams.set('sort', this.value);
+                
+                // Сбрасываем номер страницы при изменении сортировки
+                if (urlParams.has('page')) {
+                    urlParams.delete('page');
+                }
+                
+                // Перенаправляем на страницу с новыми параметрами
+                window.location.href = `${window.location.pathname}?${urlParams.toString()}`;
+            });
         }
     });
 </script>

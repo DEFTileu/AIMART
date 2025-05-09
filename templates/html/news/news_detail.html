@@ -1,0 +1,523 @@
+{% extends 'html/base.html' %} {% load static %} {% block title %}{{
+news_item.title }} - Новости - AIMART{% endblock %} {% block extra_css %}
+<style>
+  .news-detail-container {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    gap: 40px;
+  }
+
+  .news-breadcrumbs {
+    grid-column: 1 / -1;
+    color: #777;
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+
+  .news-breadcrumbs a {
+    color: #777;
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+
+  .news-breadcrumbs a:hover {
+    color: #ff8c00;
+  }
+
+  .news-main {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+  }
+
+  .news-sidebar {
+    align-self: flex-start;
+  }
+
+  .news-image {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+  }
+
+  .news-image-container {
+    position: relative;
+  }
+
+  .news-date {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    background: rgba(255, 140, 0, 0.9);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .news-no-image {
+    width: 100%;
+    height: 400px;
+    background-color: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #888;
+    font-size: 18px;
+  }
+
+  .news-content-wrapper {
+    padding: 30px;
+  }
+
+  .news-title {
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 20px;
+    line-height: 1.3;
+  }
+
+  .news-description {
+    color: #666;
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+
+  .news-content {
+    color: #333;
+    font-size: 16px;
+    line-height: 1.8;
+  }
+
+  .news-content p,
+  .news-content ul,
+  .news-content ol {
+    margin-bottom: 20px;
+  }
+
+  .news-content a {
+    color: #ff8c00;
+    text-decoration: none;
+  }
+
+  .news-content a:hover {
+    text-decoration: underline;
+  }
+
+  .news-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 20px 0;
+  }
+
+  .news-footer {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #888;
+    font-size: 14px;
+  }
+
+  .news-stats {
+    display: flex;
+    align-items: center;
+  }
+
+  .news-stats svg {
+    margin-right: 5px;
+  }
+
+  .news-share {
+    display: flex;
+    gap: 10px;
+  }
+
+  .news-share-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-decoration: none;
+    transition: transform 0.3s;
+  }
+
+  .news-share-btn:hover {
+    transform: translateY(-3px);
+  }
+
+  .share-fb {
+    background: #1877f2;
+  }
+
+  .share-tw {
+    background: #1da1f2;
+  }
+
+  .share-tg {
+    background: #0088cc;
+  }
+
+  .news-sidebar-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+    margin-bottom: 30px;
+    overflow: hidden;
+  }
+
+  .sidebar-card-header {
+    background: #ff8c00;
+    color: white;
+    padding: 15px 20px;
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  .sidebar-card-content {
+    padding: 20px;
+  }
+
+  .other-news-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .other-news-item {
+    padding: 15px 0;
+    border-bottom: 1px solid #eee;
+  }
+
+  .other-news-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .other-news-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    line-height: 1.4;
+  }
+
+  .other-news-title a {
+    color: #333;
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+
+  .other-news-title a:hover {
+    color: #ff8c00;
+  }
+
+  .other-news-date {
+    color: #888;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+  }
+
+  .other-news-date svg {
+    margin-right: 5px;
+  }
+
+  @media (max-width: 992px) {
+    .news-detail-container {
+      grid-template-columns: 1fr;
+    }
+
+    .news-image {
+      height: 300px;
+    }
+
+    .news-no-image {
+      height: 300px;
+    }
+  }
+
+  .admin-actions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+
+  .admin-btn {
+    padding: 8px 15px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.3s;
+  }
+
+  .btn-edit {
+    background: #3498db;
+    color: white;
+  }
+
+  .btn-edit:hover {
+    background: #2980b9;
+    color: white;
+  }
+</style>
+{% endblock %} {% block content %}
+<div class="news-detail-container">
+  <div class="news-breadcrumbs">
+    <a href="{% url 'home' %}">Главная</a> &gt;
+    <a href="{% url 'news_list' %}">Новости</a> &gt;
+    <span>{{ news_item.title }}</span>
+  </div>
+
+  <div class="news-main">
+    <div class="news-image-container">
+      {% if news_item.image %}
+      <img
+        src="{{ news_item.image.url }}"
+        alt="{{ news_item.title }}"
+        class="news-image"
+        loading="lazy"
+        onerror="this.onerror=null; this.src='{% static 'images/no-image.jpg' %}'"
+      />
+      {% else %}
+      <div class="news-no-image">
+        <span>Нет изображения</span>
+      </div>
+      {% endif %}
+      <div class="news-date">{{ news_item.created_at|date:"d.m.Y" }}</div>
+    </div>
+
+    <div class="news-content-wrapper">
+      <h1 class="news-title">{{ news_item.title }}</h1>
+      <div class="news-description">{{ news_item.short_description }}</div>
+      <div class="news-content">{{ news_item.content|linebreaksbr }}</div>
+
+      {% if user.is_authenticated and user.user_type == 'admin' %}
+      <div class="admin-actions">
+        <a
+          href="{% url 'edit_news' news_item.slug %}"
+          class="admin-btn btn-edit"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            viewBox="0 0 16 16"
+          >
+            <path
+              d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"
+            />
+          </svg>
+          Редактировать
+        </a>
+      </div>
+      {% endif %}
+
+      <div class="news-footer">
+        <div class="news-stats">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            viewBox="0 0 16 16"
+          >
+            <path
+              d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"
+            />
+            <path
+              d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"
+            />
+          </svg>
+          {{ news_item.views_count }} просмотров
+        </div>
+        <div class="news-share">
+          <a
+            href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}"
+            target="_blank"
+            rel="noopener"
+            class="news-share-btn share-fb"
+            title="Поделиться в Facebook"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              viewBox="0 0 320 512"
+            >
+              <path
+                d="M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.43 0 225.36 0c-73.22 0-121.08 44.38-121.08 124.72v70.62H22.89V288h81.39v224h100.17V288z"
+              />
+            </svg>
+          </a>
+          <a
+            href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}&text={{ news_item.title }}"
+            target="_blank"
+            rel="noopener"
+            class="news-share-btn share-tw"
+            title="Поделиться в Twitter"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              viewBox="0 0 512 512"
+            >
+              <path
+                d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"
+              />
+            </svg>
+          </a>
+          <a
+            href="https://t.me/share/url?url={{ request.build_absolute_uri }}&text={{ news_item.title }}"
+            target="_blank"
+            rel="noopener"
+            class="news-share-btn share-tg"
+            title="Поделиться в Telegram"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              viewBox="0 0 496 512"
+            >
+              <path
+                d="M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm121.8 169.9l-40.7 191.8c-3 13.6-11.1 16.9-22.4 10.5l-62-45.7-29.9 28.8c-3.3 3.3-6.1 6.1-12.5 6.1l4.4-63.1 114.9-103.8c5-4.4-1.1-6.9-7.7-2.5l-142 89.4-61.2-19.1c-13.3-4.2-13.6-13.3 2.8-19.7l239.1-92.2c11.1-4 20.8 2.7 17.2 19.5z"
+              />
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="news-sidebar">
+    {% if other_news %}
+    <div class="news-sidebar-card">
+      <div class="sidebar-card-header">Другие новости</div>
+      <div class="sidebar-card-content">
+        <ul class="other-news-list">
+          {% for news in other_news %}
+          <li class="other-news-item">
+            <h3 class="other-news-title">
+              <a href="{% url 'news_detail' news.slug %}">{{ news.title }}</a>
+            </h3>
+            <div class="other-news-date">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="12"
+                height="12"
+                fill="currentColor"
+                viewBox="0 0 16 16"
+              >
+                <path
+                  d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"
+                />
+                <path
+                  d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"
+                />
+              </svg>
+              {{ news.created_at|date:"d.m.Y" }}
+            </div>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+    {% endif %}
+
+    <div class="news-sidebar-card">
+      <div class="sidebar-card-header">Подписаться на новости</div>
+      <div class="sidebar-card-content">
+        <form id="subscribeForm" onsubmit="subscribeToNews(event)">
+          <div style="margin-bottom: 15px">
+            <input
+              type="email"
+              id="subscribeEmail"
+              placeholder="Введите ваш email"
+              required
+              style="
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+              "
+            />
+          </div>
+          <div>
+            <button
+              type="submit"
+              style="
+                width: 100%;
+                padding: 10px;
+                background: #ff8c00;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                font-weight: 600;
+              "
+            >
+              Подписаться
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block extra_js %}
+<script>
+  function subscribeToNews(event) {
+    event.preventDefault();
+
+    const email = document.getElementById("subscribeEmail").value;
+    alert(`Спасибо за подписку на новости! Ваш email: ${email}`);
+
+    // Очищаем форму
+    document.getElementById("subscribeForm").reset();
+
+    // Здесь должна быть отправка email на сервер
+    // fetch('/api/subscribe/', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     'X-CSRFToken': getCookie('csrftoken')
+    //   },
+    //   body: JSON.stringify({ email: email })
+    // })
+    // .then(response => response.json())
+    // .then(data => {
+    //   if (data.success) {
+    //     alert('Спасибо за подписку на новости!');
+    //   } else {
+    //     alert('Ошибка: ' + data.error);
+    //   }
+    // })
+    // .catch(error => {
+    //   console.error('Ошибка:', error);
+    // });
+  }
+</script>
+{% endblock %}

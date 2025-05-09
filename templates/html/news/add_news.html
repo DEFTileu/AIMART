@@ -1,0 +1,289 @@
+{% extends 'html/base.html' %} {% load static %} {% block title %}{{ title }} -
+AIMART{% endblock %} {% block extra_css %}
+<style>
+  .news-form-container {
+    max-width: 800px;
+    margin: 30px auto;
+    padding: 30px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .news-form-title {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #444;
+  }
+
+  .form-control {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+  }
+
+  .form-control:focus {
+    border-color: #ff8c00;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.2);
+  }
+
+  textarea.form-control {
+    min-height: 120px;
+    resize: vertical;
+  }
+
+  .form-check {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .form-check-input {
+    margin-right: 10px;
+  }
+
+  .form-hint {
+    font-size: 13px;
+    color: #777;
+    margin-top: 5px;
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+  }
+
+  .btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .btn-primary {
+    background: #ff8c00;
+    color: white;
+  }
+
+  .btn-primary:hover {
+    background: #e67e00;
+  }
+
+  .btn-outline {
+    background: transparent;
+    border: 1px solid #ddd;
+    color: #666;
+  }
+
+  .btn-outline:hover {
+    background: #f5f5f5;
+  }
+
+  .alert {
+    padding: 12px 15px;
+    margin-bottom: 20px;
+    border-radius: 6px;
+  }
+
+  .alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+  }
+
+  .alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+  }
+
+  .field-error {
+    color: #dc3545;
+    font-size: 14px;
+    margin-top: 5px;
+  }
+
+  .custom-file-input {
+    position: relative;
+    overflow: hidden;
+    display: block;
+  }
+
+  .custom-file-input input[type="file"] {
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+  }
+
+  .custom-file-label {
+    padding: 10px 15px;
+    background: #f8f8f8;
+    border: 1px dashed #ddd;
+    border-radius: 6px;
+    text-align: center;
+    color: #777;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: block;
+  }
+
+  .custom-file-input:hover .custom-file-label {
+    background: #f1f1f1;
+    border-color: #ccc;
+  }
+
+  .selected-file {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+    padding: 5px 10px;
+    background: #f0f0f0;
+    border-radius: 4px;
+  }
+
+  .selected-file-name {
+    flex-grow: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .selected-file-remove {
+    color: #dc3545;
+    cursor: pointer;
+    margin-left: 10px;
+  }
+</style>
+{% endblock %} {% block content %}
+<div class="news-form-container">
+  <h1 class="news-form-title">{{ title }}</h1>
+
+  {% if messages %} {% for message in messages %}
+  <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+    {{ message }}
+  </div>
+  {% endfor %} {% endif %}
+
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="form-group">
+      <label for="id_title" class="form-label">Заголовок</label>
+      {{ form.title }} {% if form.title.errors %}
+      <div class="field-error">{{ form.title.errors.0 }}</div>
+      {% endif %}
+    </div>
+
+    <div class="form-group">
+      <label for="id_short_description" class="form-label"
+        >Краткое описание</label
+      >
+      {{ form.short_description }} {% if form.short_description.errors %}
+      <div class="field-error">{{ form.short_description.errors.0 }}</div>
+      {% endif %}
+      <div class="form-hint">
+        Максимум 300 символов. Будет отображаться в списке новостей.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="id_content" class="form-label">Содержание новости</label>
+      {{ form.content }} {% if form.content.errors %}
+      <div class="field-error">{{ form.content.errors.0 }}</div>
+      {% endif %}
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Изображение</label>
+      <div class="custom-file-input">
+        <label class="custom-file-label" for="id_image">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            viewBox="0 0 16 16"
+          >
+            <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z" />
+            <path
+              d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1h12z"
+            />
+          </svg>
+          Выберите изображение для новости
+        </label>
+        {{ form.image }}
+      </div>
+      {% if form.image.errors %}
+      <div class="field-error">{{ form.image.errors.0 }}</div>
+      {% endif %}
+      <div class="form-hint">Рекомендуемый размер: 1200x630 пикселей.</div>
+      <div id="selectedFile" class="selected-file" style="display: none">
+        <span class="selected-file-name"></span>
+        <span class="selected-file-remove" onclick="removeSelectedFile()"
+          >✕</span
+        >
+      </div>
+    </div>
+
+    <div class="form-check">
+      {{ form.is_published }}
+      <label for="id_is_published" class="form-check-label"
+        >Опубликовать сразу</label
+      >
+    </div>
+
+    <div class="form-actions">
+      <a href="{% url 'news_list' %}" class="btn btn-outline">Отмена</a>
+      <button type="submit" class="btn btn-primary">
+        {% if is_edit %}Сохранить изменения{% else %}Создать новость{% endif %}
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %} {% block extra_js %}
+<script>
+  document.getElementById("id_image").addEventListener("change", function (e) {
+    const fileName = e.target.files[0] ? e.target.files[0].name : "";
+    const selectedFileDiv = document.getElementById("selectedFile");
+    const fileNameSpan = selectedFileDiv.querySelector(".selected-file-name");
+
+    if (fileName) {
+      fileNameSpan.textContent = fileName;
+      selectedFileDiv.style.display = "flex";
+    } else {
+      selectedFileDiv.style.display = "none";
+    }
+  });
+
+  function removeSelectedFile() {
+    const fileInput = document.getElementById("id_image");
+    fileInput.value = "";
+    document.getElementById("selectedFile").style.display = "none";
+  }
+</script>
+{% endblock %}

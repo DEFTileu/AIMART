@@ -1,7 +1,9 @@
-{% extends 'html/base.html' %}
-{% load static %}
-{% block title %}{{ product.name }} - AIMART{% endblock %}
-{% block extra_css %}
+{% extends 'html/base.html' %} {% load static %} {% block title %}
+{{product.name }} - AIMART{% endblock %} {% block extra_css %}
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+/>
 <style>
   .product-container {
     max-width: 1200px;
@@ -34,32 +36,180 @@
 
   .product-gallery {
     position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
   }
 
-  .main-image {
+  .gallery-main {
+    position: relative;
     width: 100%;
     height: 400px;
-    object-fit: cover;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    background: #f8f8f8;
+    border-radius: 10px 10px 0 0;
   }
 
-  .optional-image {
-    position: absolute;
-    width: 100px;
-    height: 100px;
-    object-fit: cover;
-    border-radius: 8px;
-    bottom: 20px;
-    right: 20px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  .gallery-main img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+  }
+
+  .gallery-main:hover img {
+    transform: scale(1.03);
+  }
+
+  .gallery-thumbnails {
+    display: flex;
+    padding: 10px;
+    background: white;
+    border-radius: 0 0 10px 10px;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    gap: 8px;
+  }
+
+  .gallery-thumbnail {
+    width: 80px;
+    height: 80px;
+    border-radius: 5px;
+    overflow: hidden;
     cursor: pointer;
-    transition: transform 0.3s;
-    border: 3px solid white;
+    opacity: 0.7;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+    border: 2px solid transparent;
   }
 
-  .optional-image:hover {
-    transform: scale(1.1);
+  .gallery-thumbnail:hover {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
+
+  .gallery-thumbnail.active {
+    opacity: 1;
+    border-color: #ff8c00;
+  }
+
+  .gallery-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .fullscreen-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(255, 255, 255, 0.8);
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 5;
+  }
+
+  .gallery-main:hover .fullscreen-btn {
+    opacity: 1;
+  }
+
+  .no-images-placeholder {
+    width: 100%;
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    color: #999;
+    background: #f5f5f5;
+    border-radius: 10px;
+  }
+
+  .no-images-placeholder svg {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 15px;
+    color: #ddd;
+  }
+
+  .lightbox {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 1000;
+    display: none;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .lightbox-content {
+    position: relative;
+    max-width: 90%;
+    max-height: 90%;
+  }
+
+  .lightbox-img {
+    max-width: 100%;
+    max-height: 90vh;
+    object-fit: contain;
+  }
+
+  .lightbox-close {
+    position: absolute;
+    top: -40px;
+    right: 0;
+    color: white;
+    font-size: 30px;
+    cursor: pointer;
+    background: none;
+    border: none;
+  }
+
+  .lightbox-nav {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    transform: translateY(-50%);
+  }
+
+  .lightbox-nav button {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .lightbox-nav button:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+
+  .lightbox-counter {
+    position: absolute;
+    bottom: -30px;
+    width: 100%;
+    text-align: center;
+    color: white;
   }
 
   .product-info {
@@ -70,9 +220,22 @@
   }
 
   .product-name {
-    font-size: 28px;
+    font-size: 36px;
     color: #333;
-    margin: 0 0 15px;
+    margin: 0 0 20px;
+    font-weight: 700;
+    position: relative;
+    padding-bottom: 15px;
+  }
+
+  .product-name:after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background-color: #ff8c00;
   }
 
   .product-seller {
@@ -105,10 +268,24 @@
   }
 
   .product-price {
-    font-size: 32px;
+    font-size: 38px;
     font-weight: bold;
     color: #ff8c00;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: baseline;
+  }
+
+  .price-label {
+    font-size: 18px;
+    color: #666;
+    margin-right: 10px;
+    font-weight: normal;
+  }
+
+  .price-currency {
+    font-size: 24px;
+    margin-left: 5px;
   }
 
   .product-status {
@@ -130,15 +307,32 @@
   }
 
   .product-description {
-    margin-bottom: 25px;
-    line-height: 1.6;
+    margin-bottom: 30px;
+    line-height: 1.8;
     color: #555;
+    background: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 4px solid #ff8c00;
+  }
+
+  .product-description h2 {
+    font-size: 22px;
+    color: #333;
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-weight: 600;
+  }
+
+  .product-description p {
+    margin: 0;
   }
 
   .product-actions {
     display: flex;
-    gap: 10px;
-    margin-top: 30px;
+    gap: 15px;
+    margin-top: 35px;
+    justify-content: center;
   }
 
   .action-btn {
@@ -156,31 +350,89 @@
   }
 
   .btn-cart {
-    background: #ff8c00;
+    background: linear-gradient(135deg, #ff8c00 0%, #e67e00 100%);
     color: white;
     flex-grow: 1;
-  }
-
-  .btn-cart:hover {
-    background: #e67e00;
-  }
-
-  .btn-favorite {
-    background: #f8f8f8;
-    color: #ff8c00;
-    width: 50px;
+    padding: 15px 28px;
+    font-size: 18px;
+    box-shadow: 0 4px 15px rgba(255, 140, 0, 0.3);
+    transition: all 0.3s ease;
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 10px;
+    position: relative;
+    overflow: hidden;
   }
 
-  .btn-favorite:hover {
-    background: #ffe8d0;
+  .btn-cart:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.2);
+    transition: transform 0.5s ease;
   }
 
-  .added-to-favorite {
+  .btn-cart:hover:before {
+    transform: translateX(100%);
+  }
+
+  .btn-cart:hover {
+    background: linear-gradient(135deg, #e67e00 0%, #ff8c00 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(255, 140, 0, 0.4);
+  }
+
+  .btn-cart i {
+    font-size: 20px;
+  }
+
+  .btn-favorite {
+    background: #fff;
     color: #ff8c00;
-    background: #ffe8d0;
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    border: 2px solid #ff8c00;
+    position: relative;
+    padding: 0;
+  }
+
+  .btn-favorite .fav-icon {
+    width: 35px;
+    height: 35px;
+    display: block;
+    margin: 0 auto;
+    transition: transform 0.2s;
+  }
+
+  .btn-favorite.added-to-favorite .fav-heart {
+    fill: #ff8c00 !important;
+    animation: fav-pop 0.3s;
+  }
+
+  .btn-favorite:not(.added-to-favorite) .fav-heart {
+    fill: #fff !important;
+  }
+
+  @keyframes fav-pop {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.25);
+    }
+    100% {
+      transform: scale(1);
+    }
   }
 
   .product-meta {
@@ -298,10 +550,113 @@
       grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     }
   }
-</style>
-{% endblock %}
 
-{% block content %}
+  .similar-products-section,
+  .recommendations-section {
+    margin: 60px 0;
+    padding: 20px 0;
+  }
+
+  .section-title {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+    position: relative;
+    padding-bottom: 10px;
+  }
+
+  .section-title:after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background-color: #ff8c00;
+  }
+
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+  }
+
+  .product-card {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+
+  .product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  }
+
+  .product-link {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .product-image {
+    height: 200px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s;
+  }
+
+  .product-card:hover .product-image img {
+    transform: scale(1.05);
+  }
+
+  .no-image {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f5f5f5;
+    color: #999;
+  }
+
+  .product-info {
+    padding: 15px;
+  }
+
+  .product-title {
+    font-size: 16px;
+    margin: 0 0 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .product-price {
+    font-weight: bold;
+    color: #ff8c00;
+    font-size: 18px;
+  }
+
+  @media (max-width: 768px) {
+    .products-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .products-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+{% endblock %} {% block content %}
 <div class="product-container">
   <div class="product-breadcrumbs">
     <a href="{% url 'home' %}">Главная</a> &gt;
@@ -311,29 +666,71 @@
 
   <div class="product-details">
     <div class="product-gallery">
-      {% if product.image_main %}
-      <img
-        src="{{ product.image_main.url }}"
-        alt="{{ product.name }}"
-        class="main-image"
-        id="mainImage"
-      />
+      {% if product.images.exists %}
+      <div class="gallery-main">
+        <img
+          src="{{ product.main_image.url }}"
+          alt="{{ product.name }}"
+          id="gallery-main-img"
+        />
+        <button class="fullscreen-btn" id="fullscreen-btn" title="Увеличить">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M15 3h6v6h-2V5h-4V3zM3 3h6v2H5v4H3V3zm12 18h6v-6h-2v4h-4v2zM3 21h6v-2H5v-4H3v6z"
+              fill="#333"
+            />
+          </svg>
+        </button>
+      </div>
+      <div class="gallery-thumbnails">
+        {% for image in product.images.all %}
+        <div
+          class="gallery-thumbnail {% if image.is_main %}active{% endif %}"
+          data-src="{{ image.image.url }}"
+        >
+          <img
+            src="{{ image.image.url }}"
+            alt="{{ product.name }} - изображение {{ forloop.counter }}"
+          />
+        </div>
+        {% endfor %}
+      </div>
       {% else %}
-      <div
-        class="main-image"
-        style="background-color: #eee; display: flex; align-items: center; justify-content: center;"
-      >
-        <span>Нет фото</span>
+      <div class="no-images-placeholder">
+        <svg
+          width="64"
+          height="64"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"
+            fill="#ddd"
+          />
+        </svg>
+        <p>Изображения отсутствуют</p>
       </div>
       {% endif %}
-      {% if product.image_optional %}
-      <img
-        src="{{ product.image_optional.url }}"
-        alt="{{ product.name }}"
-        class="optional-image"
-        id="optionalImage"
-      />
-      {% endif %}
+    </div>
+
+    <!-- Модальное окно для полноэкранного просмотра -->
+    <div class="lightbox" id="lightbox">
+      <div class="lightbox-content">
+        <img src="" alt="" class="lightbox-img" id="lightbox-img" />
+        <button class="lightbox-close" id="lightbox-close">&times;</button>
+        <div class="lightbox-nav">
+          <button id="lightbox-prev">&lt;</button>
+          <button id="lightbox-next">&gt;</button>
+        </div>
+        <div class="lightbox-counter" id="lightbox-counter"></div>
+      </div>
     </div>
 
     <div class="product-info">
@@ -349,57 +746,359 @@
         {% else %}
         <div
           class="seller-avatar"
-          style="background-color: #ddd; display: flex; align-items: center; justify-content: center;"
+          style="
+            background-color: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          "
         >
-          <span Нет фото</span>
+          <span>Нет фото</span>
+        </div>
+        {% endif %}
+        <div class="seller-name">
+          Продавец:
+          <a href="{% url 'seller_profile' product.seller.id %}"
+            >{{ product.seller.full_name }}</a
+          >
+        </div>
+      </div>
+
+      <div class="product-price">
+        <span class="price-label">Цена:</span>
+        <span class="price-value">{{ product.price }}</span>
+        <span class="price-currency">₽</span>
+      </div>
+
+      <div
+        class="product-status {% if product.is_active %}status-active{% else %}status-inactive{% endif %}"
+      >
+        {% if product.is_active %}Активен{% else %}Неактивен{% endif %}
+      </div>
+
+      <div class="product-description">
+        <h2>Описание</h2>
+        <p>{{ product.description|safe }}</p>
+      </div>
+
+      <div class="product-actions">
+        <button
+          class="action-btn btn-cart"
+          data-product-id="{{ product.id }}"
+          onclick="addToCart({{ product.id }})"
+        >
+          <i class="fas fa-shopping-cart"></i>
+          Добавить в корзину
+        </button>
+        <button
+          class="action-btn btn-favorite {% if product.id in user_favorites %}added-to-favorite{% endif %}"
+          data-product-id="{{ product.id }}"
+          onclick="toggleFavorite({{ product.id }})"
+          title="{% if product.id in user_favorites %}Удалить из избранного{% else %}Добавить в избранное{% endif %}"
+        >
+          <svg
+            class="fav-icon"
+            width="35"
+            height="35"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              class="fav-heart"
+              d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+              fill="{% if product.id in user_favorites %}#ff8c00{% else %}#fff{% endif %}"
+              stroke="#ff8c00"
+              stroke-width="2"
+            />
+          </svg>
+        </button>
+      </div>
+
+      <div class="product-meta">
+        <span>Дата создания: {{ product.created_at|date:"d.m.Y" }}</span>
+      </div>
+    </div>
+  </div>
+  <div class="related-products">
+    <h2 class="related-title">Похожие товары</h2>
+    {% include 'html/components/product_grid.html' with
+    products=similar_products show_seller=False show_rating=True
+    show_discount=True grid_class="compact" empty_title="Похожих товаров не
+    найдено" empty_message="В данный момент нет товаров, похожих на этот"
+    empty_action_url="/catalog/" empty_action_text="Перейти в каталог" %}
+  </div>
+
+  <!-- Персональные рекомендации -->
+  {% if recommended_products %}
+  <div class="recommendations-section">
+    <div class="container">
+      <h2 class="section-title">Рекомендуем вам</h2>
+      <div class="products-grid">
+        {% for rec in recommended_products %}
+        <div class="product-card">
+          <a href="{% url 'product_detail' rec.id %}" class="product-link">
+            <div class="product-image">
+              {% if rec.main_image %}
+              <img
+                src="{{ rec.main_image.url }}"
+                alt="{{ rec.name }}"
+                loading="lazy"
+              />
+              {% else %}
+              <div class="no-image">Нет изображения</div>
+              {% endif %}
             </div>
-            {% endif %}
-            <div class="seller-name">
-            Продавец: <a href="{% url 'seller_profile' product.seller.id %}">{{ product.seller.full_name }}</a>
+            <div class="product-info">
+              <h3 class="product-title">{{ rec.name }}</h3>
+              <div class="product-price">{{ rec.price }} ₽</div>
             </div>
-            </div>  <div class="product-price">{{ product.price }} ₽</div>
-
- <div class="product-status {% if product.is_active %}status-active{% else %}status-inactive{% endif %}">
-  {% if product.is_active %}Активен{% else %}Неактивен{% endif %}
+          </a>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  {% endif %}
 </div>
+{% endblock %} {% block extra_js %}
+<script>
+  // Получаем CSRF-токен для запросов
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
 
+  // Добавление товара в корзину
+  function addToCart(productId) {
+    // Проверяем авторизацию - если пользователь не авторизован,
+    // используем обычную форму для редиректа
+    {% if user.is_authenticated %}
+      fetch('{% url "cart_ajax" %}', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({
+          product_id: productId,
+          quantity: 1,
+          operation: 'add'
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          // Визуальный фидбек
+          const cartBtn = document.querySelector('.btn-cart');
+          cartBtn.classList.add('added-to-cart');
 
-  <div class="product-description">
-    <h2>Описание</h2>
-    <p>{{ product.description|safe }}</p>
-  </div>
+          // Временно меняем текст кнопки
+          const originalText = cartBtn.textContent;
+          cartBtn.textContent = 'Добавлено ✓';
 
-  <div class="product-actions">
-    <button class="action-btn btn-cart" onclick="addToCart()">Добавить в корзину</button>
-    <button
-      class="action-btn btn-favorite {% if product in user_favorites %}added-to-favorite{% endif %}"
-      onclick="addToFavorites()"
-    >
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path
-          d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
-          fill="#ff8c00"
-        />
-      </svg>
-    </button>
-  </div>
+          // Через 2 секунды возвращаем обратно
+          setTimeout(() => {
+            cartBtn.textContent = originalText;
+            cartBtn.classList.remove('added-to-cart');
+          }, 2000);
 
-  <div class="product-meta">
-    <span>Дата создания: {{ product.created_at|date:"d.m.Y" }}</span>
-  </div>
-</div>
-</div> <div class="related-products"> <h2 class="related-title">Похожие товары</h2> {% include 'html/components/product_grid.html' with 
-  products=related_products 
-  show_seller=False
-  show_rating=True
-  show_discount=True
-  grid_class="compact"
-  empty_title="Похожих товаров не найдено"
-  empty_message="В данный момент нет товаров, похожих на этот"
-  empty_action_url="/catalog/"
-  empty_action_text="Перейти в каталог"
-%} </div> {% endblock %}
-{% block extra_js %}
+          // Обновляем счетчик корзины в шапке, если он есть
+          const cartCounter = document.querySelector('.cart-counter');
+          if (cartCounter) {
+            cartCounter.textContent = data.cart_count;
+            cartCounter.style.display = 'block';
+          }
+        } else {
+          alert('Ошибка: ' + data.error);
+        }
+      })
+      .catch(error => {
+        console.error('Ошибка:', error);
+      });
+    {% else %}
+      // Для неавторизованных используем обычное переключение без AJAX
+      window.location.href = '{% url "add_to_cart" product.id %}';
+    {% endif %}
+  }
 
-<script> function addToCart() { alert("Товар добавлен в корзину!"); } function addToFavorites() { alert("Товар добавлен в избранное!"); const favoriteBtn = document.querySelector(".btn-favorite"); favoriteBtn.classList.toggle("added-to-favorite"); } </script>
+  // Переключение товара в избранное
+  function toggleFavorite(productId) {
+    // Для авторизованных пользователей используем AJAX
+    {% if user.is_authenticated %}
+      fetch('{% url "toggle_favorite" %}', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({
+          product_id: productId
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          // Переключаем класс для визуального эффекта
+          const favoriteBtn = document.querySelector('.btn-favorite');
+          favoriteBtn.classList.toggle('added-to-favorite');
+
+          // Обновляем счетчик избранного в шапке, если он есть
+          const favCounter = document.querySelector('.favorites-counter');
+          if (favCounter) {
+            favCounter.textContent = data.favorites_count;
+            favCounter.style.display = data.favorites_count > 0 ? 'block' : 'none';
+          }
+        } else {
+          alert('Ошибка: ' + data.error);
+        }
+      })
+      .catch(error => {
+        console.error('Ошибка:', error);
+      });
+    {% else %}
+      // Для неавторизованных используем обычное переключение без AJAX
+      window.location.href = '{% url "add_to_wishlist" product.id %}';
+    {% endif %}
+  }
+</script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Инициализация галереи изображений
+    const galleryMainImg = document.getElementById("gallery-main-img");
+    const thumbnails = document.querySelectorAll(".gallery-thumbnail");
+    const fullscreenBtn = document.getElementById("fullscreen-btn");
+    const lightbox = document.getElementById("lightbox");
+    const lightboxImg = document.getElementById("lightbox-img");
+    const lightboxClose = document.getElementById("lightbox-close");
+    const lightboxPrev = document.getElementById("lightbox-prev");
+    const lightboxNext = document.getElementById("lightbox-next");
+    const lightboxCounter = document.getElementById("lightbox-counter");
+
+    let currentIndex = 0;
+    const imageUrls = [];
+
+    // Собираем все URL изображений
+    thumbnails.forEach((thumbnail, index) => {
+      const imgUrl = thumbnail.getAttribute("data-src");
+      imageUrls.push(imgUrl);
+
+      // Обработчик клика по миниатюре
+      thumbnail.addEventListener("click", function () {
+        // Обновляем основное изображение
+        galleryMainImg.src = imgUrl;
+        // Устанавливаем текущий индекс
+        currentIndex = index;
+
+        // Обновляем активную миниатюру
+        thumbnails.forEach((t) => t.classList.remove("active"));
+        thumbnail.classList.add("active");
+      });
+    });
+
+    // Функция обновления изображения в лайтбоксе
+    function updateLightbox() {
+      if (imageUrls.length === 0) return;
+
+      lightboxImg.src = imageUrls[currentIndex];
+      lightboxCounter.textContent = `${currentIndex + 1} / ${imageUrls.length}`;
+
+      // Обновляем активную миниатюру
+      thumbnails.forEach((t, i) => {
+        if (i === currentIndex) {
+          t.classList.add("active");
+        } else {
+          t.classList.remove("active");
+        }
+      });
+    }
+
+    // Обработчик клика по кнопке полноэкранного режима
+    if (fullscreenBtn) {
+      fullscreenBtn.addEventListener("click", function () {
+        lightbox.style.display = "flex";
+        updateLightbox();
+      });
+    }
+
+    // Обработчик закрытия лайтбокса
+    if (lightboxClose) {
+      lightboxClose.addEventListener("click", function () {
+        lightbox.style.display = "none";
+      });
+    }
+
+    // Перелистывание вперед
+    if (lightboxNext) {
+      lightboxNext.addEventListener("click", function () {
+        if (imageUrls.length === 0) return;
+
+        currentIndex = (currentIndex + 1) % imageUrls.length;
+        updateLightbox();
+      });
+    }
+
+    // Перелистывание назад
+    if (lightboxPrev) {
+      lightboxPrev.addEventListener("click", function () {
+        if (imageUrls.length === 0) return;
+
+        currentIndex = (currentIndex - 1 + imageUrls.length) % imageUrls.length;
+        updateLightbox();
+      });
+    }
+
+    // Закрытие по Escape
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && lightbox.style.display === "flex") {
+        lightbox.style.display = "none";
+      }
+    });
+
+    // Перелистывание стрелками
+    document.addEventListener("keydown", function (e) {
+      if (lightbox.style.display !== "flex") return;
+
+      if (e.key === "ArrowRight") {
+        currentIndex = (currentIndex + 1) % imageUrls.length;
+        updateLightbox();
+      } else if (e.key === "ArrowLeft") {
+        currentIndex = (currentIndex - 1 + imageUrls.length) % imageUrls.length;
+        updateLightbox();
+      }
+    });
+
+    // Клик по основному изображению также открывает лайтбокс
+    if (galleryMainImg) {
+      galleryMainImg.addEventListener("click", function () {
+        lightbox.style.display = "flex";
+        updateLightbox();
+      });
+    }
+
+    // Анимация появления галереи
+    const gallery = document.querySelector(".product-gallery");
+    if (gallery) {
+      gallery.style.opacity = "0";
+      gallery.style.transform = "translateY(20px)";
+
+      setTimeout(() => {
+        gallery.style.transition = "opacity 0.5s ease, transform 0.5s ease";
+        gallery.style.opacity = "1";
+        gallery.style.transform = "translateY(0)";
+      }, 100);
+    }
+  });
+</script>
 {% endblock %}

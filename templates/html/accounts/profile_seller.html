@@ -370,6 +370,132 @@
     margin-top: 30px;
   }
 
+  /* Стили для загрузки фотографий */
+  .photos-container {
+    margin-top: 20px;
+  }
+
+  .photo-uploads {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 15px;
+  }
+
+  .photo-item {
+    width: 120px;
+    height: 120px;
+    border: 2px dashed #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .photo-item:hover {
+    border-color: #ff8c00;
+  }
+
+  .photo-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .photo-item input[type="file"] {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .photo-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    color: #999;
+    font-size: 12px;
+    text-align: center;
+  }
+
+  .photo-placeholder i {
+    font-size: 24px;
+    margin-bottom: 5px;
+  }
+
+  .photo-label {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    font-size: 12px;
+    padding: 3px 0;
+    text-align: center;
+  }
+
+  .photo-remove {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 20px;
+    height: 20px;
+    background: rgba(255, 0, 0, 0.7);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 12px;
+    z-index: 2;
+  }
+
+  .profile-edit-section {
+    background: white;
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+  }
+
+  .profile-edit-title {
+    font-size: 20px;
+    color: #333;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+  }
+
+  /* Стили для редактирования профиля */
+  .edit-profile {
+    margin-top: 20px;
+  }
+
+  .edit-profile-btn {
+    display: inline-block;
+    padding: 8px 15px;
+    background: #f1f1f1;
+    color: #333;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 14px;
+    transition: all 0.3s;
+    margin-top: 10px;
+  }
+
+  .edit-profile-btn:hover {
+    background: #e1e1e1;
+  }
+
   @media (max-width: 768px) {
     .profile-header {
       flex-direction: column;
@@ -388,6 +514,306 @@
     .product-list {
       grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     }
+  }
+
+  /* Стили для галереи изображений продукта */
+  .product-images-gallery {
+    margin-top: 15px;
+  }
+
+  .image-preview-large {
+    width: 100%;
+    height: 400px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    overflow: hidden;
+    background-color: #f5f5f5;
+    position: relative;
+    border: 2px solid #ddd;
+  }
+
+  .image-preview-large img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .image-preview-large .no-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    color: #999;
+    font-size: 18px;
+  }
+
+  .image-upload-container {
+    margin-bottom: 20px;
+  }
+
+  .image-upload-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #555;
+  }
+
+  .image-upload-info {
+    font-size: 13px;
+    color: #666;
+    margin-top: 5px;
+  }
+
+  .image-upload-button {
+    display: inline-block;
+    background: #f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 12px 20px;
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .image-upload-button:hover {
+    background: #e5e5e5;
+  }
+
+  .image-upload-button i {
+    margin-right: 8px;
+  }
+
+  .image-thumbnails {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 15px;
+  }
+
+  .image-thumbnail {
+    width: 100px;
+    height: 100px;
+    border-radius: 5px;
+    border: 2px solid #ddd;
+    overflow: hidden;
+    position: relative;
+    cursor: grab;
+    transition: all 0.3s;
+  }
+
+  .image-thumbnail:hover {
+    border-color: #ff8c00;
+  }
+
+  .image-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .image-thumbnail .image-order {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    background: #ff8c00;
+    color: white;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+  }
+
+  .image-thumbnail .image-remove {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: rgba(255, 0, 0, 0.7);
+    color: white;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 12px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .image-thumbnail:hover .image-remove {
+    opacity: 1;
+  }
+
+  .image-thumbnail.is-main {
+    border-color: #ff8c00;
+  }
+
+  .hidden-file-input {
+    display: none;
+  }
+
+  .dragging {
+    opacity: 0.7;
+    transform: scale(1.05);
+    z-index: 10;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  }
+
+  .product-form {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .main-image-badge {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    background: #ff8c00;
+    color: white;
+    font-size: 10px;
+    padding: 2px.6px;
+    border-radius: 3px;
+    z-index: 2;
+  }
+
+  /* Стили для анимаций галереи изображений */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes scaleIn {
+    from {
+      transform: scale(0.8);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideInUp {
+    from {
+      transform: translateY(20px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .appear-animation {
+    animation: fadeIn 0.5s ease;
+  }
+
+  .loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255, 140, 0, 0.3);
+    border-radius: 50%;
+    border-top-color: #ff8c00;
+    animation: spin 1s ease-in-out infinite;
+    margin: 0 auto 15px;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .drag-area.active {
+    border-color: #ff8c00;
+    background: rgba(255, 140, 0, 0.05);
+  }
+
+  /* Адаптивные стили для мобильных устройств */
+
+  /* Стили для эффекта фотопленки */
+  .photo-film-effect {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    padding: 10px;
+    background-color: #fff;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+  }
+
+  .photo-film-effect::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 10px;
+    background: repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 12px,
+      #333 12px,
+      #333 15px
+    );
+  }
+
+  .photo-film-effect::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 10px;
+    background: repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 12px,
+      #333 12px,
+      #333 15px
+    );
+  }
+
+  /* Улучшенные стили для миниатюр */
+  .dragging {
+    opacity: 0.8 !important;
+    transform: rotate(2deg) scale(1.05) !important;
+    z-index: 999 !important;
+  }
+
+  .image-thumbnail {
+    transition: all 0.3s ease;
+    cursor: move;
+  }
+
+  .image-thumbnail:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2) !important;
+  }
+
+  /* Стили для превью и контейнера изображений */
+  #selected-images-container,
+  #thumbnails-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 15px;
+    min-height: 120px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    border: 1px dashed #ccc;
   }
 </style>
 {% endblock %} {% block content %}
@@ -413,201 +839,128 @@
           <span class="stat-label">Активно</span>
         </div>
       </div>
+
+      <button class="edit-profile-btn" id="edit-profile-btn">
+        Редактировать профиль
+      </button>
     </div>
+  </div>
+
+  <!-- Секция для редактирования профиля -->
+  <div
+    class="profile-edit-section"
+    id="profile-edit-section"
+    style="display: none"
+  >
+    <h2 class="profile-edit-title">Редактирование профиля</h2>
+
+    <form
+      method="post"
+      action="{% url 'profile' %}"
+      enctype="multipart/form-data"
+      id="profile-form"
+    >
+      {% csrf_token %}
+      <input type="hidden" name="action" value="update_profile" />
+
+      <div class="form-group">
+        <label for="full_name" class="form-label">Ваше имя</label>
+        <input
+          type="text"
+          id="full_name"
+          name="full_name"
+          class="form-control"
+          value="{{ user.full_name }}"
+          required
+        />
+      </div>
+
+      <h3 class="photos-title">Фотографии профиля</h3>
+      <div class="photo-uploads">
+        <!-- Основное фото -->
+        <div class="photo-item" id="photo-item-main">
+          {% if user.avatar %}
+          <img
+            src="{{ user.avatar.url }}"
+            alt="Основное фото"
+            id="preview-avatar"
+          />
+          <div class="photo-label">Основное</div>
+          <div class="photo-remove" data-photo="avatar">×</div>
+          {% else %}
+          <div class="photo-placeholder">
+            <i>+</i>
+            <span>Основное фото</span>
+          </div>
+          {% endif %}
+          <input type="file" name="avatar" id="avatar-input" accept="image/*" />
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="cancel-btn" id="cancel-edit-btn">
+          Отмена
+        </button>
+        <button type="submit" class="submit-btn">Сохранить изменения</button>
+      </div>
+    </form>
   </div>
 
   <div class="tab-navigation">
     <button class="tab-button active" data-tab="products">Мои товары</button>
-    <button class="tab-button" data-tab="new-product">Добавить товар</button>
+    <button class="tab-button" data-tab="new-product">
+      <a href="{% url 'add_product' %}"> Добавить товар</a>
+    </button>
   </div>
 
   <div id="products" class="tab-content active">
-    {% if products %}
-    <div class="product-list">
-      {% for product in products %}
-      <div class="product-card">
-        <div
-          class="product-status {% if product.is_active %}status-active{% else %}status-inactive{% endif %}"
-        >
-          {% if product.is_active %}Активен{% else %}Неактивен{% endif %}
-        </div>
-        {% if product.image_main %}
-        <img
-          src="{{ product.image_main.url }}"
-          alt="{{ product.name }}"
-          class="product-image"
-        />
-        {% else %}
-        <div
-          class="product-image"
-          style="
-            background-color: #eee;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-          "
-        >
-          <span>Нет фото</span>
-        </div>
-        {% endif %}
-        <div class="product-info">
-          <h3 class="product-name">{{ product.name }}</h3>
-          <div class="product-price">{{ product.price }} KZT</div>
-{#          <div class="product-actions">#}
-{#            <a#}
-{#              href="{% url 'edit_product' product.id %}"#}
-{#              class="product-btn btn-edit"#}
-{#              >Редактировать</a#}
-{#            >#}
-{#            <button#}
-{#              class="product-btn btn-delete"#}
-{#              data-product-id="{{ product.id }}"#}
-{#            >#}
-{#              ×#}
-{#            </button>#}
-{#          </div>#}
-          <label class="toggle-status">
-            <input
-              type="checkbox"
-              class="status-toggle"
-              data-product-id="{{ product.id }}"
-              {%
-              if
-              product.is_active
-              %}checked{%
-              endif
-              %}
-            />
-            Товар активен
-          </label>
-        </div>
-      </div>
-      {% endfor %}
-    </div>
-    {% else %}
-    <div class="empty-products">
-      <h3>У вас пока нет товаров</h3>
-      <p>Добавьте свой первый товар, чтобы начать продажи</p>
-      <button class="add-product-btn" data-tab="new-product">
-        Добавить товар
-      </button>
-    </div>
-    {% endif %}
+    {% include 'html/components/product_grid.html' with products=products show_seller=False show_rating=False is_seller_view=True grid_class="compact" %}
   </div>
-
-  <div id="new-product" class="tab-content">
-    <form
-      method="post"
-      action="{% url 'add_product' %}"
-      enctype="multipart/form-data"
-      class="product-form"
-    >
-      {% csrf_token %}
-      <h2 class="form-title">Добавление нового товара</h2>
-
-      <div class="form-group">
-        <label for="product-name" class="form-label">Название товара*</label>
-        <input
-          type="text"
-          id="product-name"
-          name="name"
-          class="form-control"
-          required
-        />
-      </div>
-
-      <div class="form-group">
-        <label for="product-description" class="form-label"
-          >Описание товара</label
-        >
-        <textarea
-          id="product-description"
-          name="description"
-          class="form-control"
-          rows="4"
-        ></textarea>
-      </div>
-
-      <div class="form-group">
-        <label for="product-price" class="form-label">Цена*</label>
-        <input
-          type="number"
-          id="product-price"
-          name="price"
-          step="0.01"
-          class="form-control"
-          required
-        />
-        <small class="form-text">Укажите цену в KZT</small>
-      </div>
-
-      <div class="form-group">
-        <label for="product-image-main" class="form-label"
-          >Основное изображение*</label
-        >
-        <input
-          type="file"
-          id="product-image-main"
-          name="image_main"
-          class="form-control"
-          accept="image/*"
-          required
-        />
-        <div id="main-image-preview" class="image-preview">
-          Предпросмотр изображения
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label for="product-image-optional" class="form-label"
-          >Дополнительное изображение</label
-        >
-        <input
-          type="file"
-          id="product-image-optional"
-          name="image_optional"
-          class="form-control"
-          accept="image/*"
-        />
-        <div id="optional-image-preview" class="image-preview">
-          Предпросмотр изображения
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label class="toggle-status">
-          <input type="checkbox" name="is_active" checked />
-          Сделать товар активным сразу после добавления
-        </label>
-      </div>
-
-      <div class="form-actions">
-        <button type="button" class="cancel-btn" data-tab="products">
-          Отмена
-        </button>
-        <button type="submit" class="submit-btn">Добавить товар</button>
-      </div>
-    </form>
-      {% if form.errors %}
-  <div class="form-errors">
-    <ul>
-      {% for field in form %}
-        {% for error in field.errors %}
-          <li>{{ error }}</li>
-        {% endfor %}
-      {% endfor %}
-    </ul>
-  </div>
-{% endif %}
-  </div>
+  <div id="new-product" class="tab-content"></div>
 </div>
 {% endblock %} {% block extra_js %}
+<!-- Подключение библиотеки SortableJS -->
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     // Переключение вкладок
     const tabButtons = document.querySelectorAll(".tab-button");
     const tabContents = document.querySelectorAll(".tab-content");
     const addProductBtn = document.querySelector(".add-product-btn");
+
+    // Добавляем обработчики для кнопок редактирования профиля
+    const editProfileBtn = document.getElementById("edit-profile-btn");
+    const profileEditSection = document.getElementById("profile-edit-section");
+    const cancelEditBtn = document.getElementById("cancel-edit-btn");
+
+    if (editProfileBtn && profileEditSection && cancelEditBtn) {
+      // Показываем секцию редактирования при нажатии на кнопку
+      editProfileBtn.addEventListener("click", function () {
+        profileEditSection.style.display = "block";
+        // Плавная анимация для отображения
+        profileEditSection.style.opacity = "0";
+        profileEditSection.style.transform = "translateY(-20px)";
+
+        setTimeout(() => {
+          profileEditSection.style.transition =
+            "opacity 0.3s ease, transform 0.3s ease";
+          profileEditSection.style.opacity = "1";
+          profileEditSection.style.transform = "translateY(0)";
+        }, 10);
+      });
+
+      // Скрываем секцию редактирования при нажатии на "Отмена"
+      cancelEditBtn.addEventListener("click", function () {
+        profileEditSection.style.transition =
+          "opacity 0.3s ease, transform 0.3s ease";
+        profileEditSection.style.opacity = "0";
+        profileEditSection.style.transform = "translateY(-20px)";
+
+        setTimeout(() => {
+          profileEditSection.style.display = "none";
+        }, 300);
+      });
+    }
 
     function switchTab(tabId) {
       tabButtons.forEach((button) => {
@@ -639,38 +992,558 @@
       });
     }
 
-    // Предпросмотр изображений
-    const mainImageInput = document.getElementById("product-image-main");
-    const optionalImageInput = document.getElementById(
-      "product-image-optional"
-    );
-    const mainImagePreview = document.getElementById("main-image-preview");
-    const optionalImagePreview = document.getElementById(
-      "optional-image-preview"
-    );
+    // Обработка загрузки фотографий продукта
+    const productImages = document.getElementById("product-images");
+    const mainPreview = document.getElementById("main-preview");
+    const thumbnailsContainer = document.getElementById("thumbnails-container");
+    const noImagePlaceholder = document.getElementById("no-image-placeholder");
 
-    function setupImagePreview(input, preview) {
-      if (!input || !preview) return;
+    // Массив для хранения выбранных файлов
+    let selectedFiles = [];
 
-      input.addEventListener("change", function () {
-        if (this.files && this.files[0]) {
-          const reader = new FileReader();
+    if (productImages) {
+      productImages.addEventListener("change", function (e) {
+        const files = Array.from(e.target.files);
 
-          reader.onload = function (e) {
-            preview.innerHTML = "";
-            preview.style.backgroundImage = `url('${e.target.result}')`;
-          };
-
-          reader.readAsDataURL(this.files[0]);
-        } else {
-          preview.innerHTML = "Предпросмотр изображения";
-          preview.style.backgroundImage = "none";
+        // Проверяем количество файлов
+        if (files.length > 5) {
+          alert("Можно загрузить максимум 5 фотографий!");
+          this.value = "";
+          return;
         }
+
+        // Сохраняем файлы
+        selectedFiles = files;
+
+        // Очищаем контейнеры
+        thumbnailsContainer.innerHTML = "";
+
+        // Показываем первое изображение в главном предпросмотре
+        if (files.length > 0) {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            mainPreview.innerHTML = `<img src="${e.target.result}" alt="Предпросмотр" style="max-width: 100%; max-height: 100%; object-fit: contain;">`;
+          };
+          reader.readAsDataURL(files[0]);
+        } else {
+          mainPreview.innerHTML =
+            '<span id="no-image-placeholder">Выберите фотографии</span>';
+        }
+
+        // Создаем миниатюры для всех изображений
+        files.forEach((file, index) => {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            const imageItem = document.createElement("div");
+            imageItem.className = "image-thumbnail";
+            imageItem.style.width = "100px";
+            imageItem.style.height = "100px";
+            imageItem.style.position = "relative";
+            imageItem.style.overflow = "hidden";
+            imageItem.style.borderRadius = "5px";
+            imageItem.style.border =
+              index === 0 ? "2px solid #ff8c00" : "2px solid #ddd";
+            imageItem.style.cursor = "pointer";
+            imageItem.dataset.index = index;
+
+            imageItem.innerHTML = `
+              <img src="${e.target.result}" alt="Миниатюра ${
+              index + 1
+            }" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease;">
+              <div style="position: absolute; top: 5px; left: 5px; background: ${
+                index === 0 ? "#ff8c00" : "#999"
+              }; color: white; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px;">${
+              index + 1
+            }</div>
+              <button type="button" style="position: absolute; top: 5px; right: 5px; padding: 0; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; background: rgba(255,0,0,0.7); border-radius: 50%; border: none; color: white; font-size: 12px; cursor: pointer; opacity: 0; transition: opacity 0.3s;">×</button>
+            `;
+
+            // Добавляем анимацию при наведении
+            imageItem.addEventListener("mouseenter", function () {
+              this.style.transform = "translateY(-5px)";
+              this.querySelector("img").style.transform = "scale(1.05)";
+              this.querySelector("button").style.opacity = "1";
+            });
+
+            imageItem.addEventListener("mouseleave", function () {
+              this.style.transform = "translateY(0)";
+              this.querySelector("img").style.transform = "scale(1)";
+              this.querySelector("button").style.opacity = "0";
+            });
+
+            // Клик на миниатюру для отображения в главном предпросмотре
+            imageItem.addEventListener("click", function () {
+              if (mainPreview) {
+                // Обновляем все миниатюры, удаляя выделение
+                const allItems =
+                  selectedImagesContainer.querySelectorAll(".image-thumbnail");
+                allItems.forEach((itm) => {
+                  itm.style.boxShadow = "none";
+                  itm.style.transform = "translateY(0)";
+                });
+
+                // Применяем выделение к текущей миниатюре
+                this.style.boxShadow = "0 5px 15px rgba(255, 140, 0, 0.5)";
+                this.style.transform = "translateY(-5px)";
+
+                // Используем функцию для обновления основного просмотра
+                const fileIndex = parseInt(this.dataset.index);
+                updateMainPreview(selectedFiles[fileIndex]);
+              }
+            });
+
+            // Удаление изображения
+            const deleteBtn = imageItem.querySelector("button");
+            deleteBtn.addEventListener("click", function (e) {
+              e.stopPropagation(); // Предотвращаем сработку клика по родителю
+
+              // Удаляем выбранный файл
+              selectedFiles = selectedFiles.filter((_, i) => i !== index);
+
+              // Анимация удаления
+              imageItem.style.transition = "all 0.3s ease";
+              imageItem.style.transform = "scale(0.8)";
+              imageItem.style.opacity = "0";
+
+              setTimeout(() => {
+                selectedImagesContainer.removeChild(imageItem);
+
+                // Обновляем счетчик
+                imageCounter.textContent = selectedFiles.length;
+                if (selectedFiles.length === 0) {
+                  imageCounter.style.display = "none";
+                }
+
+                // Получаем все элементы и перенумеровываем их
+                const allItems =
+                  selectedImagesContainer.querySelectorAll("div");
+                allItems.forEach((itm, idx) => {
+                  const counterElement = itm.querySelector("span");
+                  if (counterElement) {
+                    counterElement.textContent = idx + 1;
+                    counterElement.style.background =
+                      idx === 0 ? "#ff8c00" : "#999";
+                  }
+                  // Улучшенная обводка с тенью
+                  itm.style.border =
+                    idx === 0 ? "2px solid #ff8c00" : "2px solid #ddd";
+                  itm.style.boxShadow =
+                    idx === 0
+                      ? "0 4px 10px rgba(255, 140, 0, 0.3)"
+                      : "0 2px 5px rgba(0, 0, 0, 0.1)";
+                  itm.dataset.index = idx;
+                });
+
+                // Обновляем скрытый input
+                updateHiddenInput();
+              }, 300);
+            });
+
+            selectedImagesContainer.appendChild(imageItem);
+          };
+          reader.readAsDataURL(file);
+        });
+
+        // Инициализируем Sortable для миниатюр
+        if (typeof Sortable !== "undefined") {
+          new Sortable(selectedImagesContainer, {
+            animation: 300,
+            ghostClass: "dragging",
+            chosenClass: "image-thumbnail",
+            dragClass: "dragging",
+            delay: 100,
+            delayOnTouchOnly: true,
+            forceFallback: false,
+            fallbackTolerance: 3,
+            onStart: function (evt) {
+              document.body.style.cursor = "grabbing";
+              evt.item.style.zIndex = "1000";
+            },
+            onEnd: function (evt) {
+              document.body.style.cursor = "default";
+              evt.item.style.zIndex = "";
+
+              // Переупорядочиваем файлы после перетаскивания
+              const newOrder = [];
+              const items = selectedImagesContainer.querySelectorAll("div");
+
+              // Обновляем порядковые номера и собираем новый порядок файлов
+              items.forEach((item, index) => {
+                const oldIndex = parseInt(item.dataset.index);
+                newOrder[index] = selectedFiles[oldIndex];
+
+                // Обновляем номер и стили
+                const counter = item.querySelector("span");
+                if (counter) {
+                  counter.textContent = index + 1;
+                  counter.style.background = index === 0 ? "#ff8c00" : "#999";
+                }
+
+                // Обновляем стили рамки
+                item.style.border =
+                  index === 0 ? "2px solid #ff8c00" : "2px solid #ddd";
+                item.style.boxShadow =
+                  index === 0
+                    ? "0 4px 10px rgba(255, 140, 0, 0.3)"
+                    : "0 2px 5px rgba(0, 0, 0, 0.1)";
+                item.dataset.index = index;
+              });
+
+              // Обновляем массив файлов
+              selectedFiles = newOrder;
+
+              // Если есть файлы, показываем первое в главном предпросмотре
+              if (selectedFiles.length > 0 && mainPreview) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                  mainPreview.innerHTML = `
+                    <div class="photo-film-effect">
+                      <img src="${e.target.result}" alt="Предпросмотр" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                    </div>
+                  `;
+                };
+                reader.readAsDataURL(selectedFiles[0]);
+              }
+
+              // Обновляем скрытый input
+              updateHiddenInput();
+            },
+          });
+        }
+
+        // Обновляем скрытый input для отправки формы
+        updateHiddenInput();
       });
     }
 
-    setupImagePreview(mainImageInput, mainImagePreview);
-    setupImagePreview(optionalImageInput, optionalImagePreview);
+    // Добавляем функционал drag-and-drop для загрузки изображений
+    const dragArea = document.getElementById("drag-area");
+    const dragInput = document.getElementById("product-images-drag");
+    const uploadProgressBar = document.getElementById("upload-progress-bar");
+    const uploadProgress = document.getElementById("upload-progress");
+    const imageCounter = document.getElementById("image-counter");
+    const selectedImagesContainer = document.getElementById(
+      "selected-images-container"
+    );
+
+    // Массив для хранения выбранных файлов при перетаскивании
+    let selectedDragFiles = [];
+
+    if (dragArea && dragInput) {
+      // Обрабатываем события перетаскивания
+      if (dragArea) {
+        // Анимации при наведении
+        dragArea.addEventListener("mouseenter", function () {
+          this.style.transform = "scale(1.01)";
+          this.style.boxShadow = "0 5px 15px rgba(255, 140, 0, 0.1)";
+        });
+
+        dragArea.addEventListener("mouseleave", function () {
+          this.style.transform = "scale(1)";
+          this.style.boxShadow = "0 3px 10px rgba(0, 0, 0, 0.05)";
+        });
+
+        // События перетаскивания
+        dragArea.addEventListener("dragover", function (e) {
+          e.preventDefault();
+          this.style.borderColor = "#ff8c00";
+          this.style.background = "#fff8f0";
+          this.style.transform = "scale(1.02)";
+          this.classList.add("active");
+        });
+
+        dragArea.addEventListener("dragleave", function () {
+          this.style.borderColor = "#ddd";
+          this.style.background = "#fafafa";
+          this.style.transform = "scale(1)";
+          this.classList.remove("active");
+        });
+
+        dragArea.addEventListener("drop", function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          this.style.borderColor = "#ddd";
+          this.style.background = "#fafafa";
+          this.style.transform = "scale(1)";
+          this.classList.remove("active");
+
+          const dt = e.dataTransfer;
+          const files = dt.files;
+
+          handleFiles(files);
+        });
+
+        // Обработка выбора файлов через клик
+        dragInput.addEventListener("change", handleDragFiles);
+
+        function handleDragFiles(e) {
+          const files = e.target.files;
+          handleFiles(files);
+        }
+
+        function handleFiles(files) {
+          // Проверяем количество файлов
+          if (selectedDragFiles.length + files.length > 5) {
+            alert("Вы можете загрузить максимум 5 фотографий!");
+            return;
+          }
+
+          // Показываем индикатор прогресса
+          uploadProgress.style.display = "block";
+          uploadProgressBar.style.width = "0%";
+
+          // Симулируем загрузку для демонстрации
+          let progress = 0;
+          const interval = setInterval(() => {
+            progress += 5;
+            uploadProgressBar.style.width = `${progress}%`;
+
+            if (progress >= 100) {
+              clearInterval(interval);
+              setTimeout(() => {
+                uploadProgress.style.display = "none";
+                uploadProgressBar.style.width = "0%";
+                processImages(files);
+              }, 300);
+            }
+          }, 50);
+        }
+
+        function processImages(files) {
+          // Показываем счетчик изображений
+          imageCounter.textContent = selectedDragFiles.length + files.length;
+          imageCounter.style.display = "inline-block";
+
+          Array.from(files).forEach((file, index) => {
+            // Проверяем, что это изображение
+            if (!file.type.match("image.*")) {
+              return;
+            }
+
+            // Добавляем файл в массив
+            selectedDragFiles.push(file);
+            const fileIndex = selectedDragFiles.length - 1;
+
+            // Создаем элемент миниатюры с чтением изображения
+            const reader = new FileReader();
+            reader.onload = function (e) {
+              const imageItem = document.createElement("div");
+              imageItem.className = "image-thumbnail";
+              imageItem.style.width = "100px";
+              imageItem.style.height = "100px";
+              imageItem.style.position = "relative";
+              imageItem.style.overflow = "hidden";
+              imageItem.style.borderRadius = "5px";
+              imageItem.style.border =
+                fileIndex === 0 ? "2px solid #ff8c00" : "2px solid #ddd";
+              imageItem.style.boxShadow =
+                fileIndex === 0
+                  ? "0 4px 10px rgba(255, 140, 0, 0.3)"
+                  : "0 2px 5px rgba(0, 0, 0, 0.1)";
+              imageItem.style.cursor = "pointer";
+              imageItem.dataset.index = fileIndex;
+
+              imageItem.innerHTML = `
+                <img src="${e.target.result}" alt="Миниатюра ${
+                index + 1
+              }" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease;">
+                <span style="position: absolute; top: 5px; left: 5px; background: ${
+                  index === 0 ? "#ff8c00" : "#999"
+                }; color: white; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px;">${
+                index + 1
+              }</span>
+                <button type="button" style="position: absolute; top: 5px; right: 5px; padding: 0; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; background: rgba(255,0,0,0.7); border-radius: 50%; border: none; color: white; font-size: 12px; cursor: pointer; opacity: 0; transition: opacity 0.3s;">×</button>
+              `;
+
+              // Добавляем анимацию при наведении
+              imageItem.addEventListener("mouseenter", function () {
+                this.style.transform = "translateY(-5px)";
+                this.querySelector("img").style.transform = "scale(1.05)";
+                this.querySelector("button").style.opacity = "1";
+              });
+
+              imageItem.addEventListener("mouseleave", function () {
+                this.style.transform = "translateY(0)";
+                this.querySelector("img").style.transform = "scale(1)";
+                this.querySelector("button").style.opacity = "0";
+              });
+
+              // Клик на миниатюру для отображения в главном предпросмотре
+              imageItem.addEventListener("click", function () {
+                if (mainPreview) {
+                  // Обновляем все миниатюры, удаляя выделение
+                  const allItems =
+                    selectedImagesContainer.querySelectorAll(
+                      ".image-thumbnail"
+                    );
+                  allItems.forEach((itm) => {
+                    itm.style.boxShadow = "none";
+                    itm.style.transform = "translateY(0)";
+                  });
+
+                  // Применяем выделение к текущей миниатюре
+                  this.style.boxShadow = "0 5px 15px rgba(255, 140, 0, 0.5)";
+                  this.style.transform = "translateY(-5px)";
+
+                  // Используем функцию для обновления основного просмотра
+                  const fileIndex = parseInt(this.dataset.index);
+                  updateMainPreview(selectedDragFiles[fileIndex]);
+                }
+              });
+
+              // Удаление изображения
+              const deleteBtn = imageItem.querySelector("button");
+              deleteBtn.addEventListener("click", function (e) {
+                e.stopPropagation(); // Предотвращаем сработку клика по родителю
+
+                // Удаляем выбранный файл
+                selectedDragFiles = selectedDragFiles.filter(
+                  (_, i) => i !== index
+                );
+
+                // Анимация удаления
+                imageItem.style.transition = "all 0.3s ease";
+                imageItem.style.transform = "scale(0.8)";
+                imageItem.style.opacity = "0";
+
+                setTimeout(() => {
+                  selectedImagesContainer.removeChild(imageItem);
+
+                  // Обновляем счетчик
+                  imageCounter.textContent = selectedDragFiles.length;
+                  if (selectedDragFiles.length === 0) {
+                    imageCounter.style.display = "none";
+                  }
+
+                  // Получаем все элементы и перенумеровываем их
+                  const allItems =
+                    selectedImagesContainer.querySelectorAll("div");
+                  allItems.forEach((itm, idx) => {
+                    const counterElement = itm.querySelector("span");
+                    if (counterElement) {
+                      counterElement.textContent = idx + 1;
+                      counterElement.style.background =
+                        idx === 0 ? "#ff8c00" : "#999";
+                    }
+                    // Улучшенная обводка с тенью
+                    itm.style.border =
+                      idx === 0 ? "2px solid #ff8c00" : "2px solid #ddd";
+                    itm.style.boxShadow =
+                      idx === 0
+                        ? "0 4px 10px rgba(255, 140, 0, 0.3)"
+                        : "0 2px 5px rgba(0, 0, 0, 0.1)";
+                    itm.dataset.index = idx;
+                  });
+
+                  // Обновляем скрытый input
+                  updateHiddenInput();
+                }, 300);
+              });
+
+              selectedImagesContainer.appendChild(imageItem);
+            };
+            reader.readAsDataURL(file);
+          });
+
+          // Инициализируем Sortable для миниатюр
+          if (typeof Sortable !== "undefined") {
+            new Sortable(selectedImagesContainer, {
+              animation: 300,
+              ghostClass: "dragging",
+              chosenClass: "image-thumbnail",
+              dragClass: "dragging",
+              delay: 100,
+              delayOnTouchOnly: true,
+              forceFallback: false,
+              fallbackTolerance: 3,
+              onStart: function (evt) {
+                document.body.style.cursor = "grabbing";
+                evt.item.style.zIndex = "1000";
+              },
+              onEnd: function (evt) {
+                document.body.style.cursor = "default";
+                evt.item.style.zIndex = "";
+
+                // Переупорядочиваем файлы после перетаскивания
+                const newOrder = [];
+                const items = selectedImagesContainer.querySelectorAll("div");
+
+                // Обновляем порядковые номера и собираем новый порядок файлов
+                items.forEach((item, index) => {
+                  const oldIndex = parseInt(item.dataset.index);
+                  newOrder[index] = selectedDragFiles[oldIndex];
+
+                  // Обновляем номер и стили
+                  const counter = item.querySelector("span");
+                  if (counter) {
+                    counter.textContent = index + 1;
+                    counter.style.background = index === 0 ? "#ff8c00" : "#999";
+                  }
+
+                  // Обновляем стили рамки
+                  item.style.border =
+                    index === 0 ? "2px solid #ff8c00" : "2px solid #ddd";
+                  item.style.boxShadow =
+                    index === 0
+                      ? "0 4px 10px rgba(255, 140, 0, 0.3)"
+                      : "0 2px 5px rgba(0, 0, 0, 0.1)";
+                  item.dataset.index = index;
+                });
+
+                // Обновляем массив файлов
+                selectedDragFiles = newOrder;
+
+                // Если есть файлы, показываем первое в главном предпросмотре
+                if (selectedDragFiles.length > 0 && mainPreview) {
+                  const reader = new FileReader();
+                  reader.onload = function (e) {
+                    mainPreview.innerHTML = `
+                      <div class="photo-film-effect">
+                        <img src="${e.target.result}" alt="Предпросмотр" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                      </div>
+                    `;
+                  };
+                  reader.readAsDataURL(selectedDragFiles[0]);
+                }
+
+                // Обновляем скрытый input
+                updateHiddenInput();
+              },
+            });
+          }
+
+          // Обновляем скрытый input для отправки формы
+          updateHiddenInput();
+        }
+
+        // Функция для создания DataTransfer объекта с файлами
+        function updateHiddenInput() {
+          if (selectedDragFiles.length > 0 && productImages) {
+            // Создаем объект для передачи файлов в стандартный input
+            const dataTransfer = new DataTransfer();
+            selectedDragFiles.forEach((file) => {
+              dataTransfer.items.add(file);
+            });
+
+            // Заполняем стандартный input файлами из перетаскивания
+            productImages.files = dataTransfer.files;
+
+            // Запускаем событие изменения для обновления предпросмотра
+            if (mainPreview && selectedDragFiles.length > 0) {
+              const reader = new FileReader();
+              reader.onload = function (e) {
+                mainPreview.innerHTML = `
+                  <div class="photo-film-effect">
+                    <img src="${e.target.result}" alt="Предпросмотр" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                  </div>
+                `;
+              };
+              reader.readAsDataURL(selectedDragFiles[0]);
+            }
+          }
+        }
+      }
+    }
 
     // Изменение статуса товара
     const statusToggles = document.querySelectorAll(".status-toggle");
@@ -758,27 +1631,15 @@
                   document.querySelectorAll(".product-card");
                 if (remainingCards.length === 0) {
                   const productList = document.querySelector(".product-list");
-                  const productsTab = document.getElementById("products");
-
-                  // Если товаров не осталось, показываем сообщение
-                  if (productList) productList.remove();
-
-                  const emptyProducts = document.createElement("div");
-                  emptyProducts.className = "empty-products";
-                  emptyProducts.innerHTML = `
-                                    <h3>У вас пока нет товаров</h3>
-                                    <p>Добавьте свой первый товар, чтобы начать продажи</p>
-                                    <button class="add-product-btn" data-tab="new-product">Добавить товар</button>
-                                `;
-
-                  productsTab.appendChild(emptyProducts);
-
-                  // Добавляем обработчик для новой кнопки
-                  document
-                    .querySelector(".add-product-btn")
-                    .addEventListener("click", () => {
-                      switchTab("new-product");
-                    });
+                  if (productList) {
+                    productList.innerHTML = `
+                      <div class="empty-products">
+                        <h3>У вас пока нет товаров</h3>
+                        <p>Добавьте свой первый товар, чтобы начать продажи</p>
+                        <a href="/add-product/" class="add-product-btn">Добавить товар</a>
+                      </div>
+                    `;
+                  }
                 }
               }, 300);
             } else {
@@ -791,7 +1652,89 @@
       });
     });
 
-    // Получение CSRF токена из cookies
+    // Обработчик кнопок активации/деактивации товаров
+    const toggleStatusButtons = document.querySelectorAll(
+      ".toggle-product-status"
+    );
+
+    toggleStatusButtons.forEach((button) => {
+      button.addEventListener("click", function () {
+        const productId = this.dataset.productId;
+        const currentStatus = this.dataset.status; // 'active' или 'inactive'
+        const isActive = currentStatus === "inactive"; // если был неактивен, то активируем
+
+        fetch("/api/products/toggle-status/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCookie("csrftoken"),
+          },
+          body: JSON.stringify({
+            product_id: productId,
+            is_active: isActive,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              // Обновляем статус визуально
+              const card = button.closest(".product-card");
+              const statusBadge = card.querySelector(".product-status");
+
+              // Обновляем текст и классы кнопки
+              if (isActive) {
+                // Товар стал активным
+                button.textContent = "Деактивировать";
+                button.classList.remove("btn-activate");
+                button.classList.add("btn-deactivate");
+                button.dataset.status = "active";
+
+                // Обновляем статус
+                statusBadge.classList.remove("status-inactive");
+                statusBadge.classList.add("status-active");
+                statusBadge.textContent = "В наличии";
+              } else {
+                // Товар стал неактивным
+                button.textContent = "Активировать";
+                button.classList.remove("btn-deactivate");
+                button.classList.add("btn-activate");
+                button.dataset.status = "inactive";
+
+                // Обновляем статус
+                statusBadge.classList.remove("status-active");
+                statusBadge.classList.add("status-inactive");
+                statusBadge.textContent = "Нет в наличии";
+              }
+
+              // Обновляем статистику активных товаров
+              updateActiveProductsCount(isActive);
+            } else {
+              alert("Ошибка: " + data.error);
+            }
+          })
+          .catch((error) => {
+            console.error("Ошибка:", error);
+          });
+      });
+    });
+
+    // Функция для обновления счетчика активных товаров
+    function updateActiveProductsCount(isAddition) {
+      const activeCountElement = document.querySelector(
+        ".profile-stats .stat-item:nth-child(2) .stat-value"
+      );
+      if (activeCountElement) {
+        let count = parseInt(activeCountElement.textContent);
+        if (isAddition) {
+          count += 1;
+        } else {
+          count = Math.max(0, count - 1);
+        }
+        activeCountElement.textContent = count;
+      }
+    }
+
+    // Функция получения CSRF-токена
     function getCookie(name) {
       let cookieValue = null;
       if (document.cookie && document.cookie !== "") {
@@ -805,6 +1748,183 @@
         }
       }
       return cookieValue;
+    }
+
+    // Функционал редактирования профиля
+
+    // Обработка изменения аватарки в реальном времени
+    const avatarInput = document.getElementById("avatar-input");
+    const previewAvatar = document.getElementById("preview-avatar");
+    const profileAvatar = document.querySelector(".profile-avatar img");
+    const photoItem = document.getElementById("photo-item-main");
+
+    // Обработчик изменения аватарки
+    if (avatarInput) {
+      avatarInput.addEventListener("change", function (e) {
+        if (this.files && this.files[0]) {
+          const reader = new FileReader();
+
+          reader.onload = function (e) {
+            // Обновляем превью в форме
+            if (previewAvatar) {
+              previewAvatar.src = e.target.result;
+            } else if (photoItem) {
+              // Если превью еще нет, создаем его
+              const newPreview = document.createElement("img");
+              newPreview.src = e.target.result;
+              newPreview.alt = "Основное фото";
+              newPreview.id = "preview-avatar";
+              photoItem.appendChild(newPreview);
+            }
+
+            // Добавляем метку и кнопку удаления в форме
+            if (photoItem) {
+              // Проверяем наличие label
+              let photoLabel = photoItem.querySelector(".photo-label");
+              if (!photoLabel) {
+                photoLabel = document.createElement("div");
+                photoLabel.className = "photo-label";
+                photoLabel.textContent = "Основное";
+                photoItem.appendChild(photoLabel);
+              }
+
+              // Проверяем наличие кнопки удаления
+              let removeBtn = photoItem.querySelector(".photo-remove");
+              if (!removeBtn) {
+                removeBtn = document.createElement("div");
+                removeBtn.className = "photo-remove";
+                removeBtn.setAttribute("data-photo", "avatar");
+                removeBtn.textContent = "×";
+                photoItem.appendChild(removeBtn);
+
+                // Добавляем обработчик для новой кнопки удаления
+                removeBtn.addEventListener("click", handleAvatarRemove);
+              }
+
+              // Удаляем placeholder если он существует
+              const placeholder = photoItem.querySelector(".photo-placeholder");
+              if (placeholder) {
+                placeholder.remove();
+              }
+            }
+
+            // Обновляем аватарку в профиле для предпросмотра
+            if (profileAvatar) {
+              profileAvatar.src = e.target.result;
+              profileAvatar.style.display = "block";
+            } else if (document.querySelector(".profile-avatar")) {
+              // Если изображения нет, создаем новое
+              const newImg = document.createElement("img");
+              newImg.src = e.target.result;
+              newImg.alt = "Аватар";
+              document.querySelector(".profile-avatar").appendChild(newImg);
+            }
+          };
+
+          reader.readAsDataURL(this.files[0]);
+        }
+      });
+    }
+
+    // Обработчик удаления аватарки
+    function handleAvatarRemove() {
+      // Удаляем превью изображение
+      if (previewAvatar) {
+        previewAvatar.remove();
+      }
+
+      // Удаляем метку и кнопку удаления
+      const photoLabel = photoItem.querySelector(".photo-label");
+      if (photoLabel) {
+        photoLabel.remove();
+      }
+
+      const removeBtn = photoItem.querySelector(".photo-remove");
+      if (removeBtn) {
+        removeBtn.remove();
+      }
+
+      // Очищаем input файла
+      if (avatarInput) {
+        avatarInput.value = "";
+      }
+
+      // Устанавливаем базовый аватар в профиле вместо скрытия
+      if (profileAvatar) {
+        profileAvatar.src = "/media/avatars/avatar.png"; // Путь к базовому аватару
+        profileAvatar.style.display = "block";
+      } else if (document.querySelector(".profile-avatar")) {
+        // Если изображения нет, создаем новое с базовым аватаром
+        const newImg = document.createElement("img");
+        newImg.src = "/media/avatars/avatar";
+        newImg.alt = "Аватар";
+        document.querySelector(".profile-avatar").appendChild(newImg);
+      }
+
+      // Также обновляем превью в форме
+      if (photoItem) {
+        const newPreview = document.createElement("img");
+        newPreview.src = "/media/avatars/avatar";
+        newPreview.alt = "Основное фото";
+        newPreview.id = "preview-avatar";
+        photoItem.appendChild(newPreview);
+
+        // Добавляем метку и кнопку удаления
+        const newPhotoLabel = document.createElement("div");
+        newPhotoLabel.className = "photo-label";
+        newPhotoLabel.textContent = "Основное (базовый аватар)";
+        photoItem.appendChild(newPhotoLabel);
+
+        // Создаем скрытое поле для отправки информации о сбросе к базовому аватару
+        let resetField = document.getElementById("reset-avatar");
+        if (!resetField) {
+          resetField = document.createElement("input");
+          resetField.type = "hidden";
+          resetField.id = "reset-avatar";
+          resetField.name = "reset_avatar";
+          resetField.value = "true";
+          photoItem.appendChild(resetField);
+        }
+      }
+    }
+
+    // Привязываем обработчик к существующей кнопке удаления
+    const photoRemoveBtn = photoItem
+      ? photoItem.querySelector(".photo-remove[data-photo='avatar']")
+      : null;
+    if (photoRemoveBtn) {
+      photoRemoveBtn.addEventListener("click", handleAvatarRemove);
+    }
+
+    // Функция для обновления главного просмотра
+    function updateMainPreview(file) {
+      if (mainPreview) {
+        // Если это уже URL, используем его напрямую
+        if (typeof file === "string") {
+          mainPreview.innerHTML = `
+            <div class="photo-film-effect">
+              <img src="${file}" alt="Предпросмотр" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+            </div>
+          `;
+          return;
+        }
+
+        // Иначе читаем файл
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          mainPreview.innerHTML = `
+            <div class="photo-film-effect">
+              <img src="${e.target.result}" alt="Предпросмотр" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+            </div>
+          `;
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    // Обновляем главное превью при первой загрузке
+    if (selectedDragFiles.length > 0 && mainPreview) {
+      updateMainPreview(selectedDragFiles[0]);
     }
   });
 </script>

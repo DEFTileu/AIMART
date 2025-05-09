@@ -3,7 +3,7 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from .models import CustomUser
 
 class LoginForm(AuthenticationForm):
-    username = forms.EmailField(widget=forms.EmailInput(attrs={'id': 'id_email'}))
+    email = forms.EmailField(widget=forms.EmailInput(attrs={'id': 'id_email'}))
     password = forms.CharField(widget=forms.PasswordInput(attrs={'id': 'id_password'}))
 
 from django import forms

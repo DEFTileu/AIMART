@@ -14,6 +14,8 @@
         <!-- Форма входа -->
         <form method="post" class="form sign-in">
             {% csrf_token %}
+            <input type="hidden" name="action" value="login">
+
             <h2>Sign In</h2>
             <!-- Сообщения об ошибках -->
             {% if messages %}
@@ -65,6 +67,8 @@
             <!-- Форма регистрации -->
             <form method="post" class="form sign-up">
                 {% csrf_token %}
+                <input type="hidden" name="action" value="register">
+
                 <h2>Sign Up</h2>
                 <!-- Сообщения об ошибках -->
                 {% if messages %}

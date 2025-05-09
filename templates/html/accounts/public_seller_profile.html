@@ -353,7 +353,7 @@
 
       <div class="profile-stats">
         <div class="stat-item">
-          <span class="stat-value">{{ products_count }}</span>
+          <span class="stat-value">{{ products.count }}</span>
           <span class="stat-label">Товаров</span>
         </div>
         <div class="stat-item">
@@ -380,11 +380,7 @@
   <div class="seller-products">
     <h2 class="products-title">Товары продавца</h2>
 
-    {% include 'html/components/product_grid.html' with products=products
-    show_rating=True show_discount=True empty_title="У продавца нет активных
-    товаров" empty_message="В настоящее время этот продавец не предлагает
-    товаров для продажи." empty_action_url="/catalog/"
-    empty_action_text="Вернуться в каталог" %}
+    {% include 'html/components/product_grid.html' with products=products show_rating=True show_discount=True empty_title="У продавца нет активных товаров" empty_message="В настоящее время этот продавец не предлагает товаров для продажи." empty_action_url="/catalog/" empty_action_text="Вернуться в каталог" %}
   </div>
 </div>
 {% endblock %} {% block extra_js %}

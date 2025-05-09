@@ -25,7 +25,10 @@ SECRET_KEY = 'django-insecure-!w$ueu9bij-f3wo&wgty%ncmm(+=b*u%c9h655&vqbyp-o%w@6
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['www.AIMART.pythonanywhere.com',
+                 'aimart.pythonanywhere.com',
+                 '*']
+
 
 
 # Application definition
@@ -39,14 +42,19 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'main',
-    'accounts'
+    'accounts',
+    'django.contrib.humanize',
+    'news',
+    'products'
 ]
 
 
 
 AUTH_USER_MODEL = 'accounts.CustomUser'
-LOGIN_REDIRECT_URL = '/accounts/profile/'
-LOGOUT_REDIRECT_URL = '/accounts/login/'
+LOGIN_URL = '/auth/'  # <-- Важно!
+LOGIN_REDIRECT_URL = '/accounts/profile/'  # или на что-то своё, например /dashboard/
+LOGOUT_REDIRECT_URL = '/auth/'
+
 
 AUTHENTICATION_BACKENDS = [
     'accounts.auth_backend.EmailBackend',
@@ -100,17 +108,8 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    }
 ]
 
 
