@@ -9,6 +9,7 @@ from django.http import JsonResponse
 from django.core.cache import cache
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from django.urls import reverse
 
 from .forms import ProductForm
 from .models import Product, Favorite, CartItem, ProductView, Category, Brand, RecommendationPair, ProductImage
@@ -721,23 +722,19 @@ def edit_product(request, id):
                 # Сохраняем обновленный продукт
                 product = form.save()
 
-                # Обработка загруженных фотографий (метод 1 - все сразу)
+                # Обработка загруженных фотографий
                 if 'product_images' in request.FILES:
                     files = request.FILES.getlist('product_images')
-
-                    # Проверяем количество загруженных файлов
-                    if len(files) > 5:
-                        files = files[:5]  # Ограничиваем максимум 5 файлов
-
-                    # Удаляем существующие фотографии, если нужно заменить все
-                    if request.POST.get('replace_all_images') == 'true':
-                        ProductImage.objects.filter(product=product).delete()
+                    
+                    # Проверяем общее количество файлов
+                    existing_count = ProductImage.objects.filter(product=product).count()
+                    if existing_count + len(files) > 5:
+                        files = files[:5 - existing_count]
 
                     # Определяем следующий порядковый номер
-                    max_order = ProductImage.objects.filter(product=product).aggregate(Max('order'))[
-                                    'order__max'] or -1
+                    max_order = ProductImage.objects.filter(product=product).aggregate(Max('order'))['order__max'] or -1
 
-                    # Сохраняем фотографии
+                    # Сохраняем новые фотографии
                     for i, file in enumerate(files):
                         is_main = False
                         if i == 0 and not ProductImage.objects.filter(product=product, is_main=True).exists():
@@ -756,22 +753,18 @@ def edit_product(request, id):
                         image_id = key.replace('delete_image_', '')
                         try:
                             image = ProductImage.objects.get(id=image_id, product=product)
-                            # Проверяем, является ли удаляемое изображение главным
                             was_main = image.is_main
                             image.delete()
                             
-                            # Если было удалено главное изображение, назначаем новое
                             if was_main:
-                                # Выбираем первое доступное изображение и делаем его главным
                                 first_image = ProductImage.objects.filter(product=product).order_by('order').first()
                                 if first_image:
                                     first_image.is_main = True
                                     first_image.save()
-                        except Exception as e:
-                            print(f"Ошибка при удалении изображения: {e}")
+                        except ProductImage.DoesNotExist:
+                            pass
 
                 # Обработка изменения порядка фотографий
-                # Сначала соберем все обновления порядка
                 order_updates = {}
                 for key in request.POST:
                     if key.startswith('image_order_'):
@@ -780,53 +773,48 @@ def edit_product(request, id):
                             order_updates[int(image_id)] = int(request.POST[key])
                         except ValueError:
                             continue
-                
-                # Затем применим обновления порядка ко всем изображениям за один проход
+
                 if order_updates:
-                    # Получаем все изображения продукта
-                    product_images = ProductImage.objects.filter(product=product)
-                    
-                    # Применяем обновления порядка
-                    for image in product_images:
-                        if image.id in order_updates:
-                            image.order = order_updates[image.id]
-                            image.save()
-                
-                # Обеспечиваем последовательность порядковых номеров
-                images = ProductImage.objects.filter(product=product).order_by('order')
-                for i, image in enumerate(images):
-                    if image.order != i:
-                        image.order = i
-                        image.save()
+                    with transaction.atomic():
+                        for image_id, new_order in order_updates.items():
+                            try:
+                                image = ProductImage.objects.get(id=image_id, product=product)
+                                image.order = new_order
+                                image.save()
+                            except ProductImage.DoesNotExist:
+                                continue
 
                 # Обработка смены главного фото
                 if 'main_image' in request.POST and request.POST['main_image']:
                     try:
-                        # Сначала сбрасываем главное фото у всех изображений
                         ProductImage.objects.filter(product=product).update(is_main=False)
-                        
-                        # Затем устанавливаем новое главное фото
-                        image_id = request.POST['main_image']
-                        image = ProductImage.objects.get(id=image_id, product=product)
+                        image = ProductImage.objects.get(id=request.POST['main_image'], product=product)
                         image.is_main = True
                         image.save()
-                    except Exception as e:
-                        print(f"Ошибка при установке главного изображения: {e}")
+                    except ProductImage.DoesNotExist:
+                        pass
 
-                messages.success(request, "Товар успешно обновлен!")
-                return redirect('product_detail', id=id)
+                return JsonResponse({
+                    'success': True,
+                    'redirect_url': reverse('product_detail', args=[id])
+                })
+
             except Exception as e:
-                print(f"Ошибка при обновлении товара: {e}")
-                messages.error(request, f"Ошибка при обновлении товара: {e}")
+                return JsonResponse({
+                    'success': False,
+                    'error': str(e)
+                })
         else:
-            print(f"Форма невалидна: {form.errors}")
-            messages.error(request, "Пожалуйста, проверьте введенные данные")
+            return JsonResponse({
+                'success': False,
+                'error': 'Пожалуйста, проверьте введенные данные'
+            })
     else:
+        # Создаем форму для GET-запроса
         form = ProductForm(instance=product)
 
-    # Получаем существующие изображения товара
+    # GET запрос
     product_images = ProductImage.objects.filter(product=product).order_by('order')
-
     categories = Category.objects.all()
     brands = Brand.objects.all()
     main_image = product_images.filter(is_main=True).first()

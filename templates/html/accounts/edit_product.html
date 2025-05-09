@@ -752,6 +752,130 @@
       width: calc(50% - 5px);
     }
   }
+
+  /* Добавляем новые стили для блока с фотографиями */
+  .photos-container {
+    background: #f8f9fa;
+    border: 2px dashed #ddd;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px 0;
+    transition: all 0.3s ease;
+  }
+
+  .photos-container:hover {
+    border-color: #FF8C00;
+    box-shadow: 0 0 15px rgba(255, 140, 0, 0.1);
+  }
+
+  .image-sortable-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px;
+    padding: 15px;
+    min-height: 150px;
+  }
+
+  .image-item {
+    background: white;
+    border-radius: 8px;
+    padding: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    cursor: move;
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .image-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+  }
+
+  .image-item.dragging {
+    opacity: 0.5;
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  }
+
+  .image-item .image-preview {
+    width: 100%;
+    height: 150px;
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .image-item .image-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .image-item .image-preview:hover img {
+    transform: scale(1.1);
+  }
+
+  .image-item .image-actions {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0,0,0,0.7);
+    padding: 8px;
+    display: flex;
+    justify-content: space-between;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .image-item:hover .image-actions {
+    opacity: 1;
+  }
+
+  .action-btn {
+    background: none;
+    border: none;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background 0.3s;
+  }
+
+  .action-btn.set-main {
+    background: #FF8C00;
+  }
+
+  .action-btn.set-main:hover {
+    background: #E67E00;
+  }
+
+  .action-btn.delete-image {
+    background: #dc3545;
+  }
+
+  .action-btn.delete-image:hover {
+    background: #c82333;
+  }
+
+  .order-number {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: #FF8C00;
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+    z-index: 2;
+  }
 </style>
 {% endblock %}
 
@@ -885,35 +1009,26 @@
       {% if product_images %}
       <div class="form-group mt-4">
         <h4 class="mb-3">Текущие фотографии</h4>
-
-        <div class="image-gallery">
-          <div id="sortable-images" class="image-sortable-container appear-animation">
-            {% for image in product_images %}
-            <div class="image-item" data-id="{{ image.id }}" data-order="{{ image.order }}" data-image-id="{{ image.id }}">
-              <input type="hidden" name="image_order_{{ image.id }}" value="{{ image.order }}" class="order-input">
-              <input type="hidden" name="delete_image_{{ image.id }}" value="false" class="delete-input">
-              <div class="image-preview {% if image.is_main %}is-main{% endif %}">
-                <img src="{{ image.image.url }}" alt="Изображение {{ forloop.counter }}">
-                
-                <div class="image-actions">
-                  <button type="button" class="action-btn set-main" data-id="{{ image.id }}" {% if image.is_main %}disabled{% endif %}>
-                    {% if image.is_main %}Главное{% else %}Сделать главным{% endif %}
-                  </button>
-                  <button type="button" class="action-btn delete-image" data-id="{{ image.id }}">Удалить</button>
-                </div>
-                
-                <div class="image-order-controls">
-                  <button type="button" class="order-btn move-up" title="Переместить вверх">
-                    <i class="fas fa-chevron-up"></i>
-                  </button>
-                  <div class="order-number">{{ image.order|add:"1" }}</div>
-                  <button type="button" class="order-btn move-down" title="Переместить вниз">
-                    <i class="fas fa-chevron-down"></i>
-                  </button>
+        <div class="photos-container">
+          <div class="image-gallery">
+            <div id="sortable-images" class="image-sortable-container appear-animation">
+              {% for image in product_images %}
+              <div class="image-item" data-id="{{ image.id }}" data-order="{{ image.order }}" data-image-id="{{ image.id }}">
+                <input type="hidden" name="image_order_{{ image.id }}" value="{{ image.order }}" class="order-input">
+                <input type="hidden" name="delete_image_{{ image.id }}" value="false" class="delete-input">
+                <div class="image-preview {% if image.is_main %}is-main{% endif %}">
+                  <img src="{{ image.image.url }}" alt="Изображение {{ forloop.counter }}">
+                  <div class="order-number">{{ forloop.counter }}</div>
+                  <div class="image-actions">
+                    <button type="button" class="action-btn set-main" data-id="{{ image.id }}" {% if image.is_main %}disabled{% endif %}>
+                      {% if image.is_main %}Главное{% else %}Сделать главным{% endif %}
+                    </button>
+                    <button type="button" class="action-btn delete-image" data-id="{{ image.id }}">Удалить</button>
+                  </div>
                 </div>
               </div>
+              {% endfor %}
             </div>
-            {% endfor %}
           </div>
         </div>
       </div>
@@ -956,813 +1071,271 @@
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // Предпросмотр основного изображения и управление
-    const imageMainInput = document.getElementById('image-main');
-    const mainImagePreview = document.getElementById('main-image-preview');
-    const mainPreview = document.getElementById('main-preview');
-    const noImagePlaceholder = document.getElementById('no-image-placeholder');
-    const selectedImagesContainer = document.getElementById('selected-images-container');
-    const imageCounter = document.getElementById('image-counter');
     const dragArea = document.getElementById('drag-area');
     const dragFileInput = document.getElementById('product-images-drag');
-    const uploadProgressBar = document.getElementById('upload-progress-bar');
+    const selectedImagesContainer = document.getElementById('selected-images-container');
+    const imageCounter = document.getElementById('image-counter');
+    const mainPreview = document.getElementById('main-preview');
     const uploadProgress = document.getElementById('upload-progress');
-    
-    // Массив для хранения выбранных файлов
+    const uploadProgressBar = document.getElementById('upload-progress-bar');
     let selectedFiles = [];
 
-    // Предпросмотр всех изображений продукта
-    if (imageMainInput) {
-      imageMainInput.addEventListener('change', function() {
-        const file = this.files[0];
-        if (file) {
-          const reader = new FileReader();
-          reader.onload = function(e) {
-            // Анимируем изменение
-            if (mainImagePreview) {
-              mainImagePreview.style.transition = 'all 0.3s ease';
-              mainImagePreview.style.transform = 'scale(0.95)';
-              mainImagePreview.style.opacity = '0.5';
-              
-              setTimeout(() => {
-                mainImagePreview.innerHTML = `
-                  <img src="${e.target.result}" alt="Основное изображение">
-                  <div class="image-remove" data-image-type="main">×</div>
-                `;
-                
-                setTimeout(() => {
-                  mainImagePreview.style.transform = 'scale(1)';
-                  mainImagePreview.style.opacity = '1';
-                }, 50);
-                
-                // Добавляем обработчик для кнопки удаления
-                attachRemoveHandlers();
-              }, 300);
+    // Инициализация Sortable для контейнера с текущими изображениями
+    const sortableImagesContainer = document.getElementById('sortable-images');
+    if (sortableImagesContainer) {
+      new Sortable(sortableImagesContainer, {
+        animation: 150,
+        handle: '.image-preview',
+        ghostClass: 'dragging',
+        onStart: function(evt) {
+          evt.item.classList.add('dragging');
+        },
+        onEnd: function(evt) {
+          evt.item.classList.remove('dragging');
+          
+          // Обновляем порядок
+          const items = sortableImagesContainer.querySelectorAll('.image-item');
+          items.forEach((item, index) => {
+            const orderInput = item.querySelector('.order-input');
+            const orderNumber = item.querySelector('.order-number');
+            if (orderInput) {
+              orderInput.value = index;
             }
-            
-            // Обновляем основное превью
-            if (mainPreview) {
-              updateMainPreview(file);
+            if (orderNumber) {
+              orderNumber.textContent = index + 1;
             }
-          };
-          reader.readAsDataURL(file);
+          });
+
+          // Сохраняем новый порядок
+          saveImageOrderToLocalStorage();
         }
       });
     }
-    
-    // Функция обновления основного превью
-    function updateMainPreview(file) {
-      if (!mainPreview) return;
+
+    // Инициализация Sortable для контейнера с выбранными изображениями
+    if (selectedImagesContainer) {
+      new Sortable(selectedImagesContainer, {
+        animation: 150,
+        handle: '.preview-image',
+        ghostClass: 'dragging',
+        onEnd: function(evt) {
+          const newOrder = [];
+          const items = selectedImagesContainer.querySelectorAll('.preview-item');
+          items.forEach((item, index) => {
+            const oldIndex = parseInt(item.dataset.index);
+            newOrder[index] = selectedFiles[oldIndex];
+            item.dataset.index = index;
+            const counter = item.querySelector('.upload-counter');
+            if (counter) counter.textContent = index + 1;
+          });
+          selectedFiles = newOrder;
+          if (selectedFiles.length > 0) updateMainPreview(selectedFiles[0]);
+        }
+      });
+    }
+
+    // Обработка drag and drop
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+      dragArea.addEventListener(eventName, function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        if (eventName === 'dragenter' || eventName === 'dragover') {
+          dragArea.classList.add('active');
+        } else {
+          dragArea.classList.remove('active');
+          if (eventName === 'drop') {
+            const files = Array.from(e.dataTransfer.files);
+            handleFiles({ target: { files } });
+          }
+        }
+      }, false);
+    });
+
+    // Обработка выбора файлов
+    dragFileInput.addEventListener('change', handleFiles);
+
+    function handleFiles(e) {
+      const files = Array.from(e.target.files);
       
-      // Добавляем анимацию загрузки
-      mainPreview.innerHTML = '<div class="loading-spinner"></div>';
+      if (selectedFiles.length + files.length > 5) {
+        alert('Максимум можно загрузить 5 фотографий');
+        return;
+      }
+
+      // Показываем прогресс загрузки
+      uploadProgress.style.display = 'block';
+      uploadProgressBar.style.width = '0%';
+
+      // Добавляем новые файлы
+      selectedFiles = [...selectedFiles, ...files];
+      imageCounter.textContent = selectedFiles.length;
+      imageCounter.style.display = 'inline-block';
+
+      // Имитация загрузки
+      let progress = 0;
+      const interval = setInterval(() => {
+        progress += 5;
+        uploadProgressBar.style.width = `${progress}%`;
+        if (progress >= 100) {
+          clearInterval(interval);
+          setTimeout(() => {
+            uploadProgress.style.display = 'none';
+            displaySelectedImages();
+          }, 300);
+        }
+      }, 50);
+    }
+
+    function displaySelectedImages() {
+      selectedImagesContainer.innerHTML = '';
       
-      setTimeout(() => {
+      selectedFiles.forEach((file, index) => {
         const reader = new FileReader();
         reader.onload = function(e) {
-          mainPreview.style.transition = 'all 0.3s ease';
-          mainPreview.style.transform = 'scale(0.95)';
-          mainPreview.style.opacity = '0.7';
+          const imageItem = document.createElement('div');
+          imageItem.classList.add('preview-item');
+          imageItem.setAttribute('data-index', index);
           
-          setTimeout(() => {
-            mainPreview.innerHTML = `
-              <div class="photo-film-effect">
-                <img src="${e.target.result}" alt="Предпросмотр" style="max-width: 100%; max-height: 100%; object-fit: contain;">
-              </div>
-            `;
-            
-            setTimeout(() => {
-              mainPreview.style.transform = 'scale(1)';
-              mainPreview.style.opacity = '1';
-            }, 50);
-          }, 300);
-        };
-        reader.readAsDataURL(file);
-      }, 500);
-    }
+          imageItem.innerHTML = `
+            <div class="preview-image">
+              <img src="${e.target.result}" alt="Предпросмотр ${index + 1}">
+              <span class="upload-counter">${index + 1}</span>
+              <button type="button" class="remove-image" data-index="${index}">×</button>
+            </div>
+          `;
 
-    // Предпросмотр дополнительного изображения
-    const imageOptionalInput = document.getElementById('image-optional');
-    const optionalImagePreview = document.getElementById('optional-image-preview');
-
-    if (imageOptionalInput && optionalImagePreview) {
-      imageOptionalInput.addEventListener('change', function() {
-        const file = this.files[0];
-        if (file) {
-          const reader = new FileReader();
-          reader.onload = function(e) {
-            // Анимируем изменение
-            optionalImagePreview.style.transition = 'all 0.3s ease';
-            optionalImagePreview.style.transform = 'scale(0.95)';
-            optionalImagePreview.style.opacity = '0.5';
-            
-            setTimeout(() => {
-              optionalImagePreview.innerHTML = `
-                <img src="${e.target.result}" alt="Дополнительное изображение">
-                <div class="image-remove" data-image-type="optional">×</div>
-              `;
-              
-              setTimeout(() => {
-                optionalImagePreview.style.transform = 'scale(1)';
-                optionalImagePreview.style.opacity = '1';
-              }, 50);
-              
-              // Добавляем обработчик для кнопки удаления
-              attachRemoveHandlers();
-            }, 300);
-          };
-          reader.readAsDataURL(file);
-        }
-      });
-    }
-
-    // Удаление изображений
-    function attachRemoveHandlers() {
-      const removeButtons = document.querySelectorAll('.image-remove');
-
-      removeButtons.forEach(button => {
-        button.addEventListener('click', function() {
-          const imageType = this.dataset.imageType;
-          const parentPreview = this.closest('.image-preview');
-
-          if (imageType === 'main') {
-            imageMainInput.value = '';
-            
-            // Анимируем удаление
-            parentPreview.style.transition = 'all 0.3s ease';
-            parentPreview.style.transform = 'scale(0.9)';
-            parentPreview.style.opacity = '0';
-            
-            setTimeout(() => {
-              parentPreview.innerHTML = '<span>Нет фото</span>';
-              parentPreview.style.transform = 'scale(1)';
-              parentPreview.style.opacity = '1';
-              
-              // Добавляем скрытое поле для указания, что изображение нужно удалить
-              const hiddenInput = document.createElement('input');
-              hiddenInput.type = 'hidden';
-              hiddenInput.name = 'remove_image_main';
-              hiddenInput.value = 'true';
-              parentPreview.appendChild(hiddenInput);
-              
-              // Обновляем основное превью
+          // Обработчик удаления
+          imageItem.querySelector('.remove-image').addEventListener('click', function() {
+            selectedFiles.splice(index, 1);
+            displaySelectedImages();
+            imageCounter.textContent = selectedFiles.length;
+            if (selectedFiles.length === 0) {
+              imageCounter.style.display = 'none';
               if (mainPreview) {
                 mainPreview.innerHTML = '<span id="no-image-placeholder">Выберите фотографии</span>';
               }
-            }, 300);
-          } else if (imageType === 'optional') {
-            imageOptionalInput.value = '';
-            
-            // Анимируем удаление
-            parentPreview.style.transition = 'all 0.3s ease';
-            parentPreview.style.transform = 'scale(0.9)';
-            parentPreview.style.opacity = '0';
-            
-            setTimeout(() => {
-              parentPreview.innerHTML = '<span>Нет фото</span>';
-              parentPreview.style.transform = 'scale(1)';
-              parentPreview.style.opacity = '1';
-              
-              // Добавляем скрытое поле для указания, что изображение нужно удалить
-              const hiddenInput = document.createElement('input');
-              hiddenInput.type = 'hidden';
-              hiddenInput.name = 'remove_image_optional';
-              hiddenInput.value = 'true';
-              parentPreview.appendChild(hiddenInput);
-            }, 300);
-          }
-        });
-      });
-    }
-
-    // Вызываем функцию при загрузке страницы для существующих кнопок
-    attachRemoveHandlers();
-
-    // Подтверждение удаления товара
-    const deleteButton = document.getElementById('delete-product-btn');
-    if (deleteButton) {
-      deleteButton.addEventListener('click', function(e) {
-        e.preventDefault();
-        const confirmed = confirm('Вы действительно хотите удалить этот товар? Это действие нельзя отменить.');
-
-        if (confirmed) {
-          const productId = this.dataset.productId;
-          
-          // Анимируем кнопку при удалении
-          this.textContent = 'Удаление...';
-          this.style.opacity = '0.7';
-          this.disabled = true;
-
-          fetch(`/api/products/${productId}/delete/`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-CSRFToken': getCookie('csrftoken')
-            }
-          })
-          .then(response => response.json())
-          .then(data => {
-            if (data.success) {
-              window.location.href = '{% url "profile" %}';
-            } else {
-              alert('Ошибка при удалении товара: ' + data.error);
-              // Восстанавливаем кнопку
-              this.textContent = 'Удалить товар';
-              this.style.opacity = '1';
-              this.disabled = false;
-            }
-          })
-          .catch(error => {
-            console.error('Ошибка:', error);
-            alert('Произошла ошибка при удалении товара');
-            // Восстанавливаем кнопку
-            this.textContent = 'Удалить товар';
-            this.style.opacity = '1';
-            this.disabled = false;
-          });
-        }
-      });
-    }
-
-    // Получение CSRF токена из cookies
-    function getCookie(name) {
-      let cookieValue = null;
-      if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-          const cookie = cookies[i].trim();
-          if (cookie.substring(0, name.length + 1) === (name + '=')) {
-            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-            break;
-          }
-        }
-      }
-      return cookieValue;
-    }
-
-    // Функционал для работы с текущими изображениями товара
-    const imageItems = document.querySelectorAll('.image-item');
-    if (imageItems.length > 0) {
-      // Обработка кнопок "Сделать главным"
-      const setMainButtons = document.querySelectorAll('.set-main');
-      setMainButtons.forEach(button => {
-        button.addEventListener('click', function() {
-          const imageId = this.dataset.id;
-          document.getElementById('main-image-input').value = imageId;
-
-          // Визуально обновляем интерфейс
-          document.querySelectorAll('.image-preview').forEach(preview => {
-            preview.classList.remove('is-main');
-          });
-          document.querySelectorAll('.set-main').forEach(btn => {
-            btn.removeAttribute('disabled');
-            btn.textContent = 'Сделать главным';
-          });
-
-          const parentPreview = this.closest('.image-preview');
-          parentPreview.classList.add('is-main');
-          this.setAttribute('disabled', true);
-          this.textContent = 'Главное';
-          
-          // Эффект пульсации для выделения
-          parentPreview.style.animation = 'none';
-          setTimeout(() => {
-            parentPreview.style.animation = 'pulse 0.5s ease';
-          }, 10);
-          
-          // Обновляем основное превью
-          const imageUrl = parentPreview.querySelector('img').src;
-          if (mainPreview) {
-            mainPreview.innerHTML = `
-              <div class="photo-film-effect">
-                <img src="${imageUrl}" alt="Предпросмотр" style="max-width: 100%; max-height: 100%; object-fit: contain;">
-              </div>
-            `;
-          }
-        });
-      });
-
-      // Обработка кнопок удаления
-      const deleteButtons = document.querySelectorAll('.delete-image');
-      deleteButtons.forEach(button => {
-        button.addEventListener('click', function() {
-          const imageId = this.dataset.id;
-          const imageItem = this.closest('.image-item');
-
-          // Помечаем для удаления на сервере и скрываем из интерфейса
-          const deleteInput = imageItem.querySelector(`.delete-input`);
-          deleteInput.value = 'true';
-
-          // Анимация удаления
-          imageItem.style.transition = 'all 0.3s ease';
-          imageItem.style.transform = 'scale(0.8)';
-          imageItem.style.opacity = '0';
-
-          setTimeout(() => {
-            imageItem.style.display = 'none';
-            // Обновляем порядок отображения
-            updateOrderNumbers();
-          }, 300);
-        });
-      });
-
-      // Обработка кнопок изменения порядка
-      const moveUpButtons = document.querySelectorAll('.move-up');
-      const moveDownButtons = document.querySelectorAll('.move-down');
-
-      moveUpButtons.forEach(button => {
-        button.addEventListener('click', function() {
-          const currentItem = this.closest('.image-item');
-          const prevItem = currentItem.previousElementSibling;
-
-          if (prevItem) {
-            // Анимируем перемещение
-            currentItem.style.transition = 'all 0.3s ease';
-            prevItem.style.transition = 'all 0.3s ease';
-
-            const currentPos = currentItem.getBoundingClientRect();
-            const prevPos = prevItem.getBoundingClientRect();
-            const offsetY = prevPos.top - currentPos.top;
-
-            currentItem.style.transform = `translateY(${offsetY}px)`;
-            prevItem.style.transform = `translateY(${-currentItem.offsetHeight}px)`;
-
-            setTimeout(() => {
-              currentItem.style.transition = '';
-              prevItem.style.transition = '';
-              currentItem.style.transform = '';
-              prevItem.style.transform = '';
-
-              const container = currentItem.parentNode;
-              container.insertBefore(currentItem, prevItem);
-              updateOrderValues();
-            }, 300);
-          }
-        });
-      });
-
-      moveDownButtons.forEach(button => {
-        button.addEventListener('click', function() {
-          const currentItem = this.closest('.image-item');
-          const nextItem = currentItem.nextElementSibling;
-
-          if (nextItem) {
-            // Анимируем перемещение
-            currentItem.style.transition = 'all 0.3s ease';
-            nextItem.style.transition = 'all 0.3s ease';
-
-            const currentPos = currentItem.getBoundingClientRect();
-            const nextPos = nextItem.getBoundingClientRect();
-            const offsetY = nextPos.top - currentPos.top;
-
-            currentItem.style.transform = `translateY(${offsetY}px)`;
-            nextItem.style.transform = `translateY(${-currentItem.offsetHeight}px)`;
-
-            setTimeout(() => {
-              currentItem.style.transition = '';
-              nextItem.style.transition = '';
-              currentItem.style.transform = '';
-              nextItem.style.transform = '';
-
-              const container = currentItem.parentNode;
-              container.insertBefore(nextItem, currentItem);
-              updateOrderValues();
-            }, 300);
-          }
-        });
-      });
-
-      // Обновление значений порядка для отправки на сервер
-      function updateOrderValues() {
-        const items = document.querySelectorAll('.image-item');
-        items.forEach((item, index) => {
-          const orderInput = item.querySelector('.order-input');
-          if (orderInput) {
-            orderInput.value = index + 1;
-          }
-
-          // Обновляем отображаемый номер
-          const orderNumber = item.querySelector('.order-number');
-          if (orderNumber) {
-            orderNumber.textContent = index + 1;
-          }
-        });
-      }
-
-      // Обновление номеров после удаления
-      function updateOrderNumbers() {
-        const visibleItems = Array.from(document.querySelectorAll('.image-item')).filter(
-          item => item.style.display !== 'none'
-        );
-
-        visibleItems.forEach((item, index) => {
-          const orderNumber = item.querySelector('.order-number');
-          if (orderNumber) {
-            orderNumber.textContent = index + 1;
-          }
-
-          const orderInput = item.querySelector('.order-input');
-          if (orderInput) {
-            orderInput.value = index + 1;
-          }
-        });
-      }
-
-      // Инициализация Sortable для перетаскивания изображений
-      const sortableImagesContainer = document.getElementById('sortable-images');
-      if (sortableImagesContainer) {
-        const sortable = new Sortable(sortableImagesContainer, {
-          animation: 150,
-          ghostClass: 'dragging',
-          onEnd: function() {
-            updateOrderValues();
-            
-            // Сохраняем порядок изображений в localStorage
-            saveImageOrderToLocalStorage();
-          }
-        });
-        
-        // Восстанавливаем порядок изображений из localStorage при загрузке страницы
-        restoreImageOrderFromLocalStorage();
-      }
-    }
-
-    // Обработка загрузки изображений через перетаскивание
-    if (dragArea && dragFileInput) {
-      // Анимации при наведении
-      dragArea.addEventListener("mouseenter", function() {
-        this.style.transform = "scale(1.01)";
-        this.style.boxShadow = "0 5px 15px rgba(255, 140, 0, 0.1)";
-      });
-
-      dragArea.addEventListener("mouseleave", function() {
-        this.style.transform = "scale(1)";
-        this.style.boxShadow = "0 3px 10px rgba(0, 0, 0, 0.05)";
-      });
-
-      // Предотвращаем стандартное поведение для всего документа
-      // чтобы избежать открытия файлов в браузере при перетаскивании
-      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-        document.addEventListener(eventName, function(e) {
-          e.preventDefault();
-          e.stopPropagation();
-        }, false);
-      });
-
-      // Подсвечиваем область при перетаскивании файлов где угодно на странице
-      ['dragenter', 'dragover'].forEach(eventName => {
-        document.addEventListener(eventName, function(e) {
-          if (!dragArea) return;
-          dragArea.style.borderColor = "#FF8C00";
-          dragArea.style.background = "#fff8f0";
-          dragArea.classList.add('active');
-          dragArea.style.transform = "scale(1.02)";
-          dragArea.style.animation = "pulse 1.5s infinite";
-        }, false);
-      });
-
-      // События перетаскивания для самой области
-      ['dragenter', 'dragover'].forEach(eventName => {
-        dragArea.addEventListener(eventName, function(e) {
-          e.preventDefault();
-          e.stopPropagation();
-          this.style.borderColor = "#FF8C00";
-          this.style.background = "#fff8f0";
-          this.classList.add('active');
-          this.style.transform = "scale(1.02)";
-          
-          // Добавляем анимацию пульсации при перетаскивании
-          this.style.animation = "pulse 1.5s infinite";
-        }, false);
-      });
-
-      // Убираем подсветку при отпускании или уходе с документа
-      ['dragleave', 'drop'].forEach(eventName => {
-        document.addEventListener(eventName, function(e) {
-          if (!dragArea) return;
-          // Проверяем, что событие действительно покидает документ
-          // а не переходит между его элементами
-          if (eventName === 'dragleave' && e.target.contains(dragArea)) {
-            return;
-          }
-          dragArea.style.borderColor = "#ddd";
-          dragArea.style.background = "#fafafa";
-          dragArea.classList.remove('active');
-          dragArea.style.transform = "scale(1)";
-          dragArea.style.animation = "none";
-        }, false);
-      });
-
-      ['dragleave', 'drop'].forEach(eventName => {
-        dragArea.addEventListener(eventName, function(e) {
-          e.preventDefault();
-          e.stopPropagation();
-          this.style.borderColor = "#ddd";
-          this.style.background = "#fafafa";
-          this.classList.remove('active');
-          this.style.transform = "scale(1)";
-          
-          // Останавливаем анимацию пульсации
-          this.style.animation = "none";
-          
-          if (eventName === 'drop') {
-            const dt = e.dataTransfer;
-            const files = dt.files;
-            handleFiles({ target: { files: files } });
-          }
-        }, false);
-      });
-
-      // Клик для выбора файлов
-      dragArea.addEventListener('click', function() {
-        dragFileInput.click();
-      });
-
-      // Обработка выбора файлов через клик
-      dragFileInput.addEventListener('change', handleFiles);
-
-      // Обработчик выбора файлов
-      function handleFiles(e) {
-        const files = Array.from(e.target.files);
-
-        // Проверяем количество файлов
-        if (selectedFiles.length + files.length > 5) {
-          alert('Вы можете загрузить максимум 5 фотографий!');
-          return;
-        }
-
-        // Показываем счетчик изображений
-        selectedFiles = [...selectedFiles, ...files];
-        
-        // Сохраняем информацию о выбранных файлах в localStorage
-        try {
-          const productId = document.querySelector('input[name="product_id"]').value;
-          if (productId) {
-            // Преобразуем файлы в их представление для сохранения
-            const fileInfos = selectedFiles.map(file => ({
-              name: file.name,
-              size: file.size,
-              type: file.type,
-              lastModified: file.lastModified
-            }));
-            localStorage.setItem(`product_${productId}_selected_images`, JSON.stringify(fileInfos));
-          }
-        } catch (e) {
-          console.error('Ошибка при сохранении информации о файлах:', e);
-        }
-        
-        imageCounter.textContent = selectedFiles.length;
-        imageCounter.style.display = 'inline-block';
-
-        // Показываем прогресс
-        uploadProgress.style.display = 'block';
-
-        // Имитация загрузки
-        let progress = 0;
-        const interval = setInterval(() => {
-          progress += 5;
-          uploadProgressBar.style.width = `${progress}%`;
-
-          if (progress >= 100) {
-            clearInterval(interval);
-            setTimeout(() => {
-              uploadProgress.style.display = 'none';
-              uploadProgressBar.style.width = '0%';
-              displaySelectedImages();
-            }, 500);
-          }
-        }, 50);
-        
-        // Обновляем основное превью, если это первый файл
-        if (selectedFiles.length === 1 && mainPreview) {
-          updateMainPreview(files[0]);
-        }
-      }
-
-      // Отображение выбранных изображений
-      function displaySelectedImages() {
-        selectedImagesContainer.innerHTML = '';
-
-        selectedFiles.forEach((file, index) => {
-          const reader = new FileReader();
-          reader.onload = function(e) {
-            const imageItem = document.createElement('div');
-            imageItem.className = 'preview-item appear-animation';
-            imageItem.dataset.index = index;
-            imageItem.style.animationDelay = `${index * 0.1}s`;
-
-            imageItem.innerHTML = `
-              <div style="position: relative;">
-                <img src="${e.target.result}" alt="Превью ${index + 1}">
-                <span class="upload-counter" style="position: absolute; top: 5px; left: 5px;">${index + 1}</span>
-                <button type="button" class="image-action delete-image" style="position: absolute; top: 5px; right: 5px; padding: 0; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; background: rgba(255,0,0,0.7); border-radius: 50%; border: none; color: white; font-size: 12px; cursor: pointer; opacity: 0; transition: opacity 0.3s;">×</button>
-              </div>
-              <span class="preview-filename">${file.name}</span>
-            `;
-            
-            // Добавляем анимацию при наведении
-            imageItem.addEventListener("mouseenter", function() {
-              this.style.transform = "translateY(-5px)";
-              this.querySelector("img").style.transform = "scale(1.05)";
-              this.querySelector("button").style.opacity = "1";
-            });
-
-            imageItem.addEventListener("mouseleave", function() {
-              this.style.transform = "translateY(0)";
-              this.querySelector("img").style.transform = "scale(1)";
-              this.querySelector("button").style.opacity = "0";
-            });
-
-            // Обработчик удаления
-            const deleteBtn = imageItem.querySelector('.delete-image');
-            deleteBtn.addEventListener('click', function() {
-              selectedFiles = selectedFiles.filter((_, i) => i !== index);
-
-              // Анимация удаления
-              imageItem.style.transition = 'all 0.3s ease';
-              imageItem.style.transform = 'scale(0.8)';
-              imageItem.style.opacity = '0';
-
-              setTimeout(() => {
-                selectedImagesContainer.removeChild(imageItem);
-                // Обновляем счетчик
-                imageCounter.textContent = selectedFiles.length;
-                if (selectedFiles.length === 0) {
-                  imageCounter.style.display = 'none';
-                }
-
-                // Обновляем индексы
-                const items = selectedImagesContainer.querySelectorAll('.preview-item');
-                items.forEach((item, i) => {
-                  const counter = item.querySelector('.upload-counter');
-                  if (counter) {
-                    counter.textContent = i + 1;
-                  }
-                  item.dataset.index = i;
-                });
-                
-                // Если удалили первое изображение, обновляем основное превью
-                if (index === 0 && selectedFiles.length > 0 && mainPreview) {
-                  updateMainPreview(selectedFiles[0]);
-                } else if (selectedFiles.length === 0 && mainPreview) {
-                  mainPreview.innerHTML = '<span id="no-image-placeholder">Выберите фотографии</span>';
-                }
-              }, 300);
-            });
-
-            selectedImagesContainer.appendChild(imageItem);
-          };
-          reader.readAsDataURL(file);
-        });
-
-        // Инициализируем Sortable для миниатюр
-        if (selectedImagesContainer.children.length > 0 && typeof Sortable !== 'undefined') {
-          new Sortable(selectedImagesContainer, {
-            animation: 150,
-            ghostClass: 'dragging',
-            onEnd: function() {
-              // Переупорядочиваем файлы после перетаскивания
-              const newOrder = [];
-              const items = selectedImagesContainer.querySelectorAll('.preview-item');
-
-              items.forEach((item, index) => {
-                const oldIndex = parseInt(item.dataset.index);
-                newOrder[index] = selectedFiles[oldIndex];
-
-                // Обновляем номер
-                const counter = item.querySelector('.upload-counter');
-                if (counter) {
-                  counter.textContent = index + 1;
-                }
-
-                item.dataset.index = index;
-              });
-
-              selectedFiles = newOrder;
-              
-              // Обновляем основное превью
-              if (selectedFiles.length > 0 && mainPreview) {
-                updateMainPreview(selectedFiles[0]);
-              }
             }
           });
-        }
-      }
+
+          // Обработчик выбора главного изображения
+          imageItem.querySelector('.preview-image').addEventListener('click', function(e) {
+            if (!e.target.classList.contains('remove-image')) {
+              updateMainPreview(file);
+              const allItems = selectedImagesContainer.querySelectorAll('.preview-item');
+              allItems.forEach(item => item.classList.remove('is-main'));
+              imageItem.classList.add('is-main');
+            }
+          });
+
+          selectedImagesContainer.appendChild(imageItem);
+        };
+        reader.readAsDataURL(file);
+      });
     }
 
-    // Функция для сохранения порядка изображений в localStorage
-    function saveImageOrderToLocalStorage() {
-      const productId = document.querySelector('input[name="product_id"]').value;
-      const imageItems = document.querySelectorAll('.image-item');
-      const orderData = {};
-      
-      imageItems.forEach((item, index) => {
-        const imageId = item.dataset.imageId;
-        if (imageId) {
-          orderData[imageId] = index + 1;
-        }
-      });
-      
-      localStorage.setItem(`product_${productId}_image_order`, JSON.stringify(orderData));
-    }
-    
-    // Функция для восстановления порядка изображений из localStorage
-    function restoreImageOrderFromLocalStorage() {
-      const productId = document.querySelector('input[name="product_id"]').value;
-      const savedOrder = localStorage.getItem(`product_${productId}_image_order`);
-      
-      if (!savedOrder) return;
-      
-      try {
-        const orderData = JSON.parse(savedOrder);
-        const container = document.getElementById('sortable-images');
-        const items = Array.from(container.querySelectorAll('.image-item'));
-        
-        // Сортируем элементы в соответствии с сохраненным порядком
-        items.sort((a, b) => {
-          const aId = a.dataset.imageId;
-          const bId = b.dataset.imageId;
-          
-          if (!aId || !bId) return 0;
-          
-          return (orderData[aId] || 999) - (orderData[bId] || 999);
-        });
-        
-        // Перестраиваем DOM
-        items.forEach(item => {
-          container.appendChild(item);
-        });
-        
-        // Обновляем номера порядка
-        updateOrderValues();
-      } catch (e) {
-        console.error('Ошибка при восстановлении порядка изображений:', e);
-      }
-    }
-    
-    // Обновляем форму перед отправкой, чтобы учесть изменения в перетаскивании
+    // Обработка отправки формы
     const productForm = document.getElementById('product-form');
     if (productForm) {
       productForm.addEventListener('submit', function(e) {
-        // Обеспечиваем, что все изменения порядка изображений будут отправлены
-        updateOrderValues();
+        e.preventDefault();
         
-        // Добавляем скрытые поля для основного изображения, если оно не выбрано
-        const hasMainImage = document.querySelector('.image-preview.is-main');
-        if (!hasMainImage) {
-          // Если нет выбранного главного изображения, используем первое
-          const firstImage = document.querySelector('.image-item');
-          if (firstImage) {
-            const imageId = firstImage.dataset.imageId;
-            if (imageId) {
-              const mainImageInput = document.getElementById('main-image-input');
-              if (mainImageInput) {
-                mainImageInput.value = imageId;
-              } else {
-                // Создаем скрытое поле, если его нет
-                const hiddenInput = document.createElement('input');
-                hiddenInput.type = 'hidden';
-                hiddenInput.name = 'main_image';
-                hiddenInput.value = imageId;
-                this.appendChild(hiddenInput);
-              }
-            }
+        const formData = new FormData(this);
+        
+        // Добавляем выбранные файлы
+        selectedFiles.forEach((file, index) => {
+          formData.append('product_images', file);
+        });
+
+        // Добавляем порядок изображений
+        const orderInputs = document.querySelectorAll('.order-input');
+        orderInputs.forEach(input => {
+          formData.append(input.name, input.value);
+        });
+
+        // Отправляем форму
+        fetch(this.action, {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
           }
-        }
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            window.location.href = data.redirect_url;
+          } else {
+            alert('Ошибка при сохранении: ' + data.error);
+          }
+        })
+        .catch(error => {
+          console.error('Ошибка:', error);
+          alert('Произошла ошибка при сохранении');
+        });
       });
     }
 
-    // Обеспечиваем корректную работу dropzone при перезагрузке страницы
-    window.addEventListener('DOMContentLoaded', function() {
-      // Восстанавливаем выбранные изображения из localStorage, если есть
+    // Функция сохранения порядка в localStorage
+    function saveImageOrderToLocalStorage() {
       const productId = document.querySelector('input[name="product_id"]')?.value;
-      if (productId) {
-        const savedImages = localStorage.getItem(`product_${productId}_selected_images`);
-        if (savedImages) {
-          try {
-            selectedFiles = JSON.parse(savedImages);
-            if (selectedFiles && selectedFiles.length > 0) {
-              // Отображаем сохраненные изображения
-              displaySelectedImages();
-            }
-          } catch (e) {
-            console.error('Ошибка при восстановлении выбранных изображений:', e);
-            localStorage.removeItem(`product_${productId}_selected_images`);
-          }
-        }
-      }
+      if (!productId) return;
+
+      const items = sortableImagesContainer.querySelectorAll('.image-item');
+      const orderData = {};
       
-      // Добавляем обработчик для очистки localStorage при успешной отправке формы
-      const productForm = document.getElementById('product-form');
-      if (productForm) {
-        productForm.addEventListener('submit', function() {
-          if (productId) {
-            localStorage.removeItem(`product_${productId}_image_order`);
-            localStorage.removeItem(`product_${productId}_selected_images`);
+      items.forEach((item, index) => {
+        const imageId = item.dataset.imageId;
+        if (imageId) {
+          orderData[imageId] = index;
+        }
+      });
+
+      localStorage.setItem(`product_${productId}_image_order`, JSON.stringify(orderData));
+    }
+
+    // Восстанавливаем порядок при загрузке страницы
+    function restoreImageOrder() {
+      const productId = document.querySelector('input[name="product_id"]')?.value;
+      if (!productId) return;
+
+      const savedOrder = localStorage.getItem(`product_${productId}_image_order`);
+      if (!savedOrder) return;
+
+      try {
+        const orderData = JSON.parse(savedOrder);
+        const items = Array.from(sortableImagesContainer.querySelectorAll('.image-item'));
+        
+        // Сортируем элементы
+        items.sort((a, b) => {
+          const aId = a.dataset.imageId;
+          const bId = b.dataset.imageId;
+          return (orderData[aId] || 0) - (orderData[bId] || 0);
+        });
+
+        // Перемещаем элементы в нужном порядке
+        items.forEach(item => {
+          sortableImagesContainer.appendChild(item);
+        });
+
+        // Обновляем номера
+        items.forEach((item, index) => {
+          const orderNumber = item.querySelector('.order-number');
+          if (orderNumber) {
+            orderNumber.textContent = index + 1;
+          }
+          const orderInput = item.querySelector('.order-input');
+          if (orderInput) {
+            orderInput.value = index;
           }
         });
+      } catch (e) {
+        console.error('Ошибка при восстановлении порядка:', e);
       }
-    });
+    }
+
+    // Вызываем восстановление порядка при загрузке
+    restoreImageOrder();
   });
 </script>
 {% endblock %} 

@@ -37,7 +37,6 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
-    # 'django.contrib.auth.backends.ModelBackend',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
@@ -45,7 +44,8 @@ INSTALLED_APPS = [
     'accounts',
     'django.contrib.humanize',
     'news',
-    'products'
+    'products',
+    'django_cleanup.apps.CleanupConfig',
 ]
 
 
