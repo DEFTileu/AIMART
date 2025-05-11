@@ -1,5 +1,5 @@
-{% extends 'html/base.html' %} {% load static %} {% block title %}{{ title }} -
-AIMART{% endblock %} {% block extra_css %}
+{% extends 'html/main/base.html' %} {% load static %}
+{% block title %}{{ title }} - AIMART{% endblock %} {% block extra_css %}
 <style>
   .news-form-container {
     max-width: 800px;
@@ -178,6 +178,32 @@ AIMART{% endblock %} {% block extra_css %}
     cursor: pointer;
     margin-left: 10px;
   }
+
+  @media (max-width: 768px) {
+    .news-form-title {
+      font-size: 20px;
+    }
+    .form-label,
+    .form-control,
+    .btn {
+      font-size: 14px;
+    }
+    .news-form-container {
+      padding: 15px;
+    }
+    .form-actions {
+      flex-direction: column;
+      gap: 15px;
+      align-items: stretch;
+    }
+    .d-flex.gap-2 {
+      flex-direction: column;
+      gap: 10px;
+    }
+    .btn {
+      width: 100%;
+    }
+  }
 </style>
 {% endblock %} {% block content %}
 <div class="news-form-container">
@@ -258,9 +284,17 @@ AIMART{% endblock %} {% block extra_css %}
     </div>
 
     <div class="form-actions">
-      <a href="{% url 'news_list' %}" class="btn btn-outline">Отмена</a>
-      <button type="submit" class="btn btn-primary">
-        {% if is_edit %}Сохранить изменения{% else %}Создать новость{% endif %}
+      <a href="{% url 'create_banner' %}" class="btn btn-success">
+        <i class="fas fa-image"></i> Создать баннер
+      </a>
+      <a
+        href="{% url 'news_list' %}"
+        class="btn btn-outline"
+        style="margin-left: 15px"
+        >Отмена</a
+      >
+      <button type="submit" class="btn btn-primary" style="margin-left: auto">
+        Опубликовать новость
       </button>
     </div>
   </form>

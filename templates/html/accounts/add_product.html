@@ -1,4 +1,4 @@
-{% extends 'html/base.html' %}
+{% extends 'html/main/base.html' %}
 {% load static %}
 
 {% block title %}Добавить товар - AIMART{% endblock %}
@@ -484,6 +484,8 @@
                 cursor: pointer;
               "
             />
+              <!-- В форме, после <input id="product-images-drag"> -->
+<input type="file" id="product-images" name="product_images" multiple style="display: none;">
             <div
               class="upload-progress"
               id="upload-progress"
@@ -587,18 +589,14 @@
 <!-- Подключение библиотеки SortableJS -->
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    // Обработка загрузки фотографий продукта
-    const productImages = document.getElementById("product-images");
-    const mainPreview = document.getElementById("main-preview");
-    const noImagePlaceholder = document.getElementById("no-image-placeholder");
-    const selectedImagesContainer = document.getElementById("selected-images-container");
-    const imageCounter = document.getElementById("image-counter");
-    const productForm = document.getElementById("product-form");
-    const cancelBtn = document.getElementById("cancel-btn");
+    document.addEventListener("DOMContentLoaded", function () {
+      const mainPreview = document.getElementById("main-preview");
+      const noImagePlaceholder = document.getElementById("no-image-placeholder");
+      const selectedImagesContainer = document.getElementById("selected-images-container");
+      const imageCounter = document.getElementById("image-counter");
+      const productForm = document.getElementById("product-form");
+      const cancelBtn = document.getElementById("cancel-btn");
 
-    // Массив для хранения выбранных файлов
-    let selectedFiles = [];
 
     // Добавляем функционал drag-and-drop для загрузки изображений
     const dragArea = document.getElementById("drag-area");
@@ -929,15 +927,17 @@
 
       // Функция для создания DataTransfer объекта с файлами
       function updateHiddenInput() {
-        if (selectedDragFiles.length > 0 && productImages) {
-          // Создаем объект для передачи файлов в стандартный input
+        if (selectedDragFiles.length > 0 && dragInput) { // Используем dragInput вместо productImages
           const dataTransfer = new DataTransfer();
           selectedDragFiles.forEach((file) => {
             dataTransfer.items.add(file);
           });
+          dragInput.files = dataTransfer.files; // Обновляем файлы в правильном input
 
           // Заполняем стандартный input файлами из перетаскивания
           productImages.files = dataTransfer.files;
+          // Логируем для отладки
+        console.log("Updated product-images with files:", productImages.files);
 
           // Запускаем событие изменения для обновления предпросмотра
           if (mainPreview && selectedDragFiles.length > 0) {
@@ -986,5 +986,6 @@
       }
     }
   });
+
 </script>
 {% endblock %}

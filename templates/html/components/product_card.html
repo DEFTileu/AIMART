@@ -120,15 +120,7 @@
       <button
         class="add-to-cart {% if not product.is_active %}disabled{% endif %}"
         data-product-id="{{ product.id }}"
-        onclick="addToCart(event, {{ product.id }})"
-        {%
-        if
-        not
-        product.is_active
-        %}disabled{%
-        endif
-        %}
-      >
+        onclick="addToCart(event, {{ product.id }})">
         <span class="cart-icon">🛒</span>
         <span class="cart-text"
           >{% if not product.is_active %} Нет в наличии {% else %} В корзину

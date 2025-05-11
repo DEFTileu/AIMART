@@ -117,7 +117,7 @@ def catalog(request):
         'page_obj': page_obj
     }
 
-    return render(request, 'html/catalog.html', context)
+    return render(request, 'html/main/catalog.html', context)
 
 
 def favorites(request):
@@ -134,7 +134,7 @@ def favorites(request):
             except Product.DoesNotExist:
                 pass
 
-    return render(request, 'html/favorites.html', {'favorites': favorites})
+    return render(request, 'html/main/favorites.html', {'favorites': favorites})
 
 
 def add_to_cart(request, id):
@@ -211,7 +211,7 @@ def cart_view(request):
             except Product.DoesNotExist:
                 pass
 
-    return render(request, 'html/cart.html', {
+    return render(request, 'html/main/cart.html', {
         'cart_items': cart_items,
         'cart_total': cart_total
     })
@@ -220,7 +220,7 @@ def cart_view(request):
 def wishlist_view(request):
     wishlist = request.session.get('wishlist', [])
     products_in_wishlist = Product.objects.filter(id__in=wishlist)
-    return render(request, 'html/favorites.html', {'products': products_in_wishlist})
+    return render(request, 'html/main/favorites.html', {'products': products_in_wishlist})
 
 
 def toggle_favorite(request):
@@ -833,7 +833,6 @@ def edit_product(request, id):
 
 @login_required
 def add_product(request):
-    # Проверяем, что пользователь - продавец
     if not hasattr(request.user, 'user_type') or request.user.user_type != 'seller':
         return redirect('home')
 
@@ -841,25 +840,23 @@ def add_product(request):
     brands = Brand.objects.all()
 
     if request.method == 'POST':
+        print("request.FILES:", request.FILES)
         form = ProductForm(request.POST)
         if form.is_valid():
             try:
-                # Создаем продукт без сохранения
+                # Создаем продукт
                 product = form.save(commit=False)
-                product.seller = request.user  # Привязываем товар к текущему пользователю
-                product.save()  # Сохраняем товар
+                product.seller = request.user
+                product.save()
 
-                # Обработка загруженных фотографий (метод 1 - все сразу)
+                # Обработка загруженных фотографий
                 if 'product_images' in request.FILES:
                     files = request.FILES.getlist('product_images')
-
-                    # Проверяем количество загруженных файлов
                     if len(files) > 5:
-                        files = files[:5]  # Ограничиваем максимум 5 файлов
+                        files = files[:5]  # Ограничиваем до 5 файлов
 
-                    # Сохраняем фотографии
                     for i, file in enumerate(files):
-                        is_main = (i == 0)  # Первая фотография считается главной
+                        is_main = (i == 0)  # Первая фотография - главная
                         ProductImage.objects.create(
                             product=product,
                             image=file,
@@ -867,52 +864,29 @@ def add_product(request):
                             order=i
                         )
 
-                # Обработка отдельных загруженных фотографий (метод 2 - по одной)
-                for i in range(1, 6):  # Максимум 5 фотографий
-                    field_name = f'product_image_{i}'
-                    if field_name in request.FILES:
-                        file = request.FILES[field_name]
-                        max_order = ProductImage.objects.filter(product=product).aggregate(Max('order'))[
-                                        'order__max'] or -1
-
-                        # Создаем новое изображение
-                        is_main = False
-                        if i == 1 or not ProductImage.objects.filter(product=product, is_main=True).exists():
-                            is_main = True
-
-                        ProductImage.objects.create(
-                            product=product,
-                            image=file,
-                            is_main=is_main,
-                            order=max_order + 1
-                        )
-
-                # Перенаправляем на страницу профиля продавца
                 return redirect('profile')
             except Exception as e:
                 print(f"Ошибка при сохранении товара: {e}")
+                messages.error(request, f"Ошибка при сохранении товара: {e}")
                 return render(request, 'html/accounts/add_product.html', {
                     'form': form,
-                    'error': f'Ошибка при сохранении товара: {e}',
                     'categories': categories,
                     'brands': brands
                 })
         else:
-            # Если форма не валидна, показываем ошибки
+            messages.error(request, "Пожалуйста, проверьте введенные данные.")
             return render(request, 'html/accounts/add_product.html', {
                 'form': form,
                 'categories': categories,
                 'brands': brands
             })
     else:
-        # GET запрос - показываем пустую форму
         form = ProductForm()
         return render(request, 'html/accounts/add_product.html', {
             'form': form,
             'categories': categories,
             'brands': brands
         })
-
 
 def product_detail(request, id):
     # Пытаемся получить товар из кэша
@@ -993,4 +967,4 @@ def product_detail(request, id):
         'similar_products': similar_products
     }
 
-    return render(request, 'html/product_detail.html', context)
+    return render(request, 'html/product/product_detail.html', context)

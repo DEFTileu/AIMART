@@ -1,0 +1,317 @@
+/* Новый современный баннер */
+.hero-banner {
+  position: relative;
+  max-width: 1200px;
+  height: 420px;
+  margin: 0 auto 2rem;
+  overflow: hidden;
+  border-radius: 18px;
+  box-shadow: 0 6px 32px rgba(0, 0, 0, 0.12);
+  background: #fff;
+}
+
+.banner-carousel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.banner-slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  z-index: 1;
+  pointer-events: none;
+  transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.banner-slide.active {
+  opacity: 1;
+  z-index: 2;
+  pointer-events: auto;
+}
+
+.banner-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 18px;
+  filter: brightness(0.85);
+}
+
+.banner-caption {
+  position: absolute;
+  left: 60px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #fff;
+  z-index: 3;
+  max-width: 40%;
+  background: rgba(0, 0, 0, 0.32);
+  padding: 32px 36px;
+  border-radius: 16px;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+.banner-title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: #fff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+}
+
+.banner-desc {
+  font-size: 1.1rem;
+  margin-bottom: 18px;
+  color: #f3f3f3;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.banner-btn {
+  display: inline-block;
+  padding: 12px 32px;
+  background: linear-gradient(90deg, #ff8c00 0%, #ffb347 100%);
+  color: #fff;
+  font-weight: 600;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  text-decoration: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: background 0.2s, box-shadow 0.2s;
+}
+
+.banner-btn:hover {
+  background: linear-gradient(90deg, #ffb347 0%, #ff8c00 100%);
+  box-shadow: 0 4px 16px rgba(255, 140, 0, 0.18);
+}
+
+/* Кнопки навигации по бокам */
+.banner-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.7);
+  border: none;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  font-size: 22px;
+  color: #ff8c00;
+  cursor: pointer;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, color 0.2s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.banner-nav:hover {
+  background: #ff8c00;
+  color: #fff;
+}
+
+.banner-prev {
+  left: 24px;
+}
+
+.banner-next {
+  right: 24px;
+}
+
+/* Точки навигации внизу */
+.banner-dots {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 12px;
+  z-index: 10;
+}
+
+.banner-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.6);
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.banner-dot.active {
+  background: #ff8c00;
+  transform: scale(1.25);
+}
+
+.banner-dot:hover {
+  background: #ffb347;
+}
+
+/* Адаптивность для баннеров */
+@media (max-width: 992px) {
+  .hero-banner {
+    height: 320px;
+  }
+
+  .banner-caption {
+    left: 24px;
+    padding: 18px 20px;
+    max-width: 60%;
+  }
+
+  .banner-title {
+    font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .hero-banner {
+    height: 180px;
+    border-radius: 8px;
+  }
+
+  .banner-caption {
+    left: 10px;
+    right: 10px;
+    top: auto;
+    bottom: 18px;
+    transform: none;
+    max-width: 95%;
+    padding: 10px 12px;
+  }
+
+  .banner-title {
+    font-size: 1.1rem;
+  }
+
+  .banner-btn {
+    font-size: 0.95rem;
+    padding: 8px 18px;
+  }
+
+  .banner-nav {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+
+  .banner-dot {
+    width: 8px;
+    height: 8px;
+  }
+}
+
+.banner-dots-center {
+  position: absolute;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 10;
+}
+
+.banner-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.6);
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.banner-dot.active {
+  background: #ff8c00;
+  transform: scale(1.2);
+}
+
+.banner-dot:hover {
+  background: #ffb347;
+}
+
+.banner-pause-btn {
+  position: absolute;
+  right: 32px;
+  bottom: 32px;
+  z-index: 20;
+  background: rgba(255, 255, 255, 0.85);
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  color: #ff8c00;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.banner-pause-btn:hover {
+  background: #ff8c00;
+  color: #fff;
+}
+
+.about-features {
+  display: flex;
+  gap: 24px;
+  margin-top: 32px;
+}
+
+.feature-item {
+  flex: 1 1 0;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+  padding: 24px 18px;
+  text-align: center;
+  min-width: 0;
+}
+
+@media (max-width: 900px) {
+  .about-features {
+    gap: 12px;
+  }
+  .feature-item {
+    padding: 16px 8px;
+  }
+}
+
+@media (max-width: 600px) {
+  .about-features {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 18px;
+  }
+  .feature-item {
+    padding: 10px 4px;
+    font-size: 0.97rem;
+    min-width: 0;
+    border-radius: 8px;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+  }
+  .feature-title {
+    font-size: 1.05rem;
+  }
+  .feature-icon {
+    font-size: 2rem;
+    margin-bottom: 6px;
+  }
+}

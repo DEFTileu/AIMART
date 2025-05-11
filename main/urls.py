@@ -1,11 +1,17 @@
-from django.contrib import admin
-from django.urls import path,include
+from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
 
-from main.views import home, base, about, cart, seller_profile, faq
+from main.views import home, base, about, seller_profile, faq
 from products.views import product_detail, catalog, favorites, cart_view, add_product, edit_product, delete_product, \
         add_to_cart, add_to_wishlist, toggle_favorite, cart_ajax, get_counters, toggle_product_status, update_cart, \
         remove_from_cart, clear_cart
+
+from main.views import AlpamysChortAboutUs,AlpamysChortInfreg,AlpamysChortMathreg,AlpamysChrot
+
+
 from accounts.views import auth_view
+from . import views
 
 urlpatterns = [
         path('',home,name='home',),
@@ -30,4 +36,16 @@ urlpatterns = [
         path('remove_from_cart/<int:id>/', remove_from_cart, name='remove_from_cart'),
         path('clear_cart/', clear_cart, name='clear_cart'),
         path('faq/', faq, name='faq'),
-]
+        path('banners/', views.banner_list, name='banner_list'),
+        path('banners/create/', views.create_banner, name='create_banner'),
+        path('banners/<int:banner_id>/edit/', views.edit_banner, name='edit_banner'),
+        path('banners/<int:banner_id>/delete/', views.delete_banner, name='delete_banner'),
+
+
+
+
+        path('AlpamysChrot',AlpamysChrot,name='AlpamysChrot'),
+        path('AlpamysChrotAbout',AlpamysChortAboutUs,name='AlpamysChrotAbout'),
+        path('AlpamysChortInf',AlpamysChortInfreg,name='AlpamysChrotInf'),
+        path('AlpamysChrotMath',AlpamysChortMathreg,name='AlpamysChrotMath'),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,4 +1,4 @@
-{% extends 'html/base.html' %} {% load static %} {% block title %}
+{% extends 'html/main/base.html' %} {% load static %} {% block title %}
 {{product.name }} - AIMART{% endblock %} {% block extra_css %}
 <link
   rel="stylesheet"
@@ -767,7 +767,7 @@
       <div class="product-price">
         <span class="price-label">Цена:</span>
         <span class="price-value">{{ product.price }}</span>
-        <span class="price-currency">₽</span>
+        <span class="price-currency">₸</span>
       </div>
 
       <div
@@ -822,11 +822,7 @@
   </div>
   <div class="related-products">
     <h2 class="related-title">Похожие товары</h2>
-    {% include 'html/components/product_grid.html' with
-    products=similar_products show_seller=False show_rating=True
-    show_discount=True grid_class="compact" empty_title="Похожих товаров не
-    найдено" empty_message="В данный момент нет товаров, похожих на этот"
-    empty_action_url="/catalog/" empty_action_text="Перейти в каталог" %}
+    {% include 'html/components/product_grid.html' with products=similar_products show_seller=False show_rating=True show_discount=True grid_class="compact" empty_title="Похожих товаров не найдено" empty_message="В данный момент нет товаров, похожих на этот" empty_action_url="/catalog/" empty_action_text="Перейти в каталог" %}
   </div>
 
   <!-- Персональные рекомендации -->
@@ -834,29 +830,7 @@
   <div class="recommendations-section">
     <div class="container">
       <h2 class="section-title">Рекомендуем вам</h2>
-      <div class="products-grid">
-        {% for rec in recommended_products %}
-        <div class="product-card">
-          <a href="{% url 'product_detail' rec.id %}" class="product-link">
-            <div class="product-image">
-              {% if rec.main_image %}
-              <img
-                src="{{ rec.main_image.url }}"
-                alt="{{ rec.name }}"
-                loading="lazy"
-              />
-              {% else %}
-              <div class="no-image">Нет изображения</div>
-              {% endif %}
-            </div>
-            <div class="product-info">
-              <h3 class="product-title">{{ rec.name }}</h3>
-              <div class="product-price">{{ rec.price }} ₽</div>
-            </div>
-          </a>
-        </div>
-        {% endfor %}
-      </div>
+    {% include 'html/components/product_grid.html' with products=recommended_products grid_class="list" show_discount=True empty_title="Рекомендованных товаров для этого товара нет." empty_message="На данный момент у нас нет рекомендованных товаров для вас в этой категории. Мы постоянно обновляем наш ассортимент, и, возможно, в ближайшее время появятся новые предложения, которые могут вас заинтересовать. "%}
     </div>
   </div>
   {% endif %}

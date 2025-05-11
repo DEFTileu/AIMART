@@ -1,0 +1,77 @@
+{% extends 'html/main/base.html' %} {% load static %} {% block title %} {{ title }} -
+AIMART{% endblock %} {% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/banner/banner_list.css' %}" />
+{% endblock %} {% block content %}
+<div class="banner-list-container">
+  <div class="banner-list-header">
+    <h1 class="banner-list-title">{{ title }}</h1>
+    <a href="{% url 'create_banner' %}" class="btn-create-banner">
+      <i class="fas fa-plus"></i> Создать баннер
+    </a>
+  </div>
+
+  {% if messages %} {% for message in messages %}
+  <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+  {% endfor %} {% endif %} {% if banners %}
+  <div class="table-responsive">
+    <table class="banner-table">
+      <thead>
+        <tr>
+          <th>Изображение</th>
+          <th>Заголовок</th>
+          <th>Порядок</th>
+          <th>Статус</th>
+          <th>Действия</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for banner in banners %}
+        <tr>
+          <td>
+            {% if banner.image %}
+            <img
+              src="{{ banner.image.url }}"
+              alt="{{ banner.title }}"
+              class="banner-image"
+              loading="lazy"
+            />
+            {% else %}
+            <span class="text-muted">Нет изображения</span>
+            {% endif %}
+          </td>
+          <td class="banner-title">{{ banner.title }}</td>
+          <td class="banner-order">{{ banner.order }}</td>
+          <td>
+            {% if banner.is_active %}
+            <span class="banner-status active">Активен</span>
+            {% else %}
+            <span class="banner-status inactive">Неактивен</span>
+            {% endif %}
+          </td>
+          <td>
+            <div class="banner-actions">
+              <a href="{% url 'edit_banner' banner.id %}" class="btn-edit">
+                <i class="fas fa-edit"></i> Редактировать
+              </a>
+              <a href="{% url 'delete_banner' banner.id %}" class="btn-delete">
+                <i class="fas fa-trash"></i> Удалить
+              </a>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Модальные окна для подтверждения удаления -->
+  {# Удалено: модальные окна #} {% else %}
+  <div class="alert alert-info">
+    Баннеры пока не созданы.
+    <a href="{% url 'create_banner' %}" class="alert-link"
+      >Создать первый баннер</a
+    >
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

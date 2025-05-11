@@ -1,0 +1,164 @@
+{% extends 'html/main/base.html' %}
+{% load static %}
+
+{% block title %}Главная - AIMART{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/banner/banners.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- Hero Banner Section -->
+<section class="hero-banner">
+    <div class="banner-carousel">
+        {% for banner in banners %}
+        <div class="banner-slide{% if forloop.first %} active{% endif %}">
+            {% if banner.button_url %}
+                {% if not banner.button_text %}
+                    <a href="{{ banner.button_url }}">
+                        <img src="{{ banner.image.url }}" alt="{{ banner.title }}" class="banner-image" style="cursor:pointer;">
+                    </a>
+                {% elif banner.button_text|lower == 'empty' %}
+                    <a href="{{ banner.button_url }}">
+                        <img src="{{ banner.image.url }}" alt="{{ banner.title }}" class="banner-image" style="cursor:pointer;">
+                    </a>
+                {% else %}
+                    <img src="{{ banner.image.url }}" alt="{{ banner.title }}" class="banner-image">
+                {% endif %}
+            {% else %}
+                <img src="{{ banner.image.url }}" alt="{{ banner.title }}" class="banner-image">
+            {% endif %}
+            {% if banner.button_text and banner.button_text|lower != 'empty' %}
+            <div class="banner-caption">
+                <h2 class="banner-title">{{ banner.title }}</h2>
+                {% if banner.description %}<p class="banner-desc">{{ banner.description }}</p>{% endif %}
+                {% if banner.button_url %}
+                <a href="{{ banner.button_url }}" class="banner-btn">{{ banner.button_text|default:'Подробнее' }}</a>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+        {% empty %}
+        <div class="banner-slide active">
+            <img src="{% static 'images/banner.png' %}" alt="Добро пожаловать в AIMART" class="banner-image">
+            <div class="banner-caption">
+                <h2 class="banner-title">Добро пожаловать в AIMART</h2>
+                <a href="{% url 'catalog' %}" class="banner-btn">Смотреть каталог</a>
+            </div>
+        </div>
+        {% endfor %}
+        <button class="banner-nav banner-prev" aria-label="Предыдущий баннер"><i class="fas fa-chevron-left"></i></button>
+        <button class="banner-nav banner-next" aria-label="Следующий баннер"><i class="fas fa-chevron-right"></i></button>
+        <button id="banner-pause-btn" class="banner-pause-btn" aria-label="Пауза"><i class="fas fa-pause"></i></button>
+        <div class="banner-dots-center">
+            {% for banner in banners %}
+            <button class="banner-dot{% if forloop.first %} active{% endif %}" data-index="{{ forloop.counter0 }}" aria-label="Перейти к баннеру {{ forloop.counter }}"></button>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- About Section -->
+<section class="about-section">
+    <div class="about-container">
+    </div>
+    <div class="about-features">
+        <div class="feature-item">
+            <div class="feature-icon">🚚</div>
+            <h3 class="feature-title">Быстрая доставка</h3>
+            <p class="feature-desc">Доставляем заказы по всему Казахстану в кратчайшие сроки</p>
+        </div>
+        <div class="feature-item">
+            <div class="feature-icon">💸</div>
+            <h3 class="feature-title">Лучшие цены</h3>
+            <p class="feature-desc">Регулярные акции и скидки для наших покупателей в Казахстане</p>
+        </div>
+        <div class="feature-item">
+            <div class="feature-icon">🔒</div>
+            <h3 class="feature-title">Безопасная оплата</h3>
+            <p class="feature-desc">Надёжные и проверенные способы оплаты в Казахстане</p>
+        </div>
+        <div class="feature-item">
+            <div class="feature-icon">👍</div>
+            <h3 class="feature-title">Гарантия качества</h3>
+            <p class="feature-desc">Тщательно отбираем и проверяем все товары для клиентов Казахстана</p>
+        </div>
+    </div>
+</section>
+
+<!-- Products Section -->
+<section class="products-section">
+    <h2 class="section-title">Популярные товары</h2>
+    {% include 'html/components/product_grid.html' with products=products show_seller=True show_rating=True grid_class="compact" %}
+    </div>
+    <div style="text-align: center; margin-top: 2rem;">
+        <a href="{% url 'catalog' %}" class="banner-btn">Смотреть все товары</a>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function() {
+    let carousel = document.querySelector('.banner-carousel');
+    let slides = carousel.querySelectorAll('.banner-slide');
+    let dots = carousel.querySelectorAll('.banner-dot');
+    let pauseBtn = document.getElementById('banner-pause-btn');
+    let prevBtn = carousel.querySelector('.banner-prev');
+    let nextBtn = carousel.querySelector('.banner-next');
+    let current = 0;
+    let paused = false;
+    let pauseTimeout = null;
+    let interval = 5000;
+    let autoSwitch;
+
+    function showSlide(idx) {
+        slides.forEach((slide, i) => {
+            slide.classList.toggle('active', i === idx);
+            dots[i].classList.toggle('active', i === idx);
+        });
+        current = idx;
+    }
+
+    function nextSlide() {
+        let next = (current + 1) % slides.length;
+        showSlide(next);
+    }
+    function prevSlide() {
+        let prev = (current - 1 + slides.length) % slides.length;
+        showSlide(prev);
+    }
+
+    function startAuto() {
+        if (autoSwitch) clearInterval(autoSwitch);
+        autoSwitch = setInterval(() => {
+            if (!paused) nextSlide();
+        }, interval);
+    }
+
+    dots.forEach((dot, i) => {
+        dot.addEventListener('click', () => {
+            showSlide(i);
+        });
+    });
+    if (prevBtn) prevBtn.addEventListener('click', prevSlide);
+    if (nextBtn) nextBtn.addEventListener('click', nextSlide);
+
+    pauseBtn.addEventListener('click', function() {
+        paused = !paused;
+        this.innerHTML = paused ? '<i class="fas fa-play"></i>' : '<i class="fas fa-pause"></i>';
+        if (paused) {
+            if (pauseTimeout) clearTimeout(pauseTimeout);
+            pauseTimeout = setTimeout(() => {
+                paused = false;
+                pauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+            }, 120000); // 2 минуты
+        } else {
+            if (pauseTimeout) clearTimeout(pauseTimeout);
+        }
+    });
+
+    startAuto();
+})();
+</script>
+{% endblock %}

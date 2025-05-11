@@ -1,34 +1,48 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.cache import cache_page
 from django.core.cache import cache
 from accounts.models import CustomUser
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required, user_passes_test
+from .models import Banner
+from .forms import BannerForm
 
 from products.models import Product
 
 
-@cache_page(60 * 15)  # Кэшируем на 15 минут
+def AlpamysChrot(request):
+    return render(request,'AlpaChort/AlphaMath.html')
+def AlpamysChortAboutUs(request):
+    return render(request,'AlpaChort/aboutUs.html')
+def AlpamysChortInfreg(request):
+    return render(request,'AlpaChort/infRegistr.html')
+def AlpamysChortMathreg(request):
+    return render(request,'AlpaChort/mathRegistr.html')
+
+
+
+
+
+
+# Убираем кэширование для отладки
 def home(request):
-    # Берем активные товары и предварительно загружаем связанные объекты
-    cache_key = 'home_products'
-    products = cache.get(cache_key)
+    # Получаем все активные баннеры, отсортированные по порядку
+    banners = Banner.objects.filter(is_active=True).order_by('order')
     
-    if not products:
-        products = Product.objects.filter(is_active=True).select_related('category', 'brand').prefetch_related('images')[:12]
-        cache.set(cache_key, products, 60 * 10)  # Кэшируем на 10 минут
-        
-    return render(request, 'html/home.html', {'products': products})
+    # Получаем популярные товары (например, последние 8 активных товаров)
+    products = Product.objects.filter(is_active=True).order_by('-created_at')[:8]
+    
+    context = {
+        'banners': banners,
+        'products': products,
+    }
+    return render(request, 'html/main/home.html', context)
 
 def about(request):
-    return render(request, 'html/about.html')
+    return render(request, 'html/main/about.html')
 
 def base(request):
-    return render(request, 'html/base.html')
-
-
-
-def cart(request):
-    return render(request, 'html/cart.html')
-
+    return render(request, 'html/main/base.html')
 
 
 
@@ -101,5 +115,66 @@ def faq(request):
         'faq_categories': faq_categories
     }
     
-    return render(request, 'html/faq.html', context)
+    return render(request, 'html/main/faq.html', context)
+
+def is_staff_user(user):
+    return user.is_staff
+
+@login_required
+@user_passes_test(is_staff_user)
+def create_banner(request):
+    if request.method == 'POST':
+        form = BannerForm(request.POST, request.FILES)
+        if form.is_valid():
+            banner = form.save()
+            messages.success(request, 'Баннер успешно создан')
+            return redirect('banner_list')
+    else:
+        form = BannerForm()
+    
+    return render(request, 'html/banner/banner_form.html', {
+        'form': form,
+        'title': 'Создание баннера'
+    })
+
+@login_required
+@user_passes_test(is_staff_user)
+def edit_banner(request, banner_id):
+    banner = get_object_or_404(Banner, id=banner_id)
+    if request.method == 'POST':
+        form = BannerForm(request.POST, request.FILES, instance=banner)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Баннер успешно обновлен')
+            return redirect('banner_list')
+    else:
+        form = BannerForm(instance=banner)
+    
+    return render(request, 'html/banner/banner_form.html', {
+        'form': form,
+        'banner': banner,
+        'title': 'Редактирование баннера'
+    })
+
+@login_required
+@user_passes_test(is_staff_user)
+def banner_list(request):
+    banners = Banner.objects.all()
+    return render(request, 'html/banner/banner_list.html', {
+        'banners': banners,
+        'title': 'Управление баннерами'
+    })
+
+@login_required
+@user_passes_test(is_staff_user)
+def delete_banner(request, banner_id):
+    banner = get_object_or_404(Banner, id=banner_id)
+    if request.method == 'POST':
+        banner.delete()
+        messages.success(request, 'Баннер успешно удален')
+        return redirect('banner_list')
+    return render(request, 'html/banner_confirm_delete.html', {
+        'banner': banner,
+        'title': 'Удаление баннера'
+    })
 
