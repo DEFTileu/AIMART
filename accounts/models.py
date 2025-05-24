@@ -1,5 +1,10 @@
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
+from django.core.exceptions import ValidationError
 from django.db import models
+from django.contrib.auth.models import User
+from django.conf import settings
+import re
+
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
@@ -60,3 +65,49 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     def has_module_perms(self, app_label):
         """Имеет ли пользователь доступ к указанному приложению."""
         return True
+
+
+
+
+class Card(models.Model):
+    CARD_TYPES = [
+        ('VISA', 'Visa'),
+        ('MASTERCARD', 'MasterCard'),
+        ('AMEX', 'American Express'),
+        ('MAESTRO', 'Maestro'),
+        ('MIR', 'МИР'),
+    ]
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='account_cards')
+
+    card_type = models.CharField(max_length=20, choices=CARD_TYPES)
+    card_number = models.CharField(max_length=19)  # формат: XXXX XXXX XXXX XXXX
+    expiry_month = models.IntegerField()
+    expiry_year = models.IntegerField()
+    card_holder = models.CharField(max_length=100)
+    cvv = models.CharField(max_length=4)
+    is_default = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def clean(self):
+        # Валидация номера карты (формат XXXX XXXX XXXX XXXX)
+        if not re.match(r'^\d{4}\s\d{4}\s\d{4}\s\d{4}$', self.card_number):
+            raise ValidationError('Неверный формат номера карты. Ожидается XXXX XXXX XXXX XXXX')
+
+        # Валидация expiry_month
+        if not (1 <= self.expiry_month <= 12):
+            raise ValidationError('Месяц истечения должен быть от 1 до 12')
+
+        # Валидация expiry_year (например, от текущего года и выше)
+        import datetime
+        current_year = datetime.datetime.now().year
+        if self.expiry_year < current_year:
+            raise ValidationError('Год истечения карты не может быть в прошлом')
+
+        # Валидация CVV (3-4 цифры)
+        if not re.match(r'^\d{3,4}$', self.cvv):
+            raise ValidationError('CVV должен содержать 3 или 4 цифры')
+
+    def __str__(self):
+        return f"{self.card_holder} - **** **** **** {self.card_number[-4:]}"
+

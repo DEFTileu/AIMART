@@ -1,0 +1,45 @@
+{% extends 'html/main/base.html' %} {% block title %}Чек заказа{% endblock %} {%
+block content %}
+<div
+  style="
+    max-width: 500px;
+    margin: 40px auto;
+    padding: 30px 20px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08);
+  "
+>
+  <h2 style="text-align: center">Чек заказа №{{ order.id }}</h2>
+  <div style="margin: 20px 0">
+    <b>Дата:</b> {{ order.paid_at|date:"d.m.Y H:i" }}<br />
+    <b>Покупатель:</b> {{ order.user.full_name }} ({{ order.user.email }})<br />
+    <b>Способ оплаты:</b> {{ order.get_payment_method_display }}<br />
+    {% if order.card_mask %}<b>Карта:</b> {{ order.card_mask }}<br />{% endif %}
+  </div>
+  <table style="width: 100%; margin-bottom: 20px">
+    <thead>
+      <tr>
+        <th style="text-align: left">Товар</th>
+        <th>Кол-во</th>
+        <th>Цена</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in order.items.all %}
+      <tr>
+        <td>{{ item.product.name }}</td>
+        <td style="text-align: center">{{ item.quantity }}</td>
+        <td style="text-align: right">{{ item.price }}₸</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div style="text-align: right; font-size: 20px; font-weight: 700">
+    Итого: {{ order.total_amount }}₸
+  </div>
+  <div style="text-align: center; margin-top: 30px">
+    <a href="/" class="checkout-btn">Вернуться на главную</a>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends 'html/main/base.html' %} {% block title %}Kaspi QR — оплата заказа{%
+endblock %} {% block content %}
+<div
+  style="
+    max-width: 400px;
+    margin: 40px auto;
+    padding: 30px 20px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08);
+    text-align: center;
+  "
+>
+  <img
+    src="https://kaspi.kz/qr/img/qr-logo.svg"
+    alt="Kaspi QR"
+    style="height: 40px; margin-bottom: 10px"
+  />
+  <h2 style="margin: 10px 0 5px 0">Kaspi QR</h2>
+  <div style="color: #888; font-size: 16px">Сканируйте и платите</div>
+  <div style="font-size: 32px; font-weight: 700; margin: 15px 0 10px 0">
+    {{ order.total_amount|floatformat:0 }} ₸
+  </div>
+  {% if order.kaspi_qr_image %}
+  <img
+    src="{{ order.kaspi_qr_image.url }}"
+    alt="QR code"
+    style="
+      width: 180px;
+      height: 180px;
+      margin: 10px auto 20px auto;
+      display: block;
+    "
+  />
+  {% endif %}
+  <div style="margin-bottom: 10px">Способы оплаты:</div>
+  <div style="display: flex; justify-content: center; gap: 10px">
+    <span
+      style="
+        background: #e53935;
+        color: #fff;
+        padding: 4px 12px;
+        border-radius: 6px;
+        font-weight: 600;
+      "
+      >RED</span
+    >
+    <span
+      style="
+        background: #ffb300;
+        color: #fff;
+        padding: 4px 12px;
+        border-radius: 6px;
+        font-weight: 600;
+      "
+      >KREDIT</span
+    >
+  </div>
+  <form method="post" style="margin-top: 25px">
+    {% csrf_token %}
+    <button type="submit" class="checkout-btn" style="width: 100%">
+      Я оплатил
+    </button>
+  </form>
+</div>
+{% endblock %}

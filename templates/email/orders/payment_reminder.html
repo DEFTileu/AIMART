@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Напоминание об оплате</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .header {
+        background: linear-gradient(135deg, #ff5722, #f4511e);
+        color: white;
+        padding: 20px;
+        text-align: center;
+        border-radius: 8px 8px 0 0;
+      }
+      .content {
+        background: #fff;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 0 0 8px 8px;
+      }
+      .payment-info {
+        margin: 20px 0;
+        padding: 15px;
+        background: #fff3e0;
+        border-radius: 4px;
+        border: 1px solid #ffe0b2;
+      }
+      .order-details {
+        margin: 20px 0;
+        padding: 15px;
+        background: #f9f9f9;
+        border-radius: 4px;
+      }
+      .payment-methods {
+        margin: 20px 0;
+        padding: 15px;
+        background: #f5f5f5;
+        border-radius: 4px;
+      }
+      .footer {
+        text-align: center;
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+        color: #666;
+        font-size: 12px;
+      }
+      .button {
+        display: inline-block;
+        padding: 10px 20px;
+        background: linear-gradient(135deg, #ff5722, #f4511e);
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        margin: 20px 0;
+      }
+      .warning {
+        color: #f4511e;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>Напоминание об оплате</h1>
+      </div>
+      <div class="content">
+        <p>Здравствуйте, {{ user.first_name }}!</p>
+
+        <p class="warning">
+          Это напоминание о том, что ваш заказ ожидает оплаты.
+        </p>
+
+        <div class="payment-info">
+          <h2>Информация об оплате</h2>
+          <p><strong>Номер заказа:</strong> {{ order.number }}</p>
+          <p><strong>Сумма к оплате:</strong> {{ total }} ₸</p>
+          <p>
+            <strong>Срок оплаты:</strong> {{ payment_deadline|date:"d.m.Y H:i"
+            }}
+          </p>
+        </div>
+
+        <div class="order-details">
+          <h2>Детали заказа</h2>
+          <p>
+            <strong>Дата заказа:</strong> {{ order.created_at|date:"d.m.Y H:i"
+            }}
+          </p>
+          <p><strong>Способ оплаты:</strong> {{ payment_method }}</p>
+        </div>
+
+        <div class="payment-methods">
+          <h2>Доступные способы оплаты</h2>
+          <ul>
+            <li>Банковской картой</li>
+            <li>Через Kaspi</li>
+            <li>Наличными при получении</li>
+          </ul>
+        </div>
+
+        <a href="{{ payment_url }}" class="button">Оплатить заказ</a>
+
+        <p>
+          Если вы уже оплатили заказ, пожалуйста, проигнорируйте это письмо.
+        </p>
+
+        <div class="footer">
+          <p>
+            Если у вас возникли проблемы с оплатой, пожалуйста, свяжитесь с
+            нашей службой поддержки.
+          </p>
+          <p>© 2024 AIMART. Все права защищены.</p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

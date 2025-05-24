@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Подтверждение заказа</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .header {
+        background: linear-gradient(135deg, #ff6b35, #ff9500);
+        color: white;
+        padding: 20px;
+        text-align: center;
+        border-radius: 8px 8px 0 0;
+      }
+      .content {
+        background: #fff;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 0 0 8px 8px;
+      }
+      .order-info {
+        margin: 20px 0;
+        padding: 15px;
+        background: #f9f9f9;
+        border-radius: 4px;
+      }
+      .order-items {
+        margin: 20px 0;
+      }
+      .order-item {
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
+      }
+      .order-total {
+        margin-top: 20px;
+        text-align: right;
+        font-weight: bold;
+      }
+      .footer {
+        text-align: center;
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+        color: #666;
+        font-size: 12px;
+      }
+      .button {
+        display: inline-block;
+        padding: 10px 20px;
+        background: linear-gradient(135deg, #ff6b35, #ff9500);
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        margin: 20px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>Подтверждение заказа</h1>
+      </div>
+      <div class="content">
+        <p>Здравствуйте, {{ user.first_name }}!</p>
+
+        <p>
+          Спасибо за ваш заказ в AIMART. Мы получили ваш заказ и начинаем его
+          обработку.
+        </p>
+
+        <div class="order-info">
+          <h2>Информация о заказе</h2>
+          <p><strong>Номер заказа:</strong> {{ order.number }}</p>
+          <p>
+            <strong>Дата заказа:</strong> {{ order.created_at|date:"d.m.Y H:i"
+            }}
+          </p>
+          <p><strong>Способ оплаты:</strong> {{ payment_method }}</p>
+          <p><strong>Статус заказа:</strong> {{ status }}</p>
+        </div>
+
+        <div class="order-items">
+          <h2>Товары в заказе</h2>
+          {% for item in items %}
+          <div class="order-item">
+            <p><strong>{{ item.product.name }}</strong></p>
+            <p>Количество: {{ item.quantity }}</p>
+            <p>Цена: {{ item.price }} ₸</p>
+          </div>
+          {% endfor %}
+        </div>
+
+        <div class="order-total">
+          <p>Итого к оплате: {{ total }} ₸</p>
+        </div>
+
+        <p>
+          Мы отправим вам уведомление, когда ваш заказ будет готов к отправке.
+        </p>
+
+        <a href="{{ order.get_absolute_url }}" class="button"
+          >Просмотреть заказ</a
+        >
+
+        <div class="footer">
+          <p>
+            Если у вас есть вопросы, пожалуйста, свяжитесь с нашей службой
+            поддержки.
+          </p>
+          <p>© 2024 AIMART. Все права защищены.</p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

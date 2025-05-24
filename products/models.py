@@ -1,5 +1,7 @@
 from django.conf import settings
 from django.db import models
+from django.utils import timezone
+import uuid
 
 
 class ProductImage(models.Model):
@@ -175,6 +177,7 @@ class Favorite(models.Model):
 
     def __str__(self):
         return f"{self.user.email} -> {self.product.name}"
+
 
 class CartItem(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='cart_items')

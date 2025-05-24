@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Political Science - Поиск вопросов</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Arial, sans-serif;
+        background: #f4f6fb;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        max-width: 600px;
+        margin: 40px auto;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+        padding: 32px 28px 24px 28px;
+      }
+      .header-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 24px;
+      }
+      h1 {
+        text-align: center;
+        color: #2d3a4b;
+        margin: 0;
+      }
+      .help-icon {
+        cursor: help;
+        color: #1976d2;
+        font-size: 24px;
+        position: relative;
+        display: inline-block;
+      }
+      .tooltip {
+        visibility: hidden;
+        background-color: #333;
+        color: #fff;
+        text-align: left;
+        padding: 12px;
+        border-radius: 6px;
+        position: absolute;
+        z-index: 1;
+        width: 300px;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        margin-top: 10px;
+        font-size: 14px;
+        line-height: 1.4;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+      .help-icon:hover .tooltip {
+        visibility: visible;
+        opacity: 1;
+      }
+      .tooltip::after {
+        content: "";
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        margin-left: -5px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: transparent transparent #333 transparent;
+      }
+      #searchForm {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 18px;
+      }
+      #query {
+        flex: 1;
+        padding: 10px 14px;
+        border: 1px solid #cfd8dc;
+        border-radius: 6px;
+        font-size: 16px;
+      }
+      .add-btn {
+        background: #1976d2;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        padding: 10px 18px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background 0.2s;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .add-btn:hover {
+        background: #125ea7;
+      }
+      #searchResults {
+        margin-top: 18px;
+      }
+      .result-block {
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e8eef7;
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+
+      .result-block:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+      }
+
+      .question-text {
+        color: #1976d2;
+        font-size: 16px;
+        font-weight: 500;
+        margin-bottom: 12px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #f0f4f8;
+      }
+
+      .correct-answer-block {
+        background: #f1f8f1;
+        color: #2e7d32;
+        padding: 10px 15px;
+        border-radius: 8px;
+        font-weight: 500;
+        margin-bottom: 12px;
+        border-left: 4px solid #2e7d32;
+      }
+
+      .answers-block {
+        background: #f8fafd;
+        padding: 12px 15px;
+        border-radius: 8px;
+        margin-top: 12px;
+      }
+
+      .answers-title {
+        color: #546e7a;
+        font-weight: 500;
+        margin-bottom: 8px;
+      }
+
+      .answer-item {
+        color: #37474f;
+        margin: 6px 0;
+        padding-left: 12px;
+      }
+      .correct-answer {
+        color: #2e7d32;
+        font-weight: bold;
+        background-color: #e8f5e9;
+        padding: 4px 8px;
+        border-radius: 4px;
+        margin: 8px 0;
+        display: inline-block;
+      }
+      hr {
+        border: none;
+        border-top: 1px solid #e0e0e0;
+      }
+      .disclaimer {
+        text-align: center;
+        color: #666;
+        font-size: 12px;
+        margin-top: 20px;
+        padding-top: 15px;
+        border-top: 1px solid #e0e0e0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header-container">
+        <h1>Поиск вопросов по Political Science</h1>
+        <div class="help-icon">
+          ?
+          <div class="tooltip">
+            <strong>Как пользоваться:</strong><br />
+            1. Введите ключевые слова для поиска вопроса<br />
+            2. Если вопрос не найден, нажмите "Добавить вопрос"<br />
+            3. При добавлении вопроса:<br />
+            • Введите текст вопроса<br />
+            • Укажите правильный ответ<br />
+            • Добавьте варианты ответов<br />
+            • Поставьте галочку "Только правильный ответ", если уверены только в
+            правильном ответе
+          </div>
+        </div>
+      </div>
+      <form method="GET" id="searchForm">
+        {% csrf_token %}
+        <input
+          type="text"
+          id="query"
+          name="query"
+          placeholder="Введите ключевые слова для поиска..."
+          oninput="searchQuestions()"
+        />
+        <a href="{% url 'add_question' %}" class="add-btn">
+          <span>+</span>
+          <span>Добавить вопрос</span>
+        </a>
+      </form>
+      <div id="searchResults">
+        <!-- Результаты поиска будут появляться здесь -->
+      </div>
+      <div class="disclaimer">
+        ⚠️ Обратите внимание: Мы не несем ответственности за точность и
+        правильность представленных ответов. Всегда проверяйте информацию из
+        надежных источников.
+      </div>
+    </div>
+    <script>
+      function searchQuestions() {
+        const query = document.getElementById("query").value;
+        if (query.length === 0) {
+          document.getElementById("searchResults").innerHTML = "";
+          return;
+        }
+        fetch(`/polit/ajax_search/?query=${query}`)
+          .then((response) => response.json())
+          .then((data) => {
+            const resultsDiv = document.getElementById("searchResults");
+            resultsDiv.innerHTML = "";
+            if (data.results.length === 0) {
+              resultsDiv.innerHTML = "Вопросы не найдены";
+            } else {
+              data.results.forEach((result) => {
+                let resultHtml = `
+                  <div class='result-block'>
+                    <div class="question-text">${result.question_text}</div>
+                    <div class="correct-answer-block">
+                      ✓ Правильный ответ: ${result.correct_answer}
+                    </div>`;
+
+                if (result.answers && result.answers.length > 0) {
+                  resultHtml += `
+                    <div class="answers-block">
+                      <div class="answers-title">Все варианты ответов:</div>`;
+
+                  result.answers.forEach((answer) => {
+                    resultHtml += `<div class="answer-item">• ${answer}</div>`;
+                  });
+
+                  resultHtml += `</div>`;
+                }
+
+                resultHtml += `</div>`;
+                resultsDiv.innerHTML += resultHtml;
+              });
+            }
+          });
+      }
+    </script>
+  </body>
+</html>

@@ -1,5 +1,7 @@
 import json
 from itertools import combinations
+import time
+from django.utils import timezone
 
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
@@ -10,9 +12,13 @@ from django.core.cache import cache
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
 
-from .forms import ProductForm
+from .forms import ProductForm, CheckoutForm
 from .models import Product, Favorite, CartItem, ProductView, Category, Brand, RecommendationPair, ProductImage
+from io import BytesIO
+from django.core.files.base import ContentFile
+import base64
 
 
 def catalog(request):

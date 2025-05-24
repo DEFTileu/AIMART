@@ -20,3 +20,11 @@ from products.views import add_product, product_detail, edit_product, add_to_car
 #         path('remove_from_cart/<int:id>/', remove_from_cart, name='remove_from_cart'),
 #         path('clear_cart/', clear_cart, name='clear_cart'),
 # ]
+
+from . import views
+
+urlpatterns = [
+    path('checkout/', views.checkout, name='checkout'),
+    path('order/<int:order_id>/kaspi_qr/', views.kaspi_qr, name='kaspi_qr'),
+    path('order/<int:order_id>/receipt/', views.order_receipt, name='order_receipt'),
+]

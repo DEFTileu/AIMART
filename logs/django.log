@@ -1,0 +1,105 @@
+ERROR 2025-05-24 21:21:42,656 signal 18776 22748 Signal handler <bound method DjangoFixup.on_import_modules of <celery.fixups.django.DjangoFixup object at 0x000001D01891E290>> raised: ModuleNotFoundError("No module named 'crispy_forms'")
+Traceback (most recent call last):
+  File "C:\Users\asus\PycharmProjects\AIMART\.venv\Lib\site-packages\celery\utils\dispatch\signal.py", line 280, in send
+    response = receiver(signal=self, sender=sender, **named)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\asus\PycharmProjects\AIMART\.venv\Lib\site-packages\celery\fixups\django.py", line 101, in on_import_modules
+    self.worker_fixup.validate_models()
+  File "C:\Users\asus\PycharmProjects\AIMART\.venv\Lib\site-packages\celery\fixups\django.py", line 139, in validate_models
+    self.django_setup()
+  File "C:\Users\asus\PycharmProjects\AIMART\.venv\Lib\site-packages\celery\fixups\django.py", line 135, in django_setup
+    django.setup()
+  File "C:\Users\asus\PycharmProjects\AIMART\.venv\Lib\site-packages\django\__init__.py", line 24, in setup
+    apps.populate(settings.INSTALLED_APPS)
+  File "C:\Users\asus\PycharmProjects\AIMART\.venv\Lib\site-packages\django\apps\registry.py", line 91, in populate
+    app_config = AppConfig.create(entry)
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\asus\PycharmProjects\AIMART\.venv\Lib\site-packages\django\apps\config.py", line 193, in create
+    import_module(entry)
+  File "C:\Users\asus\AppData\Local\Programs\Python\Python311\Lib\importlib\__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1206, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1178, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1142, in _find_and_load_unlocked
+ModuleNotFoundError: No module named 'crispy_forms'
+ERROR 2025-05-24 21:21:42,659 signal 18776 22748 Signal handler <promise@0x1d01890c7d0 --> <bound method Celery._autodiscover_tasks of <Celery AIMART at 0x1d01891d890>>> raised: AppRegistryNotReady("Apps aren't loaded yet.")
+Traceback (most recent call last):
+  File "C:\Users\asus\PycharmProjects\AIMART\.venv\Lib\site-packages\celery\utils\dispatch\signal.py", line 280, in send
+    response = receiver(signal=self, sender=sender, **named)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\asus\PycharmProjects\AIMART\.venv\Lib\site-packages\vine\promises.py", line 161, in __call__
+    return self.throw()
+           ^^^^^^^^^^^^
+  File "C:\Users\asus\PycharmProjects\AIMART\.venv\Lib\site-packages\vine\promises.py", line 158, in __call__
+    retval = fun(*final_args, **final_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\asus\PycharmProjects\AIMART\.venv\Lib\site-packages\celery\app\base.py", line 788, in _autodiscover_tasks
+    return self._autodiscover_tasks_from_fixups(related_name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\asus\PycharmProjects\AIMART\.venv\Lib\site-packages\celery\app\base.py", line 797, in _autodiscover_tasks_from_fixups
+    return self._autodiscover_tasks_from_names([
+                                               ^
+  File "C:\Users\asus\PycharmProjects\AIMART\.venv\Lib\site-packages\celery\app\base.py", line 800, in <listcomp>
+    for pkg in fixup.autodiscover_tasks()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\asus\PycharmProjects\AIMART\.venv\Lib\site-packages\celery\fixups\django.py", line 111, in autodiscover_tasks
+    return [config.name for config in apps.get_app_configs()]
+                                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\asus\PycharmProjects\AIMART\.venv\Lib\site-packages\django\apps\registry.py", line 147, in get_app_configs
+    self.check_apps_ready()
+  File "C:\Users\asus\PycharmProjects\AIMART\.venv\Lib\site-packages\django\apps\registry.py", line 138, in check_apps_ready
+    raise AppRegistryNotReady("Apps aren't loaded yet.")
+django.core.exceptions.AppRegistryNotReady: Apps aren't loaded yet.
+ERROR 2025-05-24 21:23:54,895 signal 27068 27684 Signal handler <bound method DjangoFixup.on_import_modules of <celery.fixups.django.DjangoFixup object at 0x00000272F6452890>> raised: ImportError("Module 'products.apps' does not contain a 'ProductsConfig' class. Choices are: 'WishlistcartConfig'.")
+Traceback (most recent call last):
+  File "C:\Users\asus\PycharmProjects\AIMART\.venv\Lib\site-packages\celery\utils\dispatch\signal.py", line 280, in send
+    response = receiver(signal=self, sender=sender, **named)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\asus\PycharmProjects\AIMART\.venv\Lib\site-packages\celery\fixups\django.py", line 101, in on_import_modules
+    self.worker_fixup.validate_models()
+  File "C:\Users\asus\PycharmProjects\AIMART\.venv\Lib\site-packages\celery\fixups\django.py", line 139, in validate_models
+    self.django_setup()
+  File "C:\Users\asus\PycharmProjects\AIMART\.venv\Lib\site-packages\celery\fixups\django.py", line 135, in django_setup
+    django.setup()
+  File "C:\Users\asus\PycharmProjects\AIMART\.venv\Lib\site-packages\django\__init__.py", line 24, in setup
+    apps.populate(settings.INSTALLED_APPS)
+  File "C:\Users\asus\PycharmProjects\AIMART\.venv\Lib\site-packages\django\apps\registry.py", line 91, in populate
+    app_config = AppConfig.create(entry)
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\asus\PycharmProjects\AIMART\.venv\Lib\site-packages\django\apps\config.py", line 190, in create
+    raise ImportError(msg)
+ImportError: Module 'products.apps' does not contain a 'ProductsConfig' class. Choices are: 'WishlistcartConfig'.
+ERROR 2025-05-24 21:23:54,896 signal 27068 27684 Signal handler <promise@0x272f6440870 --> <bound method Celery._autodiscover_tasks of <Celery AIMART at 0x272f6451f90>>> raised: AppRegistryNotReady("Apps aren't loaded yet.")
+Traceback (most recent call last):
+  File "C:\Users\asus\PycharmProjects\AIMART\.venv\Lib\site-packages\celery\utils\dispatch\signal.py", line 280, in send
+    response = receiver(signal=self, sender=sender, **named)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\asus\PycharmProjects\AIMART\.venv\Lib\site-packages\vine\promises.py", line 161, in __call__
+    return self.throw()
+           ^^^^^^^^^^^^
+  File "C:\Users\asus\PycharmProjects\AIMART\.venv\Lib\site-packages\vine\promises.py", line 158, in __call__
+    retval = fun(*final_args, **final_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\asus\PycharmProjects\AIMART\.venv\Lib\site-packages\celery\app\base.py", line 788, in _autodiscover_tasks
+    return self._autodiscover_tasks_from_fixups(related_name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\asus\PycharmProjects\AIMART\.venv\Lib\site-packages\celery\app\base.py", line 797, in _autodiscover_tasks_from_fixups
+    return self._autodiscover_tasks_from_names([
+                                               ^
+  File "C:\Users\asus\PycharmProjects\AIMART\.venv\Lib\site-packages\celery\app\base.py", line 800, in <listcomp>
+    for pkg in fixup.autodiscover_tasks()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\asus\PycharmProjects\AIMART\.venv\Lib\site-packages\celery\fixups\django.py", line 111, in autodiscover_tasks
+    return [config.name for config in apps.get_app_configs()]
+                                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\asus\PycharmProjects\AIMART\.venv\Lib\site-packages\django\apps\registry.py", line 147, in get_app_configs
+    self.check_apps_ready()
+  File "C:\Users\asus\PycharmProjects\AIMART\.venv\Lib\site-packages\django\apps\registry.py", line 138, in check_apps_ready
+    raise AppRegistryNotReady("Apps aren't loaded yet.")
+django.core.exceptions.AppRegistryNotReady: Apps aren't loaded yet.
+INFO 2025-05-24 21:26:41,201 autoreload 32336 20424 Watching for file changes with StatReloader
+INFO 2025-05-24 21:27:08,532 autoreload 32336 20424 C:\Users\asus\PycharmProjects\AIMART\AIMART\settings.py changed, reloading.
+INFO 2025-05-24 21:27:09,207 autoreload 7312 18776 Watching for file changes with StatReloader
+INFO 2025-05-24 21:27:10,551 autoreload 7312 18776 C:\Users\asus\PycharmProjects\AIMART\AIMART\settings.py changed, reloading.
+INFO 2025-05-24 21:27:12,242 autoreload 23860 26724 Watching for file changes with StatReloader

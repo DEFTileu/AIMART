@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="ru" data-arp=""><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Страница не найдена | ИИ Маркетплейс</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+        :root {
+            --primary: #FF6600;
+            --primary-light: #FF8533;
+            --primary-dark: #E65C00;
+            --dark: #1A1A2E;
+            --light: #FFFFFF;
+            --gray: #F5F5F7;
+            --text: #333333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        .container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        .error-content {
+            text-align: center;
+            max-width: 600px;
+            margin-bottom: 3rem;
+        }
+
+        .error-code {
+            font-size: 10rem;
+            font-weight: 700;
+            color: var(--primary);
+            line-height: 1;
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+            animation: pulse 2s infinite ease-in-out;
+            text-shadow: 0 10px 20px rgba(255, 102, 0, 0.2);
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .error-title {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--text);
+        }
+
+        .error-message {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            color: #666;
+            margin-bottom: 2rem;
+        }
+
+        .home-button {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(255, 102, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .home-button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 25px rgba(255, 102, 0, 0.3);
+        }
+
+        .home-button:active {
+            transform: translateY(-1px);
+        }
+
+        .home-button::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 150%;
+            height: 150%;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            opacity: 0;
+            transition: transform 0.6s, opacity 0.6s;
+        }
+
+        .home-button:hover::after {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+
+        .ai-animation {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 40vh;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .neural-network {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .node {
+            position: absolute;
+            background: var(--primary);
+            border-radius: 50%;
+            opacity: 0.1;
+            transform: scale(0);
+            animation: nodeAppear 3s infinite;
+        }
+
+        .connection {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            transform-origin: left center;
+            opacity: 0;
+            animation: connectionAppear 4s infinite;
+        }
+
+        @keyframes nodeAppear {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            20% {
+                transform: scale(1);
+                opacity: 0.7;
+            }
+            80% {
+                transform: scale(1);
+                opacity: 0.7;
+            }
+            100% {
+                transform: scale(0);
+                opacity: 0;
+            }
+        }
+
+        @keyframes connectionAppear {
+            0% {
+                opacity: 0;
+                transform: scaleX(0);
+            }
+            20% {
+                opacity: 0.5;
+                transform: scaleX(1);
+            }
+            80% {
+                opacity: 0.5;
+                transform: scaleX(1);
+            }
+            100% {
+                opacity: 0;
+                transform: scaleX(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .error-code {
+                font-size: 8rem;
+            }
+
+            .error-title {
+                font-size: 1.5rem;
+            }
+
+            .error-message {
+                font-size: 1rem;
+            }
+
+            .ai-animation {
+                height: 30vh;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .error-code {
+                font-size: 6rem;
+            }
+
+            .error-title {
+                font-size: 1.2rem;
+            }
+
+            .container {
+                padding: 1.5rem;
+            }
+
+            .home-button {
+                padding: 0.8rem 2rem;
+                font-size: 1rem;
+            }
+
+            .ai-animation {
+                height: 25vh;
+            }
+        }
+    </style>
+<style>.lottie-animation-container{width:var(--lottie-animation-container-width);height:var(--lottie-animation-container-height);background-color:var(--lottie-animation-container-background-color);overflow:hidden;margin:var(--lottie-animation-margin)}.lottie-animation-container svg{transform:scale(var(--lottie-animation-scale))}</style><style>.lottie-animation-container{width:var(--lottie-animation-container-width);height:var(--lottie-animation-container-height);background-color:var(--lottie-animation-container-background-color);overflow:hidden;margin:var(--lottie-animation-margin)}.lottie-animation-container svg{transform:scale(var(--lottie-animation-scale))}</style></head>
+<body>
+    <main class="container">
+        <div class="error-content">
+            <h1 class="error-code">404</h1>
+            <h2 class="error-title">Такой страницы не существует</h2>
+            <p class="error-message">Даже искусственный интеллект ошибается — попробуйте вернуться на главную 😊</p>
+            <a href="https://aimart.pythonanywhere.com" class="home-button">На главную</a>
+        </div>
+    </main>
+
+    <div class="ai-animation">
+        <div class="neural-network" id="neural-network"><div class="node" style="width: 5.01608px; height: 5.01608px; left: 3.94237px; bottom: 296.839px; animation-delay: 4.41618s;"></div><div class="node" style="width: 8.2757px; height: 8.2757px; left: 294.421px; bottom: 282.278px; animation-delay: 1.52094s;"></div><div class="node" style="width: 17.0364px; height: 17.0364px; left: 46.4727px; bottom: 104.979px; animation-delay: 1.34633s;"></div><div class="node" style="width: 10.4161px; height: 10.4161px; left: 1410.03px; bottom: 159.527px; animation-delay: 0.480555s;"></div><div class="node" style="width: 12.8117px; height: 12.8117px; left: 588.106px; bottom: 216.297px; animation-delay: 3.58078s;"></div><div class="node" style="width: 13.9819px; height: 13.9819px; left: 1395.73px; bottom: 192.238px; animation-delay: 3.77749s;"></div><div class="node" style="width: 19.6569px; height: 19.6569px; left: 198.428px; bottom: 170.473px; animation-delay: 2.25891s;"></div><div class="node" style="width: 14.4491px; height: 14.4491px; left: 863.585px; bottom: 196.359px; animation-delay: 2.51002s;"></div><div class="node" style="width: 7.42181px; height: 7.42181px; left: 1010.73px; bottom: 151.306px; animation-delay: 0.599705s;"></div><div class="node" style="width: 9.27976px; height: 9.27976px; left: 984.117px; bottom: 235.902px; animation-delay: 1.44874s;"></div><div class="node" style="width: 12.6167px; height: 12.6167px; left: 817.12px; bottom: 118.96px; animation-delay: 4.7535s;"></div><div class="node" style="width: 7.33164px; height: 7.33164px; left: 1728.77px; bottom: 210.613px; animation-delay: 2.6929s;"></div><div class="node" style="width: 11.0845px; height: 11.0845px; left: 799.14px; bottom: 262.206px; animation-delay: 1.01019s;"></div><div class="node" style="width: 13.0549px; height: 13.0549px; left: 805.52px; bottom: 14.6585px; animation-delay: 4.01251s;"></div><div class="node" style="width: 15.0811px; height: 15.0811px; left: 1624.51px; bottom: 303.131px; animation-delay: 4.00793s;"></div><div class="node" style="width: 11.6289px; height: 11.6289px; left: 960.764px; bottom: 179.549px; animation-delay: 4.07366s;"></div><div class="node" style="width: 14.3269px; height: 14.3269px; left: 1220.94px; bottom: 155.041px; animation-delay: 2.02548s;"></div><div class="node" style="width: 6.00045px; height: 6.00045px; left: 293.834px; bottom: 15.0183px; animation-delay: 4.7732s;"></div><div class="node" style="width: 10.6022px; height: 10.6022px; left: 721.004px; bottom: 120.315px; animation-delay: 1.22621s;"></div><div class="node" style="width: 18.1579px; height: 18.1579px; left: 1062.74px; bottom: 85.1678px; animation-delay: 4.38795s;"></div><div class="node" style="width: 8.98778px; height: 8.98778px; left: 1028.69px; bottom: 253.282px; animation-delay: 3.61064s;"></div><div class="node" style="width: 19.5699px; height: 19.5699px; left: 875.38px; bottom: 198.507px; animation-delay: 4.94894s;"></div><div class="node" style="width: 11.13px; height: 11.13px; left: 1794.42px; bottom: 141.185px; animation-delay: 3.63074s;"></div><div class="node" style="width: 9.74759px; height: 9.74759px; left: 548.655px; bottom: 238.626px; animation-delay: 3.67931s;"></div><div class="node" style="width: 9.00198px; height: 9.00198px; left: 468.822px; bottom: 19.2061px; animation-delay: 0.676732s;"></div><div class="node" style="width: 11.6993px; height: 11.6993px; left: 766.092px; bottom: 238.047px; animation-delay: 3.55033s;"></div><div class="node" style="width: 16.0151px; height: 16.0151px; left: 1774.85px; bottom: 242.632px; animation-delay: 2.78356s;"></div><div class="node" style="width: 11.6711px; height: 11.6711px; left: 1252.77px; bottom: 44.1014px; animation-delay: 1.27879s;"></div><div class="node" style="width: 5.52393px; height: 5.52393px; left: 1742.25px; bottom: 245.186px; animation-delay: 2.07329s;"></div><div class="node" style="width: 6.69132px; height: 6.69132px; left: 522.584px; bottom: 268.161px; animation-delay: 2.57868s;"></div><div class="node" style="width: 16.0704px; height: 16.0704px; left: 973.368px; bottom: 167.849px; animation-delay: 3.86543s;"></div><div class="node" style="width: 11.4848px; height: 11.4848px; left: 754.821px; bottom: 32.7773px; animation-delay: 1.36568s;"></div><div class="node" style="width: 7.63991px; height: 7.63991px; left: 1267.07px; bottom: 136.265px; animation-delay: 0.471032s;"></div><div class="node" style="width: 5.04414px; height: 5.04414px; left: 26.817px; bottom: 178.223px; animation-delay: 3.49743s;"></div><div class="node" style="width: 14.5712px; height: 14.5712px; left: 1400.44px; bottom: 62.9141px; animation-delay: 3.29194s;"></div><div class="node" style="width: 6.21171px; height: 6.21171px; left: 1393.7px; bottom: 5.40826px; animation-delay: 2.88213s;"></div><div class="node" style="width: 6.56581px; height: 6.56581px; left: 703.77px; bottom: 150.185px; animation-delay: 0.30308s;"></div><div class="node" style="width: 18.887px; height: 18.887px; left: 126.257px; bottom: 35.4136px; animation-delay: 1.54998s;"></div><div class="node" style="width: 10.7562px; height: 10.7562px; left: 1602.26px; bottom: 293.982px; animation-delay: 0.577082s;"></div><div class="node" style="width: 11.6474px; height: 11.6474px; left: 318.602px; bottom: 211.903px; animation-delay: 0.401065s;"></div><div class="node" style="width: 16.8905px; height: 16.8905px; left: 1409.76px; bottom: 139.317px; animation-delay: 0.196087s;"></div><div class="node" style="width: 15.9452px; height: 15.9452px; left: 576.995px; bottom: 79.2184px; animation-delay: 3.02789s;"></div><div class="node" style="width: 19.9807px; height: 19.9807px; left: 1812.91px; bottom: 181.318px; animation-delay: 1.06851s;"></div><div class="node" style="width: 16.9072px; height: 16.9072px; left: 1416.57px; bottom: 146.249px; animation-delay: 4.04272s;"></div><div class="node" style="width: 9.72487px; height: 9.72487px; left: 430.937px; bottom: 12.8253px; animation-delay: 1.09403s;"></div><div class="node" style="width: 13.8669px; height: 13.8669px; left: 1397.18px; bottom: 141.557px; animation-delay: 2.87667s;"></div><div class="node" style="width: 14.5467px; height: 14.5467px; left: 1010.73px; bottom: 284.633px; animation-delay: 4.59997s;"></div><div class="node" style="width: 15.8967px; height: 15.8967px; left: 1799.18px; bottom: 294.704px; animation-delay: 2.85368s;"></div><div class="connection" style="width: 1691.42px; left: 135.701px; bottom: 35.4136px; transform: rotate(-8.81808deg); animation-delay: 3.93876s;"></div><div class="connection" style="width: 486.884px; left: 1071.82px; bottom: 85.1678px; transform: rotate(179.3deg); animation-delay: 4.91634s;"></div><div class="connection" style="width: 171.636px; left: 870.809px; bottom: 196.359px; transform: rotate(-30.9515deg); animation-delay: 0.30467s;"></div><div class="connection" style="width: 544.814px; left: 1270.89px; bottom: 136.265px; transform: rotate(178.322deg); animation-delay: 2.68077s;"></div><div class="connection" style="width: 439.043px; left: 1407.72px; bottom: 62.9141px; transform: rotate(-166.172deg); animation-delay: 1.06896s;"></div><div class="connection" style="width: 1415.47px; left: 1415.24px; bottom: 159.527px; transform: rotate(-174.433deg); animation-delay: 3.95444s;"></div><div class="connection" style="width: 773.935px; left: 1033.18px; bottom: 253.282px; transform: rotate(162.07deg); animation-delay: 1.51741s;"></div><div class="connection" style="width: 79.4322px; left: 1745.02px; bottom: 245.186px; transform: rotate(-38.5643deg); animation-delay: 2.38988s;"></div><div class="connection" style="width: 334.637px; left: 1396.81px; bottom: 5.40826px; transform: rotate(-166.211deg); animation-delay: 2.02772s;"></div><div class="connection" style="width: 1139.66px; left: 135.701px; bottom: 35.4136px; transform: rotate(-5.07691deg); animation-delay: 4.24737s;"></div><div class="connection" style="width: 1404.82px; left: 1607.64px; bottom: 293.982px; transform: rotate(174.956deg); animation-delay: 3.69052s;"></div><div class="connection" style="width: 499.209px; left: 707.053px; bottom: 150.185px; transform: rotate(-177.671deg); animation-delay: 1.99476s;"></div><div class="connection" style="width: 1257.19px; left: 1782.86px; bottom: 242.632px; transform: rotate(-178.836deg); animation-delay: 0.922172s;"></div><div class="connection" style="width: 228.114px; left: 435.8px; bottom: 12.8253px; transform: rotate(-119.225deg); animation-delay: 1.79512s;"></div><div class="connection" style="width: 451.397px; left: 584.968px; bottom: 79.2184px; transform: rotate(174.431deg); animation-delay: 0.0265158s;"></div><div class="connection" style="width: 952.489px; left: 1418.21px; bottom: 139.317px; transform: rotate(172.756deg); animation-delay: 2.00254s;"></div><div class="connection" style="width: 1229.86px; left: 1228.11px; bottom: 155.041px; transform: rotate(-173.379deg); animation-delay: 0.448519s;"></div><div class="connection" style="width: 527.658px; left: 553.528px; bottom: 238.626px; transform: rotate(173.427deg); animation-delay: 3.90711s;"></div><div class="connection" style="width: 808.565px; left: 594.512px; bottom: 216.297px; transform: rotate(1.70511deg); animation-delay: 4.69786s;"></div><div class="connection" style="width: 435.237px; left: 553.528px; bottom: 238.626px; transform: rotate(0.358565deg); animation-delay: 1.72595s;"></div><div class="connection" style="width: 144.467px; left: 804.682px; bottom: 262.206px; transform: rotate(82.5445deg); animation-delay: 4.31052s;"></div><div class="connection" style="width: 441.567px; left: 1258.6px; bottom: 44.1014px; transform: rotate(-170.24deg); animation-delay: 0.992127s;"></div><div class="connection" style="width: 804.938px; left: 1782.86px; bottom: 242.632px; transform: rotate(174.669deg); animation-delay: 2.49923s;"></div><div class="connection" style="width: 190.75px; left: 1228.11px; bottom: 155.041px; transform: rotate(4.72823deg); animation-delay: 0.22957s;"></div><div class="connection" style="width: 601.138px; left: 1632.05px; bottom: 303.131px; transform: rotate(158.741deg); animation-delay: 0.875229s;"></div><div class="connection" style="width: 678.294px; left: 29.3391px; bottom: 178.223px; transform: rotate(2.36904deg); animation-delay: 0.756824s;"></div><div class="connection" style="width: 470.594px; left: 1018px; bottom: 284.633px; transform: rotate(36.3948deg); animation-delay: 1.37648s;"></div><div class="connection" style="width: 1270.66px; left: 553.528px; bottom: 238.626px; transform: rotate(2.58498deg); animation-delay: 4.56722s;"></div><div class="connection" style="width: 560.588px; left: 1782.86px; bottom: 242.632px; transform: rotate(159.259deg); animation-delay: 1.30501s;"></div><div class="connection" style="width: 768.689px; left: 1632.05px; bottom: 303.131px; transform: rotate(172.016deg); animation-delay: 2.26782s;"></div><div class="connection" style="width: 201.862px; left: 1407.72px; bottom: 62.9141px; transform: rotate(-152.846deg); animation-delay: 2.32318s;"></div><div class="connection" style="width: 399.997px; left: 1407.72px; bottom: 62.9141px; transform: rotate(-11.2844deg); animation-delay: 4.7538s;"></div><div class="connection" style="width: 553.247px; left: 1407.72px; bottom: 62.9141px; transform: rotate(-166.042deg); animation-delay: 3.58652s;"></div><div class="connection" style="width: 185.849px; left: 1418.21px; bottom: 139.317px; transform: rotate(149.181deg); animation-delay: 1.05316s;"></div><div class="connection" style="width: 153.314px; left: 135.701px; bottom: 35.4136px; transform: rotate(-61.7548deg); animation-delay: 3.67336s;"></div><div class="connection" style="width: 985.47px; left: 1014.44px; bottom: 151.306px; transform: rotate(-178.435deg); animation-delay: 4.72747s;"></div><div class="connection" style="width: 87.556px; left: 1014.44px; bottom: 151.306px; transform: rotate(49.0585deg); animation-delay: 2.11483s;"></div><div class="connection" style="width: 1016.1px; left: 594.512px; bottom: 216.297px; transform: rotate(-4.38478deg); animation-delay: 3.16917s;"></div><div class="connection" style="width: 515.213px; left: 812.047px; bottom: 14.6585px; transform: rotate(-179.96deg); animation-delay: 3.88154s;"></div><div class="connection" style="width: 850.456px; left: 553.528px; bottom: 238.626px; transform: rotate(3.12676deg); animation-delay: 0.548463s;"></div><div class="connection" style="width: 898.279px; left: 1607.64px; bottom: 293.982px; transform: rotate(168.853deg); animation-delay: 0.959161s;"></div><div class="connection" style="width: 1010.17px; left: 726.305px; bottom: 120.315px; transform: rotate(-5.12843deg); animation-delay: 3.47345s;"></div><div class="connection" style="width: 429.901px; left: 1425.02px; bottom: 146.249px; transform: rotate(-161.222deg); animation-delay: 1.60284s;"></div><div class="connection" style="width: 399.997px; left: 1407.72px; bottom: 62.9141px; transform: rotate(-11.2844deg); animation-delay: 3.93482s;"></div><div class="connection" style="width: 1027.65px; left: 6.4504px; bottom: 296.839px; transform: rotate(2.42919deg); animation-delay: 3.71205s;"></div><div class="connection" style="width: 1107.82px; left: 298.559px; bottom: 282.278px; transform: rotate(4.66192deg); animation-delay: 1.32463s;"></div><div class="connection" style="width: 856.319px; left: 966.579px; bottom: 179.549px; transform: rotate(-0.118325deg); animation-delay: 2.73213s;"></div><div class="connection" style="width: 557.009px; left: 1014.44px; bottom: 151.306px; transform: rotate(166.281deg); animation-delay: 0.973589s;"></div><div class="connection" style="width: 719.449px; left: 1018px; bottom: 284.633px; transform: rotate(179.812deg); animation-delay: 0.752254s;"></div><div class="connection" style="width: 774.955px; left: 1799.99px; bottom: 141.185px; transform: rotate(-171.683deg); animation-delay: 2.59397s;"></div><div class="connection" style="width: 468.65px; left: 988.757px; bottom: 235.902px; transform: rotate(29.4606deg); animation-delay: 3.80504s;"></div><div class="connection" style="width: 809.011px; left: 1822.9px; bottom: 181.318px; transform: rotate(177.874deg); animation-delay: 1.34709s;"></div><div class="connection" style="width: 427.035px; left: 473.323px; bottom: 19.2061px; transform: rotate(-168.413deg); animation-delay: 0.198318s;"></div><div class="connection" style="width: 973.212px; left: 435.8px; bottom: 12.8253px; transform: rotate(-2.95018deg); animation-delay: 0.456049s;"></div><div class="connection" style="width: 1520.11px; left: 135.701px; bottom: 35.4136px; transform: rotate(-10.1437deg); animation-delay: 0.687849s;"></div><div class="connection" style="width: 1754.7px; left: 1782.86px; bottom: 242.632px; transform: rotate(177.896deg); animation-delay: 4.71327s;"></div><div class="connection" style="width: 433.123px; left: 988.757px; bottom: 235.902px; transform: rotate(158.792deg); animation-delay: 3.64202s;"></div><div class="connection" style="width: 412.184px; left: 726.305px; bottom: 120.315px; transform: rotate(-167.162deg); animation-delay: 4.01564s;"></div><div class="connection" style="width: 726.325px; left: 988.757px; bottom: 235.902px; transform: rotate(162.295deg); animation-delay: 0.766557s;"></div><div class="connection" style="width: 659.502px; left: 771.942px; bottom: 238.047px; transform: rotate(8.00111deg); animation-delay: 4.87185s;"></div><div class="connection" style="width: 16.4916px; left: 1425.02px; bottom: 146.249px; transform: rotate(-126.377deg); animation-delay: 0.758445s;"></div><div class="connection" style="width: 430.229px; left: 1228.11px; bottom: 155.041px; transform: rotate(-20.1337deg); animation-delay: 4.52538s;"></div><div class="connection" style="width: 507.469px; left: 1033.18px; bottom: 253.282px; transform: rotate(-178.32deg); animation-delay: 0.769772s;"></div><div class="connection" style="width: 961.151px; left: 988.757px; bottom: 235.902px; transform: rotate(176.56deg); animation-delay: 2.74627s;"></div><div class="connection" style="width: 335.501px; left: 1732.43px; bottom: 210.613px; transform: rotate(168.122deg); animation-delay: 3.52141s;"></div><div class="connection" style="width: 420.319px; left: 1822.9px; bottom: 181.318px; transform: rotate(-178.511deg); animation-delay: 1.88146s;"></div><div class="connection" style="width: 486.884px; left: 1071.82px; bottom: 85.1678px; transform: rotate(179.3deg); animation-delay: 3.00012s;"></div><div class="connection" style="width: 564.38px; left: 29.3391px; bottom: 178.223px; transform: rotate(10.1032deg); animation-delay: 1.90114s;"></div><div class="connection" style="width: 260.05px; left: 1632.05px; bottom: 303.131px; transform: rotate(146.481deg); animation-delay: 4.23457s;"></div><div class="connection" style="width: 559.133px; left: 473.323px; bottom: 19.2061px; transform: rotate(-22.8026deg); animation-delay: 0.291045s;"></div><div class="connection" style="width: 522.908px; left: 1782.86px; bottom: 242.632px; transform: rotate(168.263deg); animation-delay: 0.561952s;"></div><div class="connection" style="width: 181.604px; left: 1396.81px; bottom: 5.40826px; transform: rotate(-133.899deg); animation-delay: 3.43812s;"></div><div class="connection" style="width: 120.491px; left: 707.053px; bottom: 150.185px; transform: rotate(15.0198deg); animation-delay: 2.92478s;"></div><div class="connection" style="width: 229.711px; left: 1071.82px; bottom: 85.1678px; transform: rotate(-151.05deg); animation-delay: 3.2476s;"></div><div class="connection" style="width: 773.827px; left: 1014.44px; bottom: 151.306px; transform: rotate(-6.7778deg); animation-delay: 1.00188s;"></div><div class="connection" style="width: 595.368px; left: 1822.9px; bottom: 181.318px; transform: rotate(177.47deg); animation-delay: 1.76708s;"></div><div class="connection" style="width: 157.826px; left: 885.165px; bottom: 198.507px; transform: rotate(-20.3073deg); animation-delay: 4.20571s;"></div><div class="connection" style="width: 258.871px; left: 981.403px; bottom: 167.849px; transform: rotate(148.549deg); animation-delay: 3.83366s;"></div><div class="connection" style="width: 1079.77px; left: 707.053px; bottom: 150.185px; transform: rotate(-4.91151deg); animation-delay: 2.25647s;"></div><div class="connection" style="width: 798.983px; left: 804.682px; bottom: 262.206px; transform: rotate(-177.516deg); animation-delay: 1.39149s;"></div><div class="connection" style="width: 844.16px; left: 1270.89px; bottom: 136.265px; transform: rotate(171.592deg); animation-delay: 2.15902s;"></div><div class="connection" style="width: 1535.1px; left: 1822.9px; bottom: 181.318px; transform: rotate(173.781deg); animation-delay: 2.48403s;"></div><div class="connection" style="width: 404.564px; left: 870.809px; bottom: 196.359px; transform: rotate(8.54232deg); animation-delay: 4.75089s;"></div><div class="connection" style="width: 393.397px; left: 1415.24px; bottom: 159.527px; transform: rotate(-166.213deg); animation-delay: 2.40686s;"></div><div class="connection" style="width: 647.859px; left: 760.564px; bottom: 32.7773px; transform: rotate(-2.66622deg); animation-delay: 2.95449s;"></div><div class="connection" style="width: 736.581px; left: 1745.02px; bottom: 245.186px; transform: rotate(172.677deg); animation-delay: 2.97456s;"></div><div class="connection" style="width: 1332.26px; left: 473.323px; bottom: 19.2061px; transform: rotate(-5.25326deg); animation-delay: 3.02041s;"></div><div class="connection" style="width: 592.557px; left: 298.559px; bottom: 282.278px; transform: rotate(8.12716deg); animation-delay: 3.99084s;"></div><div class="connection" style="width: 1366.52px; left: 1782.86px; bottom: 242.632px; transform: rotate(170.319deg); animation-delay: 3.51142s;"></div><div class="connection" style="width: 110.135px; left: 988.757px; bottom: 235.902px; transform: rotate(160.151deg); animation-delay: 1.49513s;"></div><div class="connection" style="width: 1607.57px; left: 29.3391px; bottom: 178.223px; transform: rotate(-4.45637deg); animation-delay: 1.59942s;"></div><div class="connection" style="width: 1680.76px; left: 1732.43px; bottom: 210.613px; transform: rotate(176.397deg); animation-delay: 3.85075s;"></div><div class="connection" style="width: 230.656px; left: 324.426px; bottom: 211.903px; transform: rotate(-6.65317deg); animation-delay: 2.45194s;"></div><div class="connection" style="width: 433.27px; left: 1415.24px; bottom: 159.527px; transform: rotate(-169.847deg); animation-delay: 3.5703s;"></div><div class="connection" style="width: 1285.55px; left: 135.701px; bottom: 35.4136px; transform: rotate(-5.54028deg); animation-delay: 1.94071s;"></div><div class="connection" style="width: 270.776px; left: 525.93px; bottom: 268.161px; transform: rotate(109.442deg); animation-delay: 3.16423s;"></div></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const neuralNetwork = document.getElementById('neural-network');
+            const networkWidth = neuralNetwork.offsetWidth;
+            const networkHeight = neuralNetwork.offsetHeight;
+
+            // Создаем узлы нейросети
+            const nodeCount = Math.floor(window.innerWidth / 40); // Адаптивное количество узлов
+            const nodes = [];
+
+            for (let i = 0; i < nodeCount; i++) {
+                const node = document.createElement('div');
+                node.className = 'node';
+
+                // Случайное положение
+                const x = Math.random() * networkWidth;
+                const y = Math.random() * networkHeight * 0.8; // Размещаем в нижних 80% экрана
+
+                // Случайный размер
+                const size = Math.random() * 15 + 5;
+
+                node.style.width = `${size}px`;
+                node.style.height = `${size}px`;
+                node.style.left = `${x}px`;
+                node.style.bottom = `${y}px`;
+
+                // Случайная задержка анимации
+                const delay = Math.random() * 5;
+                node.style.animationDelay = `${delay}s`;
+
+                neuralNetwork.appendChild(node);
+                nodes.push({
+                    element: node,
+                    x: x + size / 2,
+                    y: networkHeight - y,
+                    size: size
+                });
+            }
+
+            // Создаем соединения между узлами
+            const connectionCount = nodeCount * 2;
+
+            for (let i = 0; i < connectionCount; i++) {
+                const connection = document.createElement('div');
+                connection.className = 'connection';
+
+                // Выбираем два случайных узла
+                const nodeIndex1 = Math.floor(Math.random() * nodes.length);
+                let nodeIndex2 = Math.floor(Math.random() * nodes.length);
+
+                // Убеждаемся, что это разные узлы
+                while (nodeIndex1 === nodeIndex2) {
+                    nodeIndex2 = Math.floor(Math.random() * nodes.length);
+                }
+
+                const node1 = nodes[nodeIndex1];
+                const node2 = nodes[nodeIndex2];
+
+                // Вычисляем параметры линии
+                const dx = node2.x - node1.x;
+                const dy = node2.y - node1.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+
+                connection.style.width = `${distance}px`;
+                connection.style.left = `${node1.x}px`;
+                connection.style.bottom = `${networkHeight - node1.y}px`;
+                connection.style.transform = `rotate(${angle}deg)`;
+
+                // Случайная задержка анимации
+                const delay = Math.random() * 5;
+                connection.style.animationDelay = `${delay}s`;
+
+                neuralNetwork.appendChild(connection);
+            }
+
+            // Пересоздаем анимацию при изменении размера окна
+            window.addEventListener('resize', function() {
+                neuralNetwork.innerHTML = '';
+                setTimeout(() => {
+                    const networkWidth = neuralNetwork.offsetWidth;
+                    const networkHeight = neuralNetwork.offsetHeight;
+
+                    // Пересоздаем узлы
+                    const nodeCount = Math.floor(window.innerWidth / 40);
+                    const nodes = [];
+
+                    for (let i = 0; i < nodeCount; i++) {
+                        const node = document.createElement('div');
+                        node.className = 'node';
+
+                        const x = Math.random() * networkWidth;
+                        const y = Math.random() * networkHeight * 0.8;
+                        const size = Math.random() * 15 + 5;
+
+                        node.style.width = `${size}px`;
+                        node.style.height = `${size}px`;
+                        node.style.left = `${x}px`;
+                        node.style.bottom = `${y}px`;
+
+                        const delay = Math.random() * 5;
+                        node.style.animationDelay = `${delay}s`;
+
+                        neuralNetwork.appendChild(node);
+                        nodes.push({
+                            element: node,
+                            x: x + size / 2,
+                            y: networkHeight - y,
+                            size: size
+                        });
+                    }
+
+                    // Пересоздаем соединения
+                    const connectionCount = nodeCount * 2;
+
+                    for (let i = 0; i < connectionCount; i++) {
+                        const connection = document.createElement('div');
+                        connection.className = 'connection';
+
+                        const nodeIndex1 = Math.floor(Math.random() * nodes.length);
+                        let nodeIndex2 = Math.floor(Math.random() * nodes.length);
+
+                        while (nodeIndex1 === nodeIndex2) {
+                            nodeIndex2 = Math.floor(Math.random() * nodes.length);
+                        }
+
+                        const node1 = nodes[nodeIndex1];
+                        const node2 = nodes[nodeIndex2];
+
+                        const dx = node2.x - node1.x;
+                        const dy = node2.y - node1.y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+
+                        connection.style.width = `${distance}px`;
+                        connection.style.left = `${node1.x}px`;
+                        connection.style.bottom = `${networkHeight - node1.y}px`;
+                        connection.style.transform = `rotate(${angle}deg)`;
+
+                        const delay = Math.random() * 5;
+                        connection.style.animationDelay = `${delay}s`;
+
+                        neuralNetwork.appendChild(connection);
+                    }
+                }, 100);
+            });
+        });
+    </script>
+</html>

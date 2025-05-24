@@ -1,0 +1,203 @@
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AIMART - Оплата через Kaspi</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          sans-serif;
+        background: #0a0a0a;
+        color: #ffffff;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1.6;
+      }
+
+      .container {
+        text-align: center;
+        padding: 24px;
+      }
+
+      .logo {
+        font-size: 2rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #ff6b35, #ff9500);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 40px;
+      }
+
+      .qr-card {
+        background: rgba(255, 255, 255, 0.03);
+        -webkit-backdrop-filter: blur(20px);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 24px;
+        padding: 48px;
+        max-width: 480px;
+        margin: 0 auto;
+        animation: slideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 16px;
+        color: #ffffff;
+      }
+
+      .description {
+        color: #888;
+        margin-bottom: 32px;
+      }
+
+      .qr-code {
+        width: 240px;
+        height: 240px;
+        margin: 0 auto 32px;
+        padding: 16px;
+        background: #ffffff;
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      }
+
+      .qr-code img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+
+      .order-info {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 16px;
+        padding: 20px;
+        margin-bottom: 32px;
+      }
+
+      .order-number {
+        font-family: "Roboto Mono", monospace;
+        font-size: 1.2rem;
+        color: #ff6b35;
+        margin-bottom: 8px;
+      }
+
+      .order-amount {
+        font-size: 1.1rem;
+        color: #ccc;
+      }
+
+      .btn-primary {
+        width: 100%;
+        padding: 18px;
+        background: linear-gradient(135deg, #ff6b35, #ff9500);
+        border: none;
+        border-radius: 16px;
+        color: white;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .btn-primary::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
+        transition: left 0.5s;
+      }
+
+      .btn-primary:hover::before {
+        left: 100%;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 36px rgba(255, 107, 53, 0.4);
+      }
+
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(40px) scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="logo">🛒 AIMART</div>
+
+      <div class="qr-card">
+        <h1 class="title">Оплата через Kaspi</h1>
+        <p class="description">
+          Отсканируйте QR-код в приложении Kaspi для оплаты заказа
+        </p>
+
+        <div class="qr-code">
+          <img src="{{ qr_code }}" alt="QR код для оплаты" />
+        </div>
+
+        <div class="order-info">
+          <div class="order-number">Заказ #{{ order.number }}</div>
+          <div class="order-amount">
+            Сумма: ₸ {{ order.total|floatformat:0|intcomma }}
+          </div>
+        </div>
+
+        <button class="btn-primary" id="paid-btn">✅ Оплата произведена</button>
+      </div>
+    </div>
+
+    <script>
+      document
+        .getElementById("paid-btn")
+        .addEventListener("click", async () => {
+          try {
+            const response = await fetch(
+              `/orders/check-kaspi-status/{{ order.id }}/`
+            );
+            const data = await response.json();
+
+            if (data.status === "paid") {
+              window.location.href = `/orders/success/{{ order.number }}/`;
+            } else {
+              alert("Оплата пока не подтверждена. Пожалуйста, подождите.");
+            }
+          } catch (error) {
+            console.error("Ошибка при проверке статуса:", error);
+            alert("Произошла ошибка при проверке статуса оплаты");
+          }
+        });
+    </script>
+  </body>
+</html>

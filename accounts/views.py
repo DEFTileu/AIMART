@@ -5,6 +5,7 @@ from django.contrib import messages
 
 from products.models import Product, Category, Brand
 from .forms import LoginForm, RegisterForm
+from .models import Card
 
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
@@ -96,3 +97,46 @@ def logout_view(request):
     logout(request)
     messages.success(request, "You have been logged out.")
     return redirect('auth')
+
+# @login_required
+# def card_list(request):
+#     cards = Card.objects.filter(user=request.user)
+#     form = CardForm()
+#
+#     if request.method == 'POST':
+#         form = CardForm(request.POST)
+#         if form.is_valid():
+#             card = form.save(commit=False)
+#             card.user = request.user
+#             card.save()
+#             messages.success(request, 'Карта успешно добавлена')
+#             return redirect('card_list')
+#
+#     return render(request, 'accounts/card_list.html', {
+#         'cards': cards,
+#         'form': form
+#     })
+#
+# @login_required
+# def delete_card(request, card_id):
+#     try:
+#         card = Card.objects.get(id=card_id, user=request.user)
+#         card.delete()
+#         messages.success(request, 'Карта успешно удалена')
+#     except Card.DoesNotExist:
+#         messages.error(request, 'Карта не найдена')
+#     return redirect('card_list')
+#
+# @login_required
+# def set_default_card(request, card_id):
+#     try:
+#         # Сбрасываем все карты как не дефолтные
+#         Card.objects.filter(user=request.user).update(is_default=False)
+#         # Устанавливаем выбранную карту как дефолтную
+#         card = Card.objects.get(id=card_id, user=request.user)
+#         card.is_default = True
+#         card.save()
+#         messages.success(request, 'Карта установлена как основная')
+#     except Card.DoesNotExist:
+#         messages.error(request, 'Карта не найдена')
+#     return redirect('card_list')

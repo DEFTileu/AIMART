@@ -46,9 +46,12 @@ INSTALLED_APPS = [
     'news',
     'products',
     'django_cleanup.apps.CleanupConfig',
+    'political',
+    'orders'
 ]
 
-
+USE_THOUSAND_SEPARATOR = True
+THOUSAND_SEPARATOR = ' '
 
 AUTH_USER_MODEL = 'accounts.CustomUser'
 LOGIN_URL = '/auth/'  # <-- Важно!
@@ -81,6 +84,7 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',

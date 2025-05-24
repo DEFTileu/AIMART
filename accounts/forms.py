@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
-from .models import CustomUser
+from .models import CustomUser, Card
 
 class LoginForm(AuthenticationForm):
     email = forms.EmailField(widget=forms.EmailInput(attrs={'id': 'id_email'}))
@@ -38,3 +38,38 @@ class RegisterForm(UserCreationForm):
             raise forms.ValidationError('The two password fields must match.')
 
         return password2
+
+# class CardForm(forms.ModelForm):
+#     class Meta:
+#         model = Card
+#         fields = ['card_number', 'expiry_date', 'card_holder', 'cvv']
+#         widgets = {
+#             'card_number': forms.TextInput(attrs={
+#                 'class': 'form-control',
+#                 'placeholder': 'XXXX XXXX XXXX XXXX',
+#                 'pattern': r'\d{4}\s\d{4}\s\d{4}\s\d{4}'
+#             }),
+#             'expiry_date': forms.TextInput(attrs={
+#                 'class': 'form-control',
+#                 'placeholder': 'MM/YY',
+#                 'pattern': r'(0[1-9]|1[0-2])/([0-9]{2})'
+#             }),
+#             'card_holder': forms.TextInput(attrs={
+#                 'class': 'form-control',
+#                 'placeholder': 'ИМЯ НА КАРТЕ'
+#             }),
+#             'cvv': forms.TextInput(attrs={
+#                 'class': 'form-control',
+#                 'placeholder': 'CVV',
+#                 'pattern': r'\d{3,4}'
+#             })
+#         }
+#
+#     def clean_card_number(self):
+#         card_number = self.cleaned_data['card_number']
+#         # Удаляем все пробелы для проверки
+#         card_number_clean = card_number.replace(' ', '')
+#         if not card_number_clean.isdigit() or len(card_number_clean) != 16:
+#             raise forms.ValidationError('Неверный номер карты')
+#         # Возвращаем номер с пробелами
+#         return ' '.join([card_number_clean[i:i+4] for i in range(0, 16, 4)])

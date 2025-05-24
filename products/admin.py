@@ -11,8 +11,6 @@ admin.site.register(Brand)
 admin.site.register(Category)
 admin.site.register(ProductImage)
 
-
-
 @admin.register(ProductView)
 class ProductViewAdmin(admin.ModelAdmin):
     list_display = ['user', 'product', 'session_id', 'timestamp']

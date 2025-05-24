@@ -1,0 +1,119 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+<div class="container mt-4">
+  <h2>Мои карты</h2>
+
+  {% if messages %}
+  <div class="messages">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card mb-4">
+        <div class="card-header">
+          <h4>Добавить новую карту</h4>
+        </div>
+        <div class="card-body">
+          <form method="post">
+            {% csrf_token %} {% for field in form %}
+            <div class="form-group mb-3">
+              {{ field.label_tag }} {{ field }} {% if field.errors %}
+              <div class="alert alert-danger">{{ field.errors }}</div>
+              {% endif %}
+            </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary">
+              Добавить карту
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <h4>Сохраненные карты</h4>
+        </div>
+        <div class="card-body">
+          {% if cards %}
+          <div class="list-group">
+            {% for card in cards %}
+            <div class="list-group-item">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h5 class="mb-1">
+                    **** **** **** {{ card.card_number|slice:"-4:" }}
+                  </h5>
+                  <p class="mb-1">{{ card.card_holder }}</p>
+                  <small>Срок действия: {{ card.expiry_date }}</small>
+                  {% if card.is_default %}
+                  <span class="badge bg-primary ms-2">Основная</span>
+                  {% endif %}
+                </div>
+                <div>
+                  {% if not card.is_default %}
+                  <a
+                    href="{% url 'set_default_card' card.id %}"
+                    class="btn btn-sm btn-outline-primary me-2"
+                  >
+                    Сделать основной
+                  </a>
+                  {% endif %}
+                  <a
+                    href="{% url 'delete_card' card.id %}"
+                    class="btn btn-sm btn-outline-danger"
+                    onclick="return confirm('Вы уверены, что хотите удалить эту карту?')"
+                  >
+                    Удалить
+                  </a>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <p class="text-muted">У вас пока нет сохраненных карт</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% block extra_js %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Форматирование номера карты
+    const cardNumberInput = document.querySelector('input[name="card_number"]');
+    if (cardNumberInput) {
+      cardNumberInput.addEventListener("input", function (e) {
+        let value = e.target.value.replace(/\D/g, "");
+        let formattedValue = "";
+        for (let i = 0; i < value.length; i++) {
+          if (i > 0 && i % 4 === 0) {
+            formattedValue += " ";
+          }
+          formattedValue += value[i];
+        }
+        e.target.value = formattedValue;
+      });
+    }
+
+    // Форматирование даты истечения
+    const expiryInput = document.querySelector('input[name="expiry_date"]');
+    if (expiryInput) {
+      expiryInput.addEventListener("input", function (e) {
+        let value = e.target.value.replace(/\D/g, "");
+        if (value.length >= 2) {
+          value = value.slice(0, 2) + "/" + value.slice(2, 4);
+        }
+        e.target.value = value;
+      });
+    }
+  });
+</script>
+{% endblock %} {% endblock %}

@@ -1,0 +1,47 @@
+{% extends 'html/main/base.html' %} {% block title %}Оформление заказа{%
+endblock %} {% block content %}
+<div class="cart-container">
+  <h1>Оформление заказа</h1>
+  <form method="post">
+    {% csrf_token %}
+    <div>
+      <h3>Товары в заказе:</h3>
+      <ul>
+        {% for item in cart_items %}
+        <li>
+          {{ item.product.name }} x {{ item.quantity }} — {{ item.product.price
+          }}₸
+        </li>
+        {% endfor %}
+      </ul>
+      <p><b>Итого: {{ total }}₸</b></p>
+    </div>
+    <div>
+      {{ form.payment_method.label_tag }}<br />
+      {{ form.payment_method }}
+    </div>
+    <div id="card-fields" style="display: none; margin-top: 10px">
+      {{ form.card_number.label_tag }}<br />
+      {{ form.card_number }}<br />
+      {{ form.save_card }} {{ form.save_card.label_tag }}
+    </div>
+    <button type="submit" class="checkout-btn">Оплатить</button>
+  </form>
+</div>
+<script>
+  const cardFields = document.getElementById("card-fields");
+  const radios = document.querySelectorAll('input[name="payment_method"]');
+  function toggleCardFields() {
+    if (
+      document.querySelector('input[name="payment_method"]:checked').value ===
+      "card"
+    ) {
+      cardFields.style.display = "";
+    } else {
+      cardFields.style.display = "none";
+    }
+  }
+  radios.forEach((r) => r.addEventListener("change", toggleCardFields));
+  document.addEventListener("DOMContentLoaded", toggleCardFields);
+</script>
+{% endblock %}

@@ -1,0 +1,26 @@
+Здравствуйте, {{ user.first_name }}!
+
+Статус вашего заказа был обновлен.
+
+Информация о статусе:
+Номер заказа: {{ order.number }}
+Новый статус: {{ status }}
+Дата обновления: {{ order.updated_at|date:"d.m.Y H:i" }}
+
+Детали заказа:
+Дата заказа: {{ order.created_at|date:"d.m.Y H:i" }}
+Способ оплаты: {{ payment_method }}
+Сумма заказа: {{ total }} ₸
+
+{% if order.tracking_number %}
+Информация об отслеживании:
+Номер отслеживания: {{ order.tracking_number }}
+Служба доставки: {{ order.shipping_carrier }}
+Ссылка для отслеживания: {{ order.tracking_url }}
+{% endif %}
+
+Ссылка на заказ: {{ order.get_absolute_url }}
+
+Если у вас есть вопросы, пожалуйста, свяжитесь с нашей службой поддержки.
+
+© 2024 AIMART. Все права защищены. 
